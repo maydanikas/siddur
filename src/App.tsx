@@ -189,7 +189,14 @@ const prayers: Prayer[] = [
 export default function App() {
   const [selected, setSelected] = useState<number | null>(null);
   const [showTranslit, setShowTranslit] = useState(false);
-  const [lang, setLang] = useState<Lang>('en');
+const [lang, setLang] = useState<Lang>(() => {
+  try {
+    const saved = localStorage.getItem('shacharis_lang') as Lang | null;
+    return saved || 'en';
+  } catch {
+    return 'en';
+  }
+});
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentSec, setCurrentSec] = useState(0);
@@ -220,6 +227,10 @@ const [showSplash, setShowSplash] = useState(true);
     pausedAccumRef.current = 0;
     if (intervalRef.current) window.clearInterval(intervalRef.current);
   }, [selected]);
+
+  useEffect(() => {
+  localStorage.setItem('shacharis_lang', lang);
+}, [lang]);
 
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
