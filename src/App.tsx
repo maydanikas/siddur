@@ -30,7 +30,7 @@ const prayers: Prayer[] = [
   },
   {
     id: 2,
-    titleEn: "Reishis Chochma",
+    titleEn: "Reishit Chochma",
     titleHe: "רֵאשִׁית חָכְמָה",
     he_display: "רֵאשִׁית חָכְמָה יִרְאַת יְהוָה, שֵׂכֶל טוֹב לְכָל עֹשֵׂיהֶם, תְּהִלָּתוֹ עֹמֶדֶת לָעַד. בָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד.",
     he_tts: "רֵאשִׁית חָכְמָה יִרְאַת אֲדֹנָי, שֵׂכֶל טוֹב לְכָל עֹשֵׂיהֶם, תְּהִלָּתוֹ עֹמֶדֶת לָעַד. בָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד.",
@@ -39,7 +39,7 @@ const prayers: Prayer[] = [
     nl: "Het begin van wijsheid is ontzag voor de Eeuwige, goed inzicht hebben allen die ze volbrengen, Zijn lof houdt stand voor eeuwig. Gezegend is de Naam van Zijn koninklijke glorie voor altijd.",
     en: "The beginning of wisdom is fear of the Lord, good understanding have all who do them, His praise endures forever. Blessed be the Name of His glorious kingdom forever and ever.",
     fr: "Le commencement de la sagesse est la crainte de l’Éternel, le bon sens est pour tous ceux qui les accomplissent, Sa louange subsiste à jamais. Béni soit le Nom de Son règne glorieux à tout jamais."
-  },
+},
   {
     id: 3,
     titleEn: "Torah Tziva",
@@ -54,19 +54,19 @@ const prayers: Prayer[] = [
   },
   {
     id: 4,
-    titleEn: "Veahavta Lreacha Kamocha",
+    titleEn: "Veahavta Lereacha Kamocha",
     titleHe: "וְאָהַבְתָּ לְרֵעֲךָ כָּמוֹךָ",
     he_display: "הֲרֵינִי מְקַבֵּל עַל עַצְמִי מִצְוַת עֲשֵׂה שֶׁל וְאָהַבְתָּ לְרֵעֲךָ כָּמוֹךָ.",
     he_tts: "הֲרֵינִי מְקַבֵּל עַל עַצְמִי מִצְוַת עֲשֵׂה שֶׁל וְאָהַבְתָּ לְרֵעֲךָ כָּמוֹךָ.",
-    translit: "Hareini mekabel al atzmi mitzvas aseh shel ve'ahavta lere'acha kamocha.",
+    translit: "Hareini mekabel al atzmi mitzvat aseh shel ve'ahavta lere'acha kamocha.",
     ru: "Вот, я принимаю на себя заповедь Торы: люби ближнего своего, как самого себя.",
     nl: "Zie, ik neem op mij het gebod van: heb je naaste lief als jezelf.",
     en: "Behold, I accept upon myself the positive commandment of: you shall love your fellow as yourself.",
     fr: "Me voici, j'accepte sur moi le commandement positif de: tu aimeras ton prochain comme toi-même."
-  },
+},
   {
     id: 5,
-    titleEn: "Netilas Yadayim",
+    titleEn: "Netilat Yadayim",
     titleHe: "נְטִילַת יָדַיִם",
     he_display: "בָּרוּךְ אַתָּה יְהוָה אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו וְצִוָּנוּ עַל נְטִילַת יָדָיִם.",
     he_tts: "בָּרוּךְ אַתָּה אֲדֹנָי אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו וְצִוָּנוּ עַל נְטִילַת יָדָיִם.",
@@ -75,7 +75,7 @@ const prayers: Prayer[] = [
     nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die ons geheiligd heeft met Zijn geboden en ons geboden heeft over het wassen van de handen.",
     en: "Blessed are You, Lord our God, King of the universe, Who has sanctified us with His commandments and commanded us concerning washing of the hands.",
     fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l’univers, qui nous a sanctifiés par Ses commandements et nous a ordonné le lavage des mains."
-  },
+},
   {
     id: 6,
     titleEn: "Asher Yatzar",
@@ -90,11 +90,11 @@ const prayers: Prayer[] = [
   },
   {
     id: 7,
-    titleEn: "Elokai Neshama",
-    titleHe: "אֱלֹקַי נְשָׁמָה",
-    he_display: "אֱלֹקַי, נְשָׁמָה שֶׁנָּתַתָּ בִּי טְהוֹרָה הִיא. אַתָּה בְרָאתָהּ, אַתָּה יְצַרְתָּהּ, אַתָּה נְפַחְתָּהּ בִּי, וְאַתָּה מְשַׁמְּרָהּ בְּקִרְבִּי, וְאַתָּה עָתִיד לִטְּלָהּ מִמֶּנִּי וּלְהַחֲזִירָהּ בִּי לֶעָתִיד לָבוֹא. כָּל זְמַן שֶׁהַנְּשָׁמָה בְּקִרְבִּי מוֹדֶה אֲנִי לְפָנֶיךָ, יְהוָה אֱלֹקַי וֵאלֹקֵי אֲבוֹתַי, רִבּוֹן כָּל הַמַּעֲשִׂים, אֲדוֹן כָּל הַנְּשָׁמוֹת. בָּרוּךְ אַתָּה יְהוָה, הַמַּחֲזִיר נְשָׁמוֹת לִפְגָרִים מֵתִים.",
-    he_tts: "אֱלֹקַי, נְשָׁמָה שֶׁנָּתַתָּ בִּי טְהוֹרָה הִיא. אַתָּה בְרָאתָהּ, אַתָּה יְצַרְתָּהּ, אַתָּה נְפַחְתָּהּ בִּי, וְאַתָּה מְשַׁמְּרָהּ בְּקִרְבִּי, וְאַתָּה עָתִיד לִטְּלָהּ מִמֶּנִּי וּלְהַחֲזִירָהּ בִּי לֶעָתִיד לָבוֹא. כָּל זְמַן שֶׁהַנְּשָׁמָה בְּקִרְבִּי מוֹדֶה אֲנִי לְפָנֶיךָ, אֲדֹנָי אֱלֹקַי וֵאלֹקֵי אֲבוֹתַי, רִבּוֹן כָּל הַמַּעֲשִׂים, אֲדוֹן כָּל הַנְּשָׁמוֹת. בָּרוּךְ אַתָּה אֲדֹנָי, הַמַּחֲזִיר נְשָׁמוֹת לִפְגָרִים מֵתִים.",
-    translit: "Elokai, neshamah shenatata bi tehorah hi. Atah veratah, atah yetzartah, atah nefachtah bi, ve'atah meshamrah bekirbi, ve'atah atid litlah mimeni ulehachazirah bi le'atid lavo. Kol zeman shehaneshamah bekirbi modeh ani lefanecha, Adonai Elokai velohei avotai, Ribbon kol hama'asim, Adon kol haneshamot. Baruch atah Adonai, hamachazir neshamot lifgarim metim.",
+    titleEn: "Elohai Neshama",
+    titleHe: "אֱלֹהַי נְשָׁמָה",
+    he_display: "אֱלֹהַי, נְשָׁמָה שֶׁנָּתַתָּ בִּי טְהוֹרָה הִיא. אַתָּה בְרָאתָהּ, אַתָּה יְצַרְתָּהּ, אַתָּה נְפַחְתָּהּ בִּי, וְאַתָּה מְשַׁמְּרָהּ בְּקִרְבִּי, וְאַתָּה עָתִיד לִטְּלָהּ מִמֶּנִּי וּלְהַחֲזִירָהּ בִּי לֶעָתִיד לָבוֹא. כָּל זְמַן שֶׁהַנְּשָׁמָה בְּקִרְבִּי מוֹדֶה אֲנִי לְפָנֶיךָ, יְהוָה אֱלֹהַי וֵאלֹהֵי אֲבוֹתַי, רִבּוֹן כָּל הַמַּעֲשִׂים, אֲדוֹן כָּל הַנְּשָׁמוֹת. בָּרוּךְ אַתָּה יְהוָה, הַמַּחֲזִיר נְשָׁמוֹת לִפְגָרִים מֵתִים.",
+    he_tts: "אֱלֹהַי, נְשָׁמָה שֶׁנָּתַתָּ בִּי טְהוֹרָה הִיא. אַתָּה בְרָאתָהּ, אַתָּה יְצַרְתָּהּ, אַתָּה נְפַחְתָּהּ בִּי, וְאַתָּה מְשַׁמְּרָהּ בְּקִרְבִּי, וְאַתָּה עָתִיד לִטְּלָהּ מִמֶּנִּי וּלְהַחֲזִירָהּ בִּי לֶעָתִיד לָבוֹא. כָּל זְמַן שֶׁהַנְּשָׁמָה בְּקִרְבִּי מוֹדֶה אֲנִי לְפָנֶיךָ, אֲדֹנָי אֱלֹהַי וֵאלֹהֵי אֲבוֹתַי, רִבּוֹן כָּל הַמַּעֲשִׂים, אֲדוֹן כָּל הַנְּשָׁמוֹת. בָּרוּךְ אַתָּה אֲדֹנָי, הַמַּחֲזִיר נְשָׁמוֹת לִפְגָרִים מֵתִים.",
+    translit: "Elohai, neshamah shenatata bi tehorah hi. Atah veratah, atah yetzartah, atah nefachtah bi, ve'atah meshamrah bekirbi, ve'atah atid litlah mimeni ulehachazirah bi le'atid lavo. Kol zeman shehaneshamah bekirbi modeh ani lefanecha, Adonai Elohai velohei avotai, Ribbon kol hama'asim, Adon kol haneshamot. Baruch atah Adonai, hamachazir neshamot lifgarim metim.",
     ru: "Бог мой, душа, которую Ты дал мне, чиста. Ты сотворил её, Ты создал её, Ты вдохнул её в меня, и Ты хранишь её во мне, и Ты заберёшь её у меня и возвратишь мне её в грядущем. Всё время, пока душа во мне, благодарю Тебя, Господь, Бог мой и Бог отцов моих, Владыка всех творений, Господин всех душ. Благословен Ты, Господь, возвращающий души в мёртвые тела.",
     nl: "Mijn God, de ziel die U in mij hebt gegeven is zuiver. U hebt haar geschapen, gevormd, in mij geblazen, U bewaart haar in mij, en U zult haar van mij nemen en in de toekomst aan mij teruggeven. Zolang de ziel in mij is, dank ik U, Eeuwige, mijn God en God van mijn voorouders. Gezegend bent U, Eeuwige, Die zielen terugbrengt in dode lichamen.",
     en: "My God, the soul You placed within me is pure. You created it, You formed it, You breathed it into me, You preserve it within me, and You will take it from me and restore it to me in the time to come. As long as the soul is within me, I give thanks to You, Lord my God and God of my ancestors, Master of all works, Lord of all souls. Blessed are You, Lord, Who restores souls to lifeless bodies.",
@@ -102,7 +102,7 @@ const prayers: Prayer[] = [
   },
   {
     id: 8,
-    titleEn: "Birchos HaTorah",
+    titleEn: "Birchot HaTorah",
     titleHe: "בִּרְכוֹת הַתּוֹרָה",
     he_display: "בָּרוּךְ אַתָּה יְהוָה אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו וְצִוָּנוּ עַל דִּבְרֵי תוֹרָה.\nוְהַעֲרֵב נָא יְהוָה אֱלֹהֵינוּ אֶת דִּבְרֵי תוֹרָתְךָ בְּפִינוּ וּבְפִי עַמְּךָ בֵּית יִשְׂרָאֵל, וְנִהְיֶה אֲנַחְנוּ וְצֶאֱצָאֵינוּ וְצֶאֱצָאֵי עַמְּךָ בֵּית יִשְׂרָאֵל כֻּלָּנוּ יוֹדְעֵי שְׁמֶךָ וְלוֹמְדֵי תוֹרָתֶךָ לִשְׁמָהּ. בָּרוּךְ אַתָּה יְהוָה, הַמְלַמֵּד תּוֹרָה לְעַמּוֹ יִשְׂרָאֵל.\nבָּרוּךְ אַתָּה יְהוָה אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר בָּחַר בָּנוּ מִכָּל הָעַמִּים וְנָתַן לָנוּ אֶת תּוֹרָתוֹ. בָּרוּךְ אַתָּה יְהוָה, נוֹתֵן הַתּוֹרָה.",
     he_tts: "בָּרוּךְ אַתָּה אֲדֹנָי אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו וְצִוָּנוּ עַל דִּבְרֵי תוֹרָה. וְהַעֲרֵב נָא אֲדֹנָי אֱלֹהֵינוּ אֶת דִּבְרֵי תוֹרָתְךָ בְּפִינוּ וּבְפִי עַמְּךָ בֵּית יִשְׂרָאֵל, וְנִהְיֶה אֲנַחְנוּ וְצֶאֱצָאֵינוּ וְצֶאֱצָאֵי עַמְּךָ בֵּית יִשְׂרָאֵל כֻּלָּנוּ יוֹדְעֵי שְׁמֶךָ וְלוֹמְדֵי תוֹרָתֶךָ לִשְׁמָהּ. בָּרוּךְ אַתָּה אֲדֹנָי, הַמְלַמֵּד תּוֹרָה לְעַמּוֹ יִשְׂרָאֵל. בָּרוּךְ אַתָּה אֲדֹנָי אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר בָּחַר בָּנוּ מִכָּל הָעַמִּים וְנָתַן לָנוּ אֶת תּוֹרָתוֹ. בָּרוּךְ אַתָּה אֲדֹנָי, נוֹתֵן הַתּוֹרָה.",
@@ -111,7 +111,7 @@ const prayers: Prayer[] = [
     nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die ons geheiligd heeft met Zijn geboden en ons geboden heeft over de woorden van de Tora. Maak alstublieft de woorden van Uw Tora zoet in onze mond en in de mond van Uw volk Israël. Gezegend bent U, Eeuwige, Die Tora onderwijst aan Zijn volk Israël. Gezegend bent U, Eeuwige, Die ons koos uit alle volken en ons Zijn Tora gaf. Gezegend bent U, Eeuwige, Gever van de Tora.",
     en: "Blessed are You, Lord our God, King of the universe, Who sanctified us with His commandments and commanded us to engross ourselves in the words of Torah. Please, Lord our God, make the words of Your Torah sweet in our mouth and in the mouth of Your people Israel, and may we and our offspring all know Your Name and study Your Torah for its own sake. Blessed are You, Lord, Who teaches Torah to His people Israel. Blessed are You, Lord our God, King of the universe, Who chose us from all peoples and gave us His Torah. Blessed are You, Lord, Giver of the Torah.",
     fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l’univers, qui nous a sanctifiés par Ses commandements et nous a ordonné les paroles de la Torah. Rends agréables, Éternel notre Dieu, les paroles de Ta Torah dans notre bouche et dans celle de Ton peuple Israël, et que nous et notre descendance connaissions tous Ton Nom et étudiions Ta Torah pour elle-même. Béni sois-Tu, Éternel, qui enseignes la Torah à Son peuple Israël. Béni sois-Tu, Éternel, qui nous a choisis parmi tous les peuples et nous a donné Sa Torah. Béni sois-Tu, Éternel, Donneur de la Torah."
-  },
+},
   {
     id: 9,
     titleEn: "Yivarechecha",
@@ -140,14 +140,14 @@ const prayers: Prayer[] = [
     id: 11,
     titleEn: "Shema",
     titleHe: "שְׁמַע",
-    he_display: `אֵל מֶלֶךְ נֶאֱמָן:\nשְׁמַע יִשְׂרָאֵל יְהוָה אֱלֹהֵינוּ יְהוָה אֶחָד:\nבָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד:`,
-    he_tts: `אֵל מֶלֶךְ נֶאֱמָן. שְׁמַע יִשְׂרָאֵל אֲדֹנָי אֱלֹהֵינוּ אֲדֹנָי אֶחָד. בָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד.`,
+    he_display: "אֵל מֶלֶךְ נֶאֱמָן:\nשְׁמַע יִשְׂרָאֵל יְהוָה אֱלֹהֵינוּ יְהוָה אֶחָד:\nבָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד:",
+    he_tts: "אֵל מֶלֶךְ נֶאֱמָן. שְׁמַע יִשְׂרָאֵל אֲדֹנָי אֱלֹהֵינוּ אֲדֹנָי אֶחָד. בָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד.",
     translit: "El Melech Ne'eman: Shema Yisrael Adonai Eloheinu Adonai Echad. Baruch shem kevod malchuto le'olam va'ed.",
     ru: "Бог — Царь верный. Слушай, Израиль: Господь — Бог наш, Господь один. Благословенно славное имя царства Его во веки веков.",
     nl: "God is een betrouwbare Koning. Hoor, Israël: de Eeuwige is onze God, de Eeuwige is Eén. Gezegend is de Naam van Zijn heerlijke koninkrijk voor eeuwig en altijd.",
     en: "God is a faithful King. Hear, O Israel: The Lord is our God, the Lord is One. Blessed be the Name of His glorious kingdom for ever and ever.",
     fr: "Dieu est un Roi fidèle. Écoute, Israël: l’Éternel est notre Dieu, l’Éternel est Un. Béni soit le Nom de Son règne glorieux pour toujours et à jamais."
-  },
+},
   {
     id: 12,
     titleEn: "Ve'ahavta",
