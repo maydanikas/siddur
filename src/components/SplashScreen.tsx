@@ -5,19 +5,18 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
   const started = useRef(false);
 
   useEffect(() => {
-    if (started.current) return; // защита от StrictMode
+    if (started.current) return;
     started.current = true;
 
     const staticEl = document.getElementById('static-splash');
-    // Плавно перекладываем контроль от HTML к React, без display:none
     if (staticEl) {
       staticEl.style.opacity = '0';
       staticEl.style.transition = 'opacity 0.3s ease';
       setTimeout(()=> staticEl.remove(), 300);
     }
 
-    const t1 = setTimeout(() => setHide(true), 2000);
-    const t2 = setTimeout(() => onFinish(), 2600);
+    const t1 = setTimeout(() => setHide(true), 2000); // сколько показываем
+    const t2 = setTimeout(() => onFinish(), 2600); // +0.6с на исчезновение
 
     return () => {
       clearTimeout(t1);

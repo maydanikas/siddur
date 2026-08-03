@@ -13,7 +13,7 @@ export default defineConfig({
         short_name: 'Siddur',
         description: 'Шахарит - утренние молитвы. Работает офлайн',
            background_color: "#0D9488",
-    theme_color: "#0D9488",
+            theme_color: "#0D9488",
         display: 'standalone',
         orientation: 'portrait',
         lang: 'he',
