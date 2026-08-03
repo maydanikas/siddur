@@ -8,17 +8,19 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <link rel="apple-touch-icon" href="/icon-192.png" />
+<link rel="apple-touch-startup-image" href="/icon-512.png" />
 <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  html, body { background: #0D9488; margin:0; }
+  html, body { background:#0D9488 !important; margin:0; }
   #static-splash {
-    position:fixed; inset:0; background:#0D9488; z-index:99999;
+    position:fixed; inset:0; width:100vw; height:100vh;
+    background:#0D9488; z-index:99999;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
   }
-  #static-splash.shin {
+  #static-splash .shin {
     color:white; font-size:160px; line-height:1; font-family:serif;
   }
-  #static-splash.label {
+  #static-splash .label {
     position:absolute; bottom:64px; color:white; font-size:32px; letter-spacing:6px; font-family:Inter, sans-serif;
   }
 </style>

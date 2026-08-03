@@ -1,7 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body { margin: 0; background: #fff; font-family: Inter, sans-serif; }
-.he-serif { font-family: 'Frank Ruhl Libre', serif; }
-.ui-sans { font-family: Inter, sans-serif; }
