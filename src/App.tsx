@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-
+import SplashScreen from './components/SplashScreen';
 
 type Lang = 'ru' | 'nl' | 'en' | 'fr';
 type Prayer = {
@@ -202,7 +202,9 @@ const [lang, setLang] = useState<Lang>(() => {
   const [currentSec, setCurrentSec] = useState(0);
   const [durationSec, setDurationSec] = useState(0);
 
-
+  //additional
+const [showSplash, setShowSplash] = useState(true);
+  //end additional
 
   const intervalRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
@@ -314,7 +316,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
   return (
     <div className="min-h-screen bg-white text-zinc-900 antialiased selection:bg-teal-100">
       
- 
+      {showSplash && <SplashScreen onFinish={()=>setShowSplash(false)} />}
       
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500&family=Inter:wght@400;500;600&display=swap');
