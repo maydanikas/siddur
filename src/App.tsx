@@ -208,6 +208,57 @@ const [lang, setLang] = useState<Lang>(() => {
   const startRef = useRef<number>(0);
   const pausedAccumRef = useRef<number>(0);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const swipeRef = useRef<{ startX: number; startY: number; edge: 'left' | 'right' | null }>({
+    startX: 0,
+    startY: 0,
+    edge: null,
+  });
+
+  const EDGE_ZONE_PX = 48;
+  const SWIPE_MIN_PX = 60;
+  const SWIPE_MAX_VERTICAL_PX = 80;
+
+  const goToPrayer = (idx: number | null) => {
+    setSelected(idx);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePrayerTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    const x = touch.clientX;
+    const width = window.innerWidth;
+
+    if (x <= EDGE_ZONE_PX) {
+      swipeRef.current = { startX: x, startY: touch.clientY, edge: 'left' };
+    } else if (x >= width - EDGE_ZONE_PX) {
+      swipeRef.current = { startX: x, startY: touch.clientY, edge: 'right' };
+    } else {
+      swipeRef.current = { startX: 0, startY: 0, edge: null };
+    }
+  };
+
+  const handlePrayerTouchEnd = (e: React.TouchEvent) => {
+    if (selected === null) return;
+
+    const { edge, startX, startY } = swipeRef.current;
+    swipeRef.current = { startX: 0, startY: 0, edge: null };
+    if (!edge) return;
+
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - startX;
+    const dy = Math.abs(touch.clientY - startY);
+    if (dy > SWIPE_MAX_VERTICAL_PX) return;
+
+    if (edge === 'right' && dx < -SWIPE_MIN_PX) {
+      if (selected < prayers.length - 1) goToPrayer(selected + 1);
+      return;
+    }
+
+    if (edge === 'left' && dx > SWIPE_MIN_PX) {
+      if (selected > 0) goToPrayer(selected - 1);
+      else goToPrayer(null);
+    }
+  };
 
   useEffect(() => {
     return () => {
@@ -334,13 +385,14 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
 
         <main className="flex-1 flex flex-col min-h-0">
           {selected !== null && currentPrayer ? (
-            <>
+            <div
+              className="flex-1 flex flex-col min-h-0"
+              onTouchStart={handlePrayerTouchStart}
+              onTouchEnd={handlePrayerTouchEnd}
+            >
               <div className="px-4 pt-2 pb-3 ui-sans sticky top-0 bg-white/90 backdrop-blur z-10 border-b border-zinc-50">
                 <button
-                  onClick={() => {
-                    setSelected(null);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
+                  onClick={() => goToPrayer(null)}
                   className="inline-flex items-center gap-1.5 text-[13px] font-medium text-zinc-600 hover:text-zinc-900 py-1"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M15 18l-6-6 6-6"/></svg>
@@ -414,7 +466,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
 
                 <div className="mt-10 flex gap-3 ui-sans">
                   <button
-                    onClick={() => selected !== null && selected > 0 && setSelected(selected - 1)}
+                    onClick={() => selected !== null && selected > 0 && goToPrayer(selected - 1)}
                     disabled={selected === 0}
                     className={`flex-1 h-11 rounded-full font-medium text-[14px] border transition-all ${
                       selected === 0 ? 'border-zinc-200 text-zinc-400 bg-zinc-50' : 'bg-white border-[#0D9488] text-[#0D9488] hover:bg-teal-50'
@@ -423,7 +475,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
                     Previous
                   </button>
                   <button
-                    onClick={() => selected !== null && selected < prayers.length - 1 && setSelected(selected + 1)}
+                    onClick={() => selected < prayers.length - 1 && goToPrayer(selected + 1)}
                     disabled={selected === prayers.length - 1}
                     className={`flex-1 h-11 rounded-full font-medium text-[14px] transition-all ${
                       selected === prayers.length - 1 ? 'bg-zinc-100 text-zinc-400' : 'bg-[#0D9488] text-white hover:bg-teal-700 shadow-sm'
@@ -461,7 +513,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           ) : null}
 
           {selected === null && (
@@ -473,10 +525,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
               {prayers.map((p, idx) => (
                 <button
                   key={p.id}
-                  onClick={() => {
-                    setSelected(idx);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
+                  onClick={() => goToPrayer(idx)}
                   className={`w-full text-left bg-white border rounded-2xl px-4 py-4 flex items-center justify-between hover:shadow-sm transition-all group ${
                     selected === idx ? 'border-[#0D9488] bg-teal-50/40 shadow-sm' : 'border-zinc-200 hover:border-[#0D9488]/40'
                   }`}
