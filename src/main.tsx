@@ -14,9 +14,4 @@ const updateSW = registerSW({
   }
 })
 
-const root = ReactDOM.createRoot(document.getElementById('root')!)
-root.render(<App />)
-
-requestAnimationFrame(() => {
-  document.getElementById('static-splash')?.remove()
-})
+ReactDOM.createRoot(document.getElementById('root')!).render(<App />)

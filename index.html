@@ -29,13 +29,24 @@
         line-height:1;
         font-family:serif;
       }
+      #static-splash .label {
+        position:absolute;
+        bottom:64px;
+        color:white;
+        font-size:32px;
+        letter-spacing:6px;
+        font-family:system-ui,sans-serif;
+      }
       @media (display-mode: standalone) {
         #static-splash { display:none; }
       }
     </style>
   </head>
   <body style="background-color:#0D9488;margin:0">
-    <div id="static-splash" aria-hidden="true"><span class="shin">ש</span></div>
+    <div id="static-splash" aria-hidden="true">
+      <span class="shin">ש</span>
+      <span class="label">SHAHARIS</span>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
