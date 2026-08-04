@@ -112,79 +112,233 @@ const prayers: Prayer[] = [
   en: "Blessed are You, Lord our God, King of the universe, Who sanctified us with His commandments and commanded us to engage in the words of Torah. Please, Lord our God, make the words of Your Torah sweet in our mouth and in the mouth of Your people Israel, and may we and our offspring and the offspring of Your people Israel all know Your Name and study Your Torah for its own sake. Blessed are You, Lord, Who teaches Torah to His people Israel. Blessed are You, Lord our God, King of the universe, Who chose us from all peoples and gave us His Torah. Blessed are You, Lord, Giver of the Torah.",
   fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l’univers, qui nous a sanctifiés par Ses commandements et nous a ordonné de nous adonner aux paroles de la Torah. Rends agréables, Éternel notre Dieu, les paroles de Ta Torah dans notre bouche et dans celle de Ton peuple Israël, et que nous et notre descendance et la descendance de Ton peuple Israël connaissions tous Ton Nom et étudiions Ta Torah pour elle-même. Béni sois-Tu, Éternel, qui enseignes la Torah à Son peuple Israël. Béni sois-Tu, Éternel, notre Dieu, Roi de l’univers, qui nous as choisis parmi tous les peuples et nous as donné Sa Torah. Béni sois-Tu, Éternel, Donneur de la Torah."
 },
-  {
-    id: 9,
-    titleEn: "Yivarechecha",
-    titleHe: "יְבָרֶכְךָ",
-    he_display: "יְבָרֶכְךָ יְהוָה וְיִשְׁמְרֶךָ.\nיָאֵר יְהוָה פָּנָיו אֵלֶיךָ וִיחֻנֶּךָּ.\nיִשָּׂא יְהוָה פָּנָיו אֵלֶיךָ וְיָשֵׂם לְךָ שָׁלוֹם.",
-    he_tts: "יְבָרֶכְךָ אֲדֹנָי וְיִשְׁמְרֶךָ. יָאֵר אֲדֹנָי פָּנָיו אֵלֶיךָ וִיחֻנֶּךָּ. יִשָּׂא אֲדֹנָי פָּנָיו אֵלֶיךָ וְיָשֵׂם לְךָ שָׁלוֹם.",
-    translit: "Yevarechecha Adonai veyishmerecha. Ya'er Adonai panav elecha vichunecha. Yisa Adonai panav elecha veyasem lecha shalom.",
-    ru: "Да благословит тебя Господь и сохранит тебя. Да озарит Господь лицо Своё для тебя и помилует тебя. Да обратит Господь лицо Своё к тебе и даст тебе мир.",
-    nl: "Moge de Eeuwige je zegenen en je behoeden. Moge de Eeuwige Zijn aangezicht naar je doen lichten en je genadig zijn. Moge de Eeuwige Zijn aangezicht naar je verheffen en je vrede geven.",
-    en: "May the Lord bless you and keep you. May the Lord make His face shine upon you and be gracious to you. May the Lord lift up His face to you and grant you peace.",
-    fr: "Que l’Éternel te bénisse et te garde. Que l’Éternel fasse briller Sa face sur toi et t’accorde Sa grâce. Que l’Éternel lève Sa face vers toi et te donne la paix."
-  },
-  {
-    id: 10,
-    titleEn: "Eilu Devarim",
-    titleHe: "אֵלּוּ דְבָרִים",
-    he_display: "אֵלּוּ דְבָרִים שֶׁאֵין לָהֶם שִׁעוּר: הַפֵּאָה, וְהַבִּכּוּרִים, וְהָרֵאָיוֹן, וּגְמִילוּת חֲסָדִים, וְתַלְמוּד תּוֹרָה.\nאֵלּוּ דְבָרִים שֶׁאָדָם אוֹכֵל פֵּרוֹתֵיהֶם בָּעוֹלָם הַזֶּה וְהַקֶּרֶן קַיֶּמֶת לוֹ לָעוֹלָם הַבָּא: כִּבּוּד אָב וָאֵם, וּגְמִילוּת חֲסָדִים, וְהַשְׁכָּמַת בֵּית הַמִּדְרָשׁ שַׁחֲרִית וְעַרְבִית, וְהַכְנָסַת אוֹרְחִים, וּבִקּוּר חוֹלִים, וְהַכְנָסַת כַּלָּה, וּלְוָיַת הַמֵּת, וְעִיּוּן תְּפִלָּה, וַהֲבָאַת שָׁלוֹם בֵּין אָדָם לַחֲבֵרוֹ, וְתַלְמוּד תּוֹרָה כְּנֶגֶד כֻּלָּם.",
-    he_tts: "אֵלּוּ דְבָרִים שֶׁאֵין לָהֶם שִׁעוּר: הַפֵּאָה, וְהַבִּכּוּרִים, וְהָרֵאָיוֹן, וּגְמִילוּת חֲסָדִים, וְתַלְמוּד תּוֹרָה. אֵלּוּ דְבָרִים שֶׁאָדָם אוֹכֵל פֵּרוֹתֵיהֶם בָּעוֹלָם הַזֶּה וְהַקֶּרֶן קַיֶּמֶת לוֹ לָעוֹלָם הַבָּא: כִּבּוּד אָב וָאֵם, וּגְמִילוּת חֲסָדִים, וְהַשְׁכָּמַת בֵּית הַמִּדְרָשׁ שַׁחֲרִית וְעַרְבִית, וְהַכְנָסַת אוֹרְחִים, וּבִקּוּר חוֹלִים, וְהַכְנָסַת כַּלָּה, וּלְוָיַת הַמֵּת, וְעִיּוּן תְּפִלָּה, וַהֲבָאַת שָׁלוֹם בֵּין אָדָם לַחֲבֵרוֹ, וְתַלְמוּד תּוֹרָה כְּנֶגֶד כֻּלָּם.",
-    translit: "Eilu devarim she'ein lahem shiur: hape'ah, vehabikurim, vehare'ayon, ugmilut chasadim, vetalmud Torah. Eilu devarim she'adam ochel peroteihem ba'olam hazeh vehakeren kayemet lo la'olam haba: kibud av va'em, ugmilut chasadim, vehashkamat beit hamidrash shacharit ve'arvit, vehachnasat orchim, uvikur cholim, vehachnasat kalah, ulvayat hamet, ve'iyun tefillah, vahava'at shalom bein adam lachavero, vetalmud Torah keneged kulam.",
-    ru: "Вот заповеди, не имеющие меры: край поля, первины, паломничество, добрые дела и изучение Торы. Вот заповеди, плоды которых человек вкушает в этом мире, а основа остаётся на мир грядущий: почитание отца и матери, добрые дела, ранний приход в дом учения утром и вечером, гостеприимство, посещение больных, помощь невесте, проводы умершего, сосредоточенность в молитве, примирение людей между собой — а изучение Торы равноценно всему.",
-    nl: "Dit zijn de dingen zonder vaste maat: de hoek van het veld, de eerstelingen, de verschijning, weldadigheid en Tora-studie. Dit zijn dingen waarvan een mens de vruchten eet in deze wereld terwijl de hoofdsom blijft voor de Toekomende Wereld: eerbied voor vader en moeder, weldadigheid, vroeg naar het leerhuis gaan, gasten ontvangen, zieken bezoeken, een bruid verheugen, een dode begeleiden, concentratie in gebed, vrede stichten tussen mensen — en Tora-studie weegt op tegen alles.",
-    en: "These are the things that have no prescribed measure: the corner of the field, the first fruits, the pilgrimage offering, acts of kindness, and Torah study. These are things whose fruits a person enjoys in this world while the principal remains for the World to Come: honoring father and mother, acts of kindness, early attendance at the house of study morning and evening, hospitality, visiting the sick, rejoicing a bride, escorting the dead, concentration in prayer, making peace between people — and Torah study is equal to them all.",
-    fr: "Voici les choses qui n’ont pas de mesure: le coin du champ, les prémices, le pèlerinage, les actes de bonté et l’étude de la Torah. Voici celles dont l’homme savoure les fruits en ce monde tandis que le capital lui reste pour le monde à venir: honorer père et mère, actes de bonté, se rendre tôt à la maison d’étude matin et soir, accueillir les invités, visiter les malades, réjouir la mariée, accompagner le mort, concentration dans la prière, amener la paix entre les hommes — et l’étude de la Torah équivaut à tout."
-  },
- {
-    id: 11,
-    titleEn: "Shema",
-    titleHe: "שְׁמַע",
-    he_display: "אֵל מֶלֶךְ נֶאֱמָן:\nשְׁמַע יִשְׂרָאֵל יְהוָה אֱלֹהֵינוּ יְהוָה אֶחָד:\nבָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד:",
-    he_tts: "אֵל מֶלֶךְ נֶאֱמָן. שְׁמַע יִשְׂרָאֵל אֲדֹנָי אֱלֹהֵינוּ אֲדֹנָי אֶחָד. בָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד.",
-    translit: "El Melech Ne'eman: Shema Yisrael Adonai Eloheinu Adonai Echad. Baruch shem kevod malchuto le'olam va'ed.",
-    ru: "Бог — Царь верный. Слушай, Израиль: Господь — Бог наш, Господь один. Благословенно славное имя царства Его во веки веков.",
-    nl: "God is een betrouwbare Koning. Hoor, Israël: de Eeuwige is onze God, de Eeuwige is Eén. Gezegend is de Naam van Zijn heerlijke koninkrijk voor eeuwig en altijd.",
-    en: "God is a faithful King. Hear, O Israel: The Lord is our God, the Lord is One. Blessed be the Name of His glorious kingdom for ever and ever.",
-    fr: "Dieu est un Roi fidèle. Écoute, Israël: l’Éternel est notre Dieu, l’Éternel est Un. Béni soit le Nom de Son règne glorieux pour toujours et à jamais."
+{
+  id: 9,
+  titleEn: "Barchi Nafshi",
+  titleHe: "בָּרְכִי נַפְשִׁי",
+  he_display: "[The morning blessings]\nבָּרְכִי נַפְשִׁי אֶת־יְיָ, יְיָ אֱלֹהַי גָּדַלְתָּ מְּאֹד, הוֹד וְהָדָר לָבָשְׁתָּ. עֹטֶה אוֹר כַּשַּׂלְמָה, נוֹטֶה שָׁמַיִם כַּיְרִיעָה.",
+  he_tts: "בָּרְכִי נַפְשִׁי אֶת־יְיָ, יְיָ אֱלֹהַי גָּדַלְתָּ מְּאֹד, הוֹד וְהָדָר לָבָשְׁתָּ. עֹטֶה אוֹר כַּשַּׂלְמָה, נוֹטֶה שָׁמַיִם כַּיְרִיעָה.",
+  translit: "Barchi nafshi et-Adonai, Adonai Elohai gadalta me'od, hod vehadar lavashta. Oteh or kasalmal, noteh shamayim kayeri'ah.",
+  ru: "[Утренние благословения] Благослови, душа моя, Господа. Господь, Бог мой, Ты весьма велик, в величие и славу Ты облачен. Ты окутываешься светом, как плащом, простираешь небеса, как завесу.",
+  nl: "[De ochtendlofzeggingen] Loof, mijn ziel, de Eeuwige. Eeuwige, mijn God, U bent zeer groot, met glorie en majesteit bent U bekleed. U hult Zich in licht als in een mantel, U spant de hemel uit als een tentdoek.",
+  en: "[The morning blessings] Bless the Lord, O my soul. Lord, my God, You are greatly exalted, You are clothed in glory and majesty. You wrap Yourself in light as in a garment, You stretch out the heavens like a curtain.",
+  fr: "[Les bénédictions du matin] Bénis l'Éternel, ô mon âme. Éternel, mon Dieu, Tu es infiniment grand, Tu es revêtu de gloire et de majesté. Tu T'enveloppes de lumière comme d'un manteau, Tu déploies les cieux comme une tenture."
 },
-  {
-    id: 12,
-    titleEn: "Ve'ahavta",
-    titleHe: "וְאָהַבְתָּ",
-    he_display: "וְאָהַבְתָּ אֵת יְהוָה אֱלֹהֶיךָ בְּכָל לְבָבְךָ וּבְכָל נַפְשְׁךָ וּבְכָל מְאֹדֶךָ. וְהָיוּ הַדְּבָרִים הָאֵלֶּה אֲשֶׁר אָנֹכִי מְצַוְּךָ הַיּוֹם עַל לְבָבֶךָ. וְשִׁנַּנְתָּם לְבָנֶיךָ וְדִבַּרְתָּ בָּם בְּשִׁבְתְּךָ בְּבֵיתֶךָ וּבְלֶכְתְּךָ בַדֶּרֶךְ וּבְשָׁכְבְּךָ וּבְקוּמֶךָ. וּקְשַׁרְתָּם לְאוֹת עַל יָדֶךָ וְהָיוּ לְטֹטָפֹת בֵּין עֵינֶיךָ. וּכְתַבְתָּם עַל מְזֻזוֹת בֵּיתֶךָ וּבִשְׁעָרֶיךָ.",
-    he_tts: "וְאָהַבְתָּ אֵת אֲדֹנָי אֱלֹהֶיךָ בְּכָל לְבָבְךָ וּבְכָל נַפְשְׁךָ וּבְכָל מְאֹדֶךָ. וְהָיוּ הַדְּבָרִים הָאֵלֶּה אֲשֶׁר אָנֹכִי מְצַוְּךָ הַיּוֹם עַל לְבָבֶךָ. וְשִׁנַּנְתָּם לְבָנֶיךָ וְדִבַּרְתָּ בָּם בְּשִׁבְתְּךָ בְּבֵיתֶךָ וּבְלֶכְתְּךָ בַדֶּרֶךְ וּבְשָׁכְבְּךָ וּבְקוּמֶךָ. וּקְשַׁרְתָּם לְאוֹת עַל יָדֶךָ וְהָיוּ לְטֹטָפֹת בֵּין עֵינֶיךָ. וּכְתַבְתָּם עַל מְזֻזוֹת בֵּיתֶךָ וּבִשְׁעָרֶיךָ.",
-    translit: "Ve'ahavta et Adonai Elohecha bechol levavcha uvchol nafshecha uvchol me'odecha. Vehayu hadevarim ha'eileh asher Anochi metzavcha hayom al levavecha. Veshinantam levanecha vedibarta bam beshivtecha beveitecha uvlechtecha vaderech uvshochbecha uvkumecha. Ukshartam le'ot al yadecha vehayu letotafot bein einecha. Uchtavtam al mezuzot beitecha uvish'arecha.",
-    ru: "И люби Господа, Бога твоего, всем сердцем твоим и всею душою твоею и всеми силами твоими. И будут слова эти, которые Я заповедую тебе сегодня, в сердце твоём. И повторяй их сыновьям твоим и говори о них, сидя в доме твоём и идя дорогою, и ложась и вставая. И повяжи их как знак на руку твою, и будут они украшением над глазами твоими. И напиши их на косяках дома твоего и на воротах твоих.",
-    nl: "En je zult de Eeuwige, je God, liefhebben met heel je hart, heel je ziel en heel je vermogen. Deze woorden die Ik je vandaag gebied, zullen op je hart zijn. Prent ze je kinderen in en spreek erover als je in je huis zit en als je onderweg bent, als je neerligt en opstaat. Bind ze als een teken op je hand en ze zullen als voorhoofdsband tussen je ogen zijn. Schrijf ze op de deurposten van je huis en op je poorten.",
-    en: "You shall love the Lord your God with all your heart, with all your soul, and with all your might. And these words which I command you today shall be upon your heart. You shall teach them thoroughly to your children and speak of them while you sit in your house, while you walk on the way, when you lie down and when you rise. You shall bind them as a sign upon your hand, and they shall be as frontlets between your eyes. You shall write them upon the doorposts of your house and upon your gates.",
-    fr: "Tu aimeras l’Éternel, ton Dieu, de tout ton cœur, de toute ton âme et de toute ta force. Ces paroles que Je te commande aujourd’hui seront sur ton cœur. Tu les inculqueras à tes enfants et tu en parleras quand tu seras assis dans ta maison, quand tu marcheras en chemin, quand tu te coucheras et quand tu te lèveras. Tu les lieras comme un signe sur ta main et elles seront comme des fronteaux entre tes yeux. Tu les écriras sur les poteaux de ta maison et sur tes portes."
-  },
-  {
-    id: 13,
-    titleEn: "Vehaya Im Shamoa",
-    titleHe: "וְהָיָה אִם שָׁמֹעַ",
-    he_display: "וְהָיָה אִם שָׁמֹעַ תִּשְׁמְעוּ אֶל מִצְוֹתַי אֲשֶׁר אָנֹכִי מְצַוֶּה אֶתְכֶם הַיּוֹם, לְאַהֲבָה אֶת יְהוָה אֱלֹהֵיכֶם וּלְעָבְדוֹ בְּכָל לְבַבְכֶם וּבְכָל נַפְשְׁכֶם. וְנָתַתִּי מְטַר אַרְצְכֶם בְּעִתּוֹ יוֹרֶה וּמַלְקוֹשׁ, וְאָסַפְתָּ דְגָנֶךָ וְתִירֹשְׁךָ וְיִצְהָרֶךָ. וְנָתַתִּי עֵשֶׂב בְּשָׂדְךָ לִבְהֶמְתֶּךָ וְאָכַלְתָּ וְשָׂבָעְתָּ. הִשָּׁמְרוּ לָכֶם פֶּן יִפְתֶּה לְבַבְכֶם וְסַרְתֶּם וַעֲבַדְתֶּם אֱלֹהִים אֲחֵרִים וְהִשְׁתַּחֲוִיתֶם לָהֶם. וְחָרָה אַף יְהוָה בָּכֶם וְעָצַר אֶת הַשָּׁמַיִם וְלֹא יִהְיֶה מָטָר וְהָאֲדָמָה לֹא תִתֵּן אֶת יְבוּלָהּ וַאֲבַדְתֶּם מְהֵרָה מֵעַל הָאָרֶץ הַטֹּבָה אֲשֶׁר יְהוָה נֹתֵן לָכֶם. וְשַׂמְתֶּם אֶת דְּבָרַי אֵלֶּה עַל לְבַבְכֶם וְעַל נַפְשְׁכֶם וּקְשַׁרְתֶּם אֹתָם לְאוֹת עַל יֶדְכֶם וְהָיוּ לְטוֹטָפֹת בֵּין עֵינֵיכֶם. וְלִמַּדְתֶּם אֹתָם אֶת בְּנֵיכֶם לְדַבֵּר בָּם בְּשִׁבְתְּךָ בְּבֵיתֶךָ וּבְלֶכְתְּךָ בַדֶּרֶךְ וּבְשָׁכְבְּךָ וּבְקוּמֶךָ. וּכְתַבְתָּם עַל מְזוּזוֹת בֵּיתֶךָ וּבִשְׁעָרֶיךָ. לְמַעַן יִרְבּוּ יְמֵיכֶם וִימֵי בְנֵיכֶם עַל הָאֲדָמָה אֲשֶׁר נִשְׁבַּע יְהוָה לַאֲבֹתֵיכֶם לָתֵת לָהֶם כִּימֵי הַשָּׁמַיִם עַל הָאָרֶץ.",
-    he_tts: "וְהָיָה אִם שָׁמֹעַ תִּשְׁמְעוּ אֶל מִצְוֹתַי אֲשֶׁר אָנֹכִי מְצַוֶּה אֶתְכֶם הַיּוֹם, לְאַהֲבָה אֶת אֲדֹנָי אֱלֹהֵיכֶם וּלְעָבְדוֹ בְּכָל לְבַבְכֶם וּבְכָל נַפְשְׁכֶם. וְנָתַתִּי מְטַר אַרְצְכֶם בְּעִתּוֹ יוֹרֶה וּמַלְקוֹשׁ, וְאָסַפְתָּ דְגָנֶךָ וְתִירֹשְׁךָ וְיִצְהָרֶךָ. וְנָתַתִּי עֵשֶׂב בְּשָׂדְךָ לִבְהֶמְתֶּךָ וְאָכַלְתָּ וְשָׂבָעְתָּ. הִשָּׁמְרוּ לָכֶם פֶּן יִפְתֶּה לְבַבְכֶם וְסַרְתֶּם וַעֲבַדְתֶּם אֱלֹהִים אֲחֵרִים וְהִשְׁתַּחֲוִיתֶם לָהֶם. וְחָרָה אַף אֲדֹנָי בָּכֶם וְעָצַר אֶת הַשָּׁמַיִם וְלֹא יִהְיֶה מָטָר וְהָאֲדָמָה לֹא תִתֵּן אֶת יְבוּלָהּ וַאֲבַדְתֶּם מְהֵרָה מֵעַל הָאָרֶץ הַטֹּבָה אֲשֶׁר אֲדֹנָי נֹתֵן לָכֶם. וְשַׂמְתֶּם אֶת דְּבָרַי אֵלֶּה עַל לְבַבְכֶם וְעַל נַפְשְׁכֶם וּקְשַׁרְתֶּם אֹתָם לְאוֹת עַל יֶדְכֶם וְהָיוּ לְטוֹטָפֹת בֵּין עֵינֵיכֶם. וְלִמַּדְתֶּם אֹתָם אֶת בְּנֵיכֶם לְדַבֵּר בָּם בְּשִׁבְתְּךָ בְּבֵיתֶךָ וּבְלֶכְתְּךָ בַדֶּרֶךְ וּבְשָׁכְבְּךָ וּבְקוּמֶךָ. וּכְתַבְתָּם עַל מְזוּזוֹת בֵּיתֶךָ וּבִשְׁעָרֶיךָ. לְמַעַן יִרְבּוּ יְמֵיכֶם וִימֵי בְנֵיכֶם עַל הָאֲדָמָה אֲשֶׁר נִשְׁבַּע אֲדֹנָי לַאֲבֹתֵיכֶם לָתֵת לָהֶם כִּימֵי הַשָּׁמַיִם עַל הָאָרֶץ.",
-    translit: "Vehaya im shamoa tishme'u el mitzvotai asher anochi metzaveh etchem hayom, le'ahavah et Adonai Eloheichem ule'avdo bechol levavchem uvchol nafshechem. Venatati metar artzechem be'ito yoreh umalkosh, ve'asafta deganecha vetiroshcha veyitzharecha. Venatati eisev besadecha livhemtecha ve'achalta vesavata. Hishamru lachem pen yifteh levavchem vesartem va'avadtem elohim acherim vehishtachavitem lahem. Vechara af Adonai bachem ve'atzar et hashamayim velo yihyeh matar veha'adamah lo titen et yevulah va'avadtem meherah me'al ha'aretz hatovah asher Adonai noten lachem. Vesamtem et devarai eileh al levavchem ve'al nafshechem ukshartem otam le'ot al yedchem vehayu letotafot bein eineichem. Velimadtem otam et beneichem ledaber bam beshivtecha beveitecha uvlechtecha vaderech uvshochbecha uvkumecha. Uchtavtam al mezuzot beitecha uvish'arecha. Lema'an yirbu yemeichem vimei veneichem al ha'adamah asher nishba Adonai la'avoteichem latet lahem kimei hashamayim al ha'aretz.",
-    ru: "И будет, если вы будете слушать заповеди Мои, которые Я заповедую вам сегодня, любя Господа, Бога вашего, и служа Ему всем сердцем вашим и всею душою вашею, то дам Я дождь земле вашей вовремя, ранний и поздний, и соберёшь хлеб твой, и вино твоё, и масло твоё. И дам траву на поле твоём для скота твоего, и будешь есть и насыщаться. Берегитесь, чтобы не обольстилось сердце ваше, и вы не уклонились и не стали служить иным богам и поклоняться им. И воспылает гнев Господа на вас, и заключит небеса, и не будет дождя, и земля не даст урожая, и вы скоро исчезнете с доброй земли, которую Господь даёт вам. И возложите слова Мои эти на сердце ваше и на душу вашу, и повяжите их как знак на руку вашу, и будут они украшением между глазами вашими. И учите им сыновей ваших, говоря о них, когда сидишь в доме твоём и когда идёшь дорогою, и когда ложишься и когда встаёшь. И напиши их на косяках дома твоего и на воротах твоих. Дабы продлились дни ваши и дни детей ваших на земле, о которой клялся Господь отцам вашим дать им, как дни неба над землёй.",
-    nl: "En het zal zijn, als jullie aandachtig luisteren naar Mijn geboden die Ik jullie vandaag gebied, om de Eeuwige, je God, lief te hebben en Hem te dienen met heel je hart en heel je ziel, dan zal Ik regen geven voor je land op zijn tijd, vroege regen en late regen, en je zult je graan, je most en je olie inzamelen. En Ik zal gras geven in je veld voor je vee, en je zult eten en verzadigd worden. Wacht je ervoor dat je hart niet verleid wordt en je afwijkt en andere goden dient. Dan zal de toorn van de Eeuwige tegen jullie ontbranden en Hij zal de hemel sluiten en er zal geen regen zijn en de aarde zal haar opbrengst niet geven en jullie zullen snel verloren gaan. Leg deze woorden van Mij op je hart en op je ziel en bind ze als teken op je hand. Leer ze aan je kinderen, spreek erover in je huis en onderweg, als je neerligt en opstaat. Schrijf ze op de deurposten van je huis en op je poorten. Opdat je dagen en de dagen van je kinderen talrijk zullen zijn op het land dat de Eeuwige aan je voorvaders gezworen heeft te geven, zoals de dagen van de hemel boven de aarde.",
-    en: "And it shall come to pass that if you hearken diligently to My commandments which I command you today, to love the Lord your God and to serve Him with all your heart and all your soul, then I will give rain for your land in its season, the early rain and the late rain, that you may gather in your grain, your wine, and your oil. And I will give grass in your fields for your cattle, and you shall eat and be satisfied. Beware lest your heart be deceived and you turn aside and serve other gods and worship them. Then the anger of the Lord will blaze against you, and He will close the heavens and there will be no rain, and the ground will not give its produce, and you will quickly perish from the good land which the Lord gives you. You shall place these words of Mine upon your heart and upon your soul, and bind them as a sign upon your hand and they shall be as frontlets between your eyes. You shall teach them to your children to speak of them when you sit in your house and when you walk on the way, when you lie down and when you rise. You shall write them upon the doorposts of your house and upon your gates. So that your days and the days of your children may be prolonged upon the land which the Lord swore to your ancestors to give them, as long as the heavens are above the earth.",
-    fr: "Et il arrivera, si vous écoutez attentivement Mes commandements que Je vous ordonne aujourd’hui, d’aimer l’Éternel votre Dieu et de Le servir de tout votre cœur et de toute votre âme, alors Je donnerai la pluie de votre terre en son temps, la pluie précoce et la tardive, et tu recueilleras ton blé, ton moût et ton huile. Et Je donnerai de l’herbe dans ton champ pour ton bétail, et tu mangeras et seras rassasié. Gardez-vous que votre cœur ne se séduise, que vous ne vous détourniez et ne serviez d’autres dieux. Alors la colère de l’Éternel s’enflammera contre vous, Il fermera les cieux et il n’y aura plus de pluie, la terre ne donnera plus son produit et vous disparaîtrez vite de la bonne terre que l’Éternel vous donne. Vous placerez ces paroles Miennes sur votre cœur et sur votre âme, vous les lierez comme un signe sur votre main et elles seront comme des fronteaux entre vos yeux. Vous les enseignerez à vos enfants, en en parlant quand tu es assis dans ta maison et quand tu marches en chemin, quand tu te couches et quand tu te lèves. Tu les écriras sur les poteaux de ta maison et sur tes portes. Afin que vos jours et les jours de vos enfants se multiplient sur la terre que l’Éternel a juré à vos pères de leur donner, comme les jours des cieux au-dessus de la terre."
-  },
-  {
-    id: 14,
-    titleEn: "Kaddish deRabbanan",
-    titleHe: "קַדִּישׁ דְּרַבָּנָן",
-    he_display: "יתגדל ויתקדש שמה רבא, בעלמא די-ברא כרעותה, וימליך מלכותה בחייכון וביומיכון ובחיי דכל-בית ישראל, בעגלא ובזמן קריב, ואמרו אמן.\n\nיהא שמה רבא מברך לעלם ולעלמי עלמיא.\n\nיתברך וישתבח ויתפאר ויתרומם ויתנשא ויתהדר ויתעלה ויתהלל שמה דקדשא, בריך הוא, לעלא (ולעלא) מן כל-ברכתא ושירתא תשבחתא ונחמתא דאמירן בעלמא, ואמרו אמן.\n\nעל ישראל ועל רבנן, ועל תלמידיהון ועל כל-תלמידי תלמידיהון, ועל כל-מאן דעסקין באוריתא, די באתרא הדין ודי בכל-אתר ואתר, יהא להון ולכון שלמא רבא, חנא וחסדא ורחמין, וחיין אריכין, ומזוני רויחי, ופורקנא, מן קדם אבוהון די בשמיא, ואמרו אמן.\n\nיהא שלמא רבא מן שמיא וחיים עלינו ועל כל-ישראל, ואמרו אמן.\n\nעשה שלום במרומיו הוא יעשה שלום עלינו ועל-כל-ישראל ועל-כל-בני-אדם, ואמרו אמן.",
-    he_tts: "יתגדל ויתקדש שמה רבא, בעלמא די-ברא כרעותה, וימליך מלכותה בחייכון וביומיכון ובחיי דכל-בית ישראל, בעגלא ובזמן קריב, ואמרו אמן. יהא שמה רבא מברך לעלם ולעלמי עלמיא. יתברך וישתבח ויתפאר ויתרומם ויתנשא ויתהדר ויתעלה ויתהלל שמה דקדשא, בריך הוא, לעלא (ולעלא) מן כל-ברכתא ושירתא תשבחתא ונחמתא דאמירן בעלמא, ואמרו אמן. על ישראל ועל רבנן, ועל תלמידיהון ועל כל-תלמידי תלמידיהון, ועל כל-מאן דעסקין באוריתא, די באתרא הדין ודי בכל-אתר ואתר, יהא להון ולכון שלמא רבא, חנא וחסדא ורחמין, וחיין אריכין, ומזוני רויחי, ופורקנא, מן קדם אבוהון די בשמיא, ואמרו אמן. יהא שלמא רבא מן שמיא וחיים עלינו ועל כל-ישראל, ואמרו אמן. עשה שלום במרומיו הוא יעשה שלום עלינו ועל-כל-ישראל ועל-כל-בני-אדם, ואמרו אמן.",
-    translit: "Yitgadal veyitkadash shemeh rabba, be'alma di vera chir'uteh, veyamlich malchuteh bechayeichon uvyomeichon uvchayei dechol beit Yisrael, be'agala uvizman kariv, ve'imru Amen. Yehei shemeh rabba mevarach le'alam ul'almei almaya. Yitbarach veyishtabach veyitpa'ar veyitromam veyitnaseh veyithadar veyit'aleh veyithalal shemeh dekudsha, berich hu, le'eila ule'eila min kol birchata veshirata tushbechata venechamata da'amiran be'alma, ve'imru Amen. Al Yisrael ve'al rabbanan, ve'al talmideihon ve'al kol talmidei talmideihon, ve'al kol man de'askin be'oraita, di ve'atra hadin vedi bechol atar ve'atar, yehei lehon ulechon shelama rabba, china vechisda verachamin, vechayin arichin, umezonei revichei, ufurecana, min kodam Avuhon di vishmaya, ve'imru Amen. Yehei shelama rabba min shemaya vechayim aleinu ve'al kol Yisrael, ve'imru Amen. Oseh shalom bimromav hu ya'aseh shalom aleinu ve'al kol Yisrael ve'al kol benei adam, ve'imru Amen.",
-    ru: "Да возвеличится и освятится Его великое Имя в мире, который Он сотворил по воле Своей, и да установит Царство Своё при жизни вашей и во дни ваши и при жизни всего дома Израиля, вскорости и в ближайшее время, и скажем: Амен. Да будет великое Имя Его благословенно вечно и во веки веков. Да будет благословенно, восхваляемо, прославляемо, возносимо, возвышаемо, почитаемо, превозносимо и восхваляемо Имя Святого, благословен Он, выше всех благословений и песнопений, славословий и утешений, произносимых в мире, и скажем: Амен. Над Израилем и над мудрецами, и над учениками их, и над всеми учениками учеников их, и над всеми занимающимися Торой, здесь и во всяком месте, да будет им и вам великий мир, милость, любовь и милосердие, долгая жизнь, обильное пропитание и избавление от Отца их Небесного, и скажем: Амен. Да будет великий мир с небес и жизнь для нас и для всего Израиля, и скажем: Амен. Делающий мир в высотах Своих, Он сделает мир нам и всему Израилю и всему человечеству, и скажем: Амен.",
-    nl: "Moge Zijn grote Naam verheven en geheiligd worden in de wereld die Hij naar Zijn wil schiep, en moge Hij Zijn koninkrijk vestigen tijdens jullie leven en tijdens jullie dagen en tijdens het leven van heel het huis van Israël, snel en spoedig, en zegt: Amen. Moge Zijn grote Naam gezegend zijn voor eeuwig en eeuwig. Moge gezegend, geprezen, verheerlijkt, verheven, verhoogd, geëerd, opgetild en geloofd worden de Naam van de Heilige, gezegend is Hij, boven elke zegen en lofzang, lofprijzing en troost die in de wereld wordt uitgesproken, en zegt: Amen. Over Israël en over de rabbijnen, over hun leerlingen en over alle leerlingen van hun leerlingen, en over allen die zich met Tora bezighouden, op deze plaats en op elke plaats, moge er voor hen en voor jullie grote vrede zijn, genade, gunst en barmhartigheid, lang leven, ruim onderhoud en verlossing van hun Vader in de hemel, en zegt: Amen. Moge er grote vrede uit de hemel en leven over ons en over heel Israël komen, en zegt: Amen. Hij Die vrede maakt in Zijn hoogten, Hij zal vrede maken over ons en over heel Israël en over alle mensen, en zegt: Amen.",
-    en: "May His great Name be exalted and sanctified in the world which He created according to His will, and may He establish His kingdom in your lifetime and in your days and in the lifetime of all the House of Israel, speedily and soon, and say Amen. May His great Name be blessed forever and to all eternity. Blessed and praised, glorified and exalted, extolled and honored, adored and lauded be the Name of the Holy One, blessed be He, beyond all blessings and hymns, praises and consolations that are uttered in the world, and say Amen. Upon Israel and upon the rabbis and upon their disciples and upon all disciples of their disciples, and upon all who engage in Torah, here and everywhere, may there be for them and for you abundant peace, grace and lovingkindness and mercy, long life, ample sustenance and deliverance from their Father in heaven, and say Amen. May there be abundant peace from heaven and life upon us and upon all Israel, and say Amen. He Who makes peace in His heights, may He make peace upon us and upon all Israel and upon all mankind, and say Amen.",
-    fr: "Que Son grand Nom soit exalté et sanctifié dans le monde qu’Il a créé selon Sa volonté, et qu’Il fasse régner Son règne de votre vivant et de vos jours et du vivant de toute la maison d’Israël, rapidement et bientôt, et dites: Amen. Que Son grand Nom soit béni à jamais et aux siècles des siècles. Béni, loué, glorifié, exalté, élevé, honoré, sublime et célébré soit le Nom du Saint, béni soit-Il, au-delà de toutes les bénédictions, cantiques, louanges et consolations qui se disent dans le monde, et dites: Amen. Sur Israël et sur les maîtres, sur leurs disciples et sur tous les disciples de leurs disciples, et sur tous ceux qui s’occupent de la Torah, en ce lieu et en tout lieu, qu’il y ait pour eux et pour vous une grande paix, grâce, bonté et miséricorde, longue vie, nourriture abondante et délivrance de la part de leur Père qui est aux cieux, et dites: Amen. Qu’il y ait une grande paix du ciel et la vie sur nous et sur tout Israël, et dites: Amen. Celui qui fait la paix dans Ses hauteurs, qu’Il fasse la paix sur nous et sur tout Israël et sur tous les êtres humains, et dites: Amen."
-  }
+{
+  id: 10,
+  titleEn: "Hineni Mit'atef BeTallit Shel Tzitzit",
+  titleHe: "הִנְנִי מִתְעַטֵּף בְּטַלִּית שֶׁל צִיצִית",
+  he_display: "[Before wrapping oneself in the tallit one may say:]\nהִנְנִי / מִתְעַטֵּף / מִתְעַטֶּפֶת / בְּטַלִּית שֶׁל צִיצִית כְּדֵי לְקַיֵּם מִצְוַת בּוֹרְאִי, כַּכָּתוּב בַּתּוֹרָה: וְעָשׂוּ לָהֶם צִיצִת עַל כַּנְפֵי בִגְדֵיהֶם לְדֹרֹתָם.",
+  he_tts: "הִנְנִי מִתְעַטֵּף בְּטַלִּית שֶׁל צִיצִית כְּדֵי לְקַיֵּם מִצְוַת בּוֹרְאִי, כַּכָּתוּב בַּתּוֹרָה: וְעָשׂוּ לָהֶם צִיצִת עַל כַּנְפֵי בִגְדֵיהֶם לְדֹרֹתָם.",
+  translit: "Hineni mit'atef/mit'atefet betalit shel tzitzit kedei lekayem mitzvat Bor'i, kakatuv baTorah: ve'asu lahem tzitzit al kanfei vigdeihem ledorotam.",
+  ru: "[Перед тем как облачиться в талит, можно сказать:] Вот я облачаюсь в талит с цицит, чтобы исполнить заповедь Творца моего, как написано в Торе: «И сделают себе цицит на углах одежд своих в поколениях своих».",
+  nl: "[Voor het omslaan van de tallit kan men zeggen:] Zie, ik omhul mij met een tallit met tzitzit om het gebod van mijn Schepper te vervullen, zoals in de Tora geschreven staat: Zij zullen voor zichzelf tzitzit maken aan de hoeken van hun kleding voor hun generaties.",
+  en: "[Before wrapping oneself in the tallit one may say:] Here I am wrapping myself in a tallit with tzitzit in order to fulfill the commandment of my Creator, as it is written in the Torah: And they shall make for themselves tzitzit on the corners of their garments for their generations.",
+  fr: "[Avant de s'envelopper dans le tallit, on peut dire :] Me voici, je m'enveloppe dans un tallit à tzitzit afin d'accomplir le commandement de mon Créateur, comme il est écrit dans la Torah : Ils se feront des tzitzit aux coins de leurs vêtements pour leurs générations."
+},
+{
+  id: 11,
+  titleEn: "Lehit'atef BaTzitzit",
+  titleHe: "לְהִתְעַטֵּף בַּצִּיצִת",
+  he_display: "[One wraps the tallit around, over the head, and says:]\nבָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו, וְצִוָּנוּ לְהִתְעַטֵּף בַּצִּיצִת.",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם אֲשֶׁר קִדְּשָׁנוּ בְּמִצְוֹתָיו, וְצִוָּנוּ לְהִתְעַטֵּף בַּצִּיצִת.",
+  translit: "Baruch atah Adonai Eloheinu Melech ha'olam asher kidshanu bemitzvotav vetzivanu lehit'atef batzitzit.",
+  ru: "[Накидывают талит на голову и говорят:] Благословен Ты, Господь, Бог наш, Царь мира, освятивший нас заповедями Своими и повелевший нам облачаться в цицит.",
+  nl: "[Men slaat de tallit om, over het hoofd, en zegt:] Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die ons geheiligd heeft met Zijn geboden en ons geboden heeft ons te omhullen met de tzitzit.",
+  en: "[One wraps the tallit around, over the head, and says:] Blessed are You, Lord our God, King of the universe, Who sanctified us with His commandments and commanded us to wrap ourselves in tzitzit.",
+  fr: "[On s'enveloppe du tallit par-dessus la tête et on dit :] Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui nous as sanctifiés par Ses commandements et nous as ordonné de nous envelopper de tzitzit."
+},
+{
+  id: 12,
+  titleEn: "Ma Yakar Chasdecha",
+  titleHe: "מַה יָּקָר חַסְדְּךָ",
+  he_display: "[When draping the tallit over the shoulders one may say:]\nמַה יָּקָר חַסְדְּךָ, אֱלֹהִים, וּבְנֵי אָדָם בְּצֵל כְּנָפֶיךָ יֶחֱסָיוּן. יִרְוְיֻן מִדֶּשֶׁן בֵּיתֶךָ, וְנַחַל עֲדָנֶיךָ תַשְׁקֵם. כִּי עִמְּךָ מְקוֹר חַיִּים, בְּאוֹרְךָ נִרְאֶה אוֹר. מְשֹׁךְ חַסְדְּךָ לְיֹדְעֶיךָ, וְצִדְקָתְךָ לְיִשְׁרֵי לֵב.",
+  he_tts: "מַה יָּקָר חַסְדְּךָ, אֱלֹהִים, וּבְנֵי אָדָם בְּצֵל כְּנָפֶיךָ יֶחֱסָיוּן. יִרְוְיֻן מִדֶּשֶׁן בֵּיתֶךָ, וְנַחַל עֲדָנֶיךָ תַשְׁקֵם. כִּי עִמְּךָ מְקוֹר חַיִּים, בְּאוֹרְךָ נִרְאֶה אוֹר. מְשֹׁךְ חַסְדְּךָ לְיֹדְעֶיךָ, וְצִדְקָתְךָ לְיִשְׁרֵי לֵב.",
+  translit: "Ma yakar chasdecha, Elohim, uvnei adam betzel kenafecha yechesayun. Yirveyun mideshen beitecha, venachal adanecha tashkem. Ki imcha mekor chayim, be'orcha nir'eh or. Meshokh chasdecha leyode'echa, vetzidkatecha leyishrei lev.",
+  ru: "[Накидывая талит на плечи, можно сказать:] Как драгоценна милость Твоя, Боже, и сыны человеческие укрываются в тени крыл Твоих. Насыщаются они от изобилия дома Твоего, и из потока наслаждений Твоих Ты поишь их. Ибо у Тебя источник жизни, в свете Твоем мы видим свет. Продли милость Твою к знающим Тебя и справедливость Твою к прямодушным.",
+  nl: "[Bij het leggen van de tallit over de schouders kan men zeggen:] Hoe kostbaar is Uw goedertierenheid, o God, en mensenkinderen schuilen in de schaduw van Uw vleugels. Zij worden verzadigd met de overvloed van Uw huis, en U laat hen drinken uit de rivier van Uw genietingen. Want bij U is de bron van het leven, in Uw licht zien wij licht. Strek Uw goedertierenheid uit tot wie U kennen, en Uw gerechtigheid tot de oprechten van hart.",
+  en: "[When draping the tallit over the shoulders one may say:] How precious is Your loving-kindness, O God, and the children of men take refuge in the shadow of Your wings. They shall be abundantly satisfied with the fullness of Your house, and You shall make them drink of the river of Your pleasures. For with You is the fountain of life, in Your light we see light. Extend Your loving-kindness to those who know You, and Your righteousness to the upright in heart.",
+  fr: "[En posant le tallit sur les épaules, on peut dire :] Combien précieuse est Ta bonté, ô Dieu, et les fils de l'homme s'abritent à l'ombre de Tes ailes. Ils se rassasient de l'abondance de Ta maison, et Tu les abreuves au fleuve de Tes délices. Car auprès de Toi est la source de vie, par Ta lumière nous voyons la lumière. Étends Ta bonté à ceux qui Te connaissent, et Ta justice à ceux qui ont le cœur droit."
+},
+{
+  id: 13,
+  titleEn: "Asher Natan LaSechvi Vina",
+  titleHe: "אֲשֶׁר נָתַן לַשֶּׂכְוִי בִינָה",
+  he_display: "[Morning Blessings - Thanks for the new day]\nבָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר נָתַן לַשֶּׂכְוִי בִּינָה, לְהַבְחִין בֵּין יוֹם וּבֵין לָיְלָה.",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר נָתַן לַשֶּׂכְוִי בִּינָה, לְהַבְחִין בֵּין יוֹם וּבֵין לָיְלָה.",
+  translit: "Baruch atah Adonai Eloheinu melech ha'olam, asher natan lasechvi vina, lehavchin bein yom uvein laila.",
+  ru: "[Утренние благословения - Благодарность за новый день] Благословен Ты, Господь, Бог наш, Царь мира, давший сердцу разум отличать день от ночи.",
+  nl: "[Ochtendzegeningen - Dank voor de nieuwe dag] Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die het hart verstand gaf om onderscheid te maken tussen dag en nacht.",
+  en: "[Morning Blessings - Thanks for the new day] Blessed are You, Lord our God, King of the universe, Who gave the heart understanding to distinguish between day and night.",
+  fr: "[Bénédictions du matin - Merci pour le jour nouveau] Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui as donné au cœur l'intelligence de distinguer entre le jour et la nuit."
+},
+{
+  id: 14,
+  titleEn: "She'asani BeTzalmo",
+  titleHe: "שֶׁעָשַׂנִי בְּצַלְמוֹ",
+  he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי בְּצַלְמוֹ.\n[Reform inclusive form]",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי בְּצַלְמוֹ.",
+  translit: "Baruch atah Adonai Eloheinu melech ha'olam, she'asani betzalmo.",
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что создал меня по образу Своему.",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die mij naar Zijn beeld gemaakt heeft.",
+  en: "Blessed are You, Lord our God, King of the universe, Who made me in His image.",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui m'a fait à Son image."
+},
+{
+  id: 15,
+  titleEn: "She'asani Yisrael",
+  titleHe: "שֶׁעָשַׂנִי יִשְׂרָאֵל",
+  he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי יִשְׂרָאֵל.\n[Reform replacement for 'who did not make me a non-Jew']",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי יִשְׂרָאֵל.",
+  translit: "Baruch atah Adonai Eloheinu melech ha'olam, she'asani Yisrael.",
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что создал меня Исраэлем.",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die mij tot Israëliet gemaakt heeft.",
+  en: "Blessed are You, Lord our God, King of the universe, Who made me an Israelite.",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui m'a fait Israël."
+},
+{
+  id: 16,
+  titleEn: "She'asani Ben / Bat / Chorin",
+  titleHe: "שֶׁעָשַׂנִי בֶּן / בַּת / חוֹרִין",
+  he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי / בֶן- / בַּת- / חוֹרִין.\n[/ ben / bat / chorin - inclusive form: son/daughter of freedom. Replaces 'who did not make me a slave']",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי בֶן־חוֹרִין.",
+  translit: "Baruch atah Adonai Eloheinu melech ha'olam, she'asani ben/bat/chorin.",
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что создал меня свободным человеком.",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die mij als een vrij mens gemaakt heeft.",
+  en: "Blessed are You, Lord our God, King of the universe, Who made me a free person.",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui m'a fait une personne libre."
+},
+{
+  id: 17,
+  titleEn: "She'asa Li Kol Tzorki",
+  titleHe: "שֶׁעָשָׂה לִי כָּל צָרְכִּי",
+  he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשָׂה לִי כָּל־צָרְכִּי.",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשָׂה לִי כָּל־צָרְכִּי.",
+  translit: "Baruch atah Adonai Eloheinu melech ha'olam, she'asa li kol-tzorki.",
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что восполнил все нужды мои.",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die voorziet in al mijn behoeften.",
+  en: "Blessed are You, Lord our God, King of the universe, Who provides for all my needs.",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui pourvoit à tous mes besoins."
+},
+{
+  id: 18,
+  titleEn: "Ozer Yisrael BiGvura",
+  titleHe: "אוֹזֵר יִשְׂרָאֵל בִּגְבוּרָה",
+  he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אוֹזֵר יִשְׂרָאֵל בִּגְבוּרָה.",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אוֹזֵר יִשְׂרָאֵל בִּגְבוּרָה.",
+  translit: "Baruch atah Adonai Eloheinu melech ha'olam, ozer Yisrael bigvura.",
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, препоясывающий Исраэль могуществом.",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die Israël omgordt met kracht.",
+  en: "Blessed are You, Lord our God, King of the universe, Who girds Israel with might.",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui ceint Israël de vaillance."
+},
+{
+  id: 19,
+  titleEn: "Oter Yisrael BeTif'ara",
+  titleHe: "עוֹטֵר יִשְׂרָאֵל בְּתִפְאָרָה",
+  he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, עוֹטֵר יִשְׂרָאֵל בְּתִפְאָרָה.",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, עוֹטֵר יִשְׂרָאֵל בְּתִפְאָרָה.",
+  translit: "Baruch atah Adonai Eloheinu melech ha'olam, oter Yisrael betif'ara.",
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, венчающий Исраэль великолепием.",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die Israël kroont met luister.",
+  en: "Blessed are You, Lord our God, King of the universe, Who crowns Israel with glory.",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui couronne Israël de splendeur."
+},
+{
+  id: 20,
+  titleEn: "HaNoten LaYa'ef Koach",
+  titleHe: "הַנּוֹתֵן לַיָּעֵף כֹּחַ",
+  he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, הַנּוֹתֵן לַיָּעֵף כֹּחַ.",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, הַנּוֹתֵן לַיָּעֵף כֹּחַ.",
+  translit: "Baruch atah Adonai Eloheinu melech ha'olam, hanoten laya'ef koach.",
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, дающий усталому силу.",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die kracht geeft aan de vermoeide.",
+  en: "Blessed are You, Lord our God, King of the universe, Who gives strength to the weary.",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui donne de la force à celui qui est fatigué."
+},
+{
+  id: 21,
+  titleEn: "HaMa'avir Shena Me'Einai",
+  titleHe: "הַמַּעֲבִיר שֵׁנָה מֵעֵינַי",
+  he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, הַמַּעֲבִיר שֵׁנָה מֵעֵינַי וּתְנוּמָה מֵעַפְעַפָּי.",
+  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, הַמַּעֲבִיר שֵׁנָה מֵעֵינַי וּתְנוּמָה מֵעַפְעַפָּי.",
+  translit: "Baruch atah Adonai Eloheinu melech ha'olam, hama'avir shena me'einai utnuma me'af'apai.",
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, удаляющий сон с глаз моих и дремоту с век моих.",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die de slaap van mijn ogen wegneemt en de sluimering van mijn oogleden.",
+  en: "Blessed are You, Lord our God, King of the universe, Who removes sleep from my eyes and slumber from my eyelids.",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui enlève le sommeil de mes yeux et l'assoupissement de mes paupières."
+},
+{
+  id: 22,
+  titleEn: "Yehi Ratzon Milfanecha veGomel Chasadim Tovim",
+  titleHe: "יְהִי רָצוֹן מִלְּפָנֶיךָ - גּוֹמֵל חֲסָדִים טוֹבִים",
+  he_display: "[Inclusive form kept as in this edition: God of our fathers and our mothers]\nוִיהִי רָצוֹן מִלְּפָנֶיךָ יְיָ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ וְאִמּוֹתֵינוּ, שֶׁתַּרְגִּילֵנוּ בְּתוֹרָתֶךָ וְדַבְּקֵנוּ בְּמִצְוֹתֶיךָ, וְאַל תְּבִיאֵנוּ לֹא לִידֵי חֵטְא, וְלֹא לִידֵי עֲבֵירָה וְעָוֹן, וְלֹא לִידֵי נִסָּיוֹן, וְלֹא לִידֵי בִזָּיוֹן, וְאַל תַּשְׁלֶט־בָּנוּ יֵצֶר הָרַע, וְהַרְחִיקֵנוּ מֵאָדָם רָע וּמֵחָבֵר רָע, וְדַבְּקֵנוּ בְּיֵצֶר הַטּוֹב וּבְמַעֲשִׂים טוֹבִים, וְכוֹף אֶת־יִצְרֵנוּ לְהִשְׁתַּעְבֶּד־לָךְ, וּתְנֵנוּ הַיּוֹם, וּבְכָל־יוֹם לְחֵן וּלְחֶסֶד וּלְרַחֲמִים בְּעֵינֶיךָ וּבְעֵינֵי כָל־רוֹאֵינוּ וְתִגְמְלֵנוּ חֲסָדִים טוֹבִים. בָּרוּךְ אַתָּה יְיָ, גּוֹמֵל חֲסָדִים טוֹבִים לְעַמּוֹ יִשְׂרָאֵל.",
+  he_tts: "וִיהִי רָצוֹן מִלְּפָנֶיךָ יְיָ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ וְאִמּוֹתֵינוּ, שֶׁתַּרְגִּילֵנוּ בְּתוֹרָתֶךָ וְדַבְּקֵנוּ בְּמִצְוֹתֶיךָ, וְאַל תְּבִיאֵנוּ לֹא לִידֵי חֵטְא, וְלֹא לִידֵי עֲבֵירָה וְעָוֹן, וְלֹא לִידֵי נִסָּיוֹן, וְלֹא לִידֵי בִזָּיוֹן, וְאַל תַּשְׁלֶט־בָּנוּ יֵצֶר הָרַע, וְהַרְחִיקֵנוּ מֵאָדָם רָע וּמֵחָבֵר רָע, וְדַבְּקֵנוּ בְּיֵצֶר הַטּוֹב וּבְמַעֲשִׂים טוֹבִים, וְכוֹף אֶת־יִצְרֵנוּ לְהִשְׁתַּעְבֶּד־לָךְ, וּתְנֵנוּ הַיּוֹם, וּבְכָל־יוֹם לְחֵן וּלְחֶסֶד וּלְרַחֲמִים בְּעֵינֶיךָ וּבְעֵינֵי כָל־רוֹאֵינוּ וְתִגְמְלֵנוּ חֲסָדִים טוֹבִים. בָּרוּךְ אַתָּה יְיָ, גּוֹמֵל חֲסָדִים טוֹבִים לְעַמּוֹ יִשְׂרָאֵל.",
+  translit: "Vihi ratzon milfanecha Adonai Eloheinu velohei avoteinu ve'imoteinu, shetargilenu beToratecha vedabkenu bemitzvotecha, ve'al tevi'enu lo lidei chet, velo lidei avera va'avon, velo lidei nisayon, velo lidei vizayon, ve'al tashlet-banu yetzer hara, veharchikenu me'adam ra umechaver ra, vedabkenu beyetzer hatov uvma'asim tovim, vechof et-yitzrenu lehishta'abed-lach, utnenu hayom uvchol-yom lechen ulechesed ulerachamim be'einecha uv'einei chol-ro'einu vetigmilenu chasadim tovim. Baruch atah Adonai, gomel chasadim tovim le'amo Yisrael.",
+  ru: "Да будет воля Твоя, Господь, Бог наш и Бог отцов наших и матерей наших, приучить нас к Торе Твоей и приблизить к заповедям Твоим. И не приводи нас ни к греху, ни к проступку, ни к преступлению, ни к испытанию, ни к позору, и не давай злому началу властвовать над нами, и удали нас от дурного человека и от дурного товарища, и прилепи нас к доброму началу и к добрым делам, и склони волю нашу служить Тебе, и дай нам сегодня и каждый день обрести милость и благоволение и милосердие в глазах Твоих и в глазах всех видящих нас, и воздай нам добрыми милостями. Благословен Ты, Господь, воздающий добрыми милостями народу Своему Исраэлю.",
+  nl: "Moge het Uw wil zijn, Eeuwige, onze God en God van onze vaders en onze moeders, dat U ons vertrouwd maakt met Uw Tora en ons hecht aan Uw geboden. Breng ons niet tot zonde, overtreding, ongerechtigheid, beproeving of schande, en laat de kwade neiging niet over ons heersen. Verwijder ons van een slecht mens en een slechte vriend, en hecht ons aan de goede neiging en aan goede daden, en dwing onze neiging om U te dienen. En geef ons vandaag en elke dag genade, gunst en barmhartigheid in Uw ogen en in de ogen van allen die ons zien, en bewijs ons goede weldaden. Gezegend bent U, Eeuwige, Die goede weldaden bewijst aan Zijn volk Israël.",
+  en: "May it be Your will, Lord our God and God of our fathers and our mothers, to accustom us to Your Torah and cleave us to Your commandments. Do not bring us to sin, transgression, iniquity, trial or disgrace, and do not let the evil inclination rule over us. Keep us far from an evil person and an evil companion, cleave us to the good inclination and to good deeds, and subdue our inclination to be subservient to You. Grant us today and every day grace, kindness and mercy in Your eyes and in the eyes of all who see us, and bestow upon us good kindnesses. Blessed are You, Lord, Who bestows good kindnesses upon His people Israel.",
+  fr: "Que ce soit Ta volonté, Éternel, notre Dieu et Dieu de nos pères et de nos mères, de nous habituer à Ta Torah et de nous attacher à Tes commandements. Ne nous amène pas à la faute, à la transgression, à l'iniquité, à l'épreuve ni à la honte, et ne laisse pas le mauvais penchant dominer sur nous. Éloigne-nous de l'homme mauvais et du mauvais compagnon, attache-nous au bon penchant et aux bonnes œuvres, et soumets notre penchant à Te servir. Accorde-nous aujourd'hui et chaque jour grâce, bienveillance et miséricorde à Tes yeux et aux yeux de tous ceux qui nous voient, et comble-nous de bonnes grâces. Béni sois-Tu, Éternel, qui comble Son peuple Israël de bonnes grâces."
+}
+
 ];
+
+const TOTAL_PRAYERS = prayers[prayers.length - 1].id;
+
+type DisplayBlock = { type: 'instruction' | 'hebrew'; content: string };
+
+function isInstructionLine(line: string): boolean {
+  const trimmed = line.trim();
+  return trimmed.startsWith('[') && trimmed.endsWith(']');
+}
+
+function parseHeDisplay(text: string): DisplayBlock[] {
+  const blocks: DisplayBlock[] = [];
+
+  for (const line of text.split('\n')) {
+    if (!line.trim()) continue;
+
+    const type: DisplayBlock['type'] = isInstructionLine(line) ? 'instruction' : 'hebrew';
+    const last = blocks[blocks.length - 1];
+
+    if (last?.type === type) {
+      last.content += `\n${line}`;
+    } else {
+      blocks.push({ type, content: line });
+    }
+  }
+
+  return blocks;
+}
+
+function HebrewDisplay({ text }: { text: string }) {
+  return (
+    <div className="space-y-4">
+      {parseHeDisplay(text).map((block, index) =>
+        block.type === 'instruction' ? (
+          <p
+            key={index}
+            dir="ltr"
+            className="ui-sans text-[15px] leading-6 text-zinc-500 italic text-left"
+          >
+            {block.content}
+          </p>
+        ) : (
+          <p
+            key={index}
+            dir="rtl"
+            lang="he"
+            className="he-serif text-[26px] sm:text-[28px] leading-[1.75] text-zinc-900 text-right whitespace-pre-wrap break-words"
+          >
+            {block.content}
+          </p>
+        )
+      )}
+    </div>
+  );
+}
+
+const DIVINE_NAME_FOR_TTS = /יְהוָה|יְהֹוָה|יהוה|יְיָ/g;
 
 export default function App() {
   const [selected, setSelected] = useState<number | null>(null);
@@ -312,11 +466,11 @@ const [lang, setLang] = useState<Lang>(() => {
     }
 
     const prayer = prayers[selected];
-const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, 'אֲדֹנָי');
+    const ttsText = prayer.he_tts.replace(DIVINE_NAME_FOR_TTS, 'אֲדֹנָי');
 
     synth.cancel();
     const utter = new SpeechSynthesisUtterance(ttsText);
-    utter.rate = 0.72;
+    utter.rate = 0.50;
     utter.pitch = 1;
     utter.lang = 'he-IL';
 
@@ -403,7 +557,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
               <div className="flex-1 overflow-auto px-5 pb-[168px]">
                 <div className="pt-3 pb-6 border-b border-zinc-100">
                   <div className="flex items-center gap-2 text-[11px] tracking-widest text-[#0D9488] font-semibold uppercase ui-sans">
-                    <span>{String(selected + 1).padStart(2, '0')} / 14</span>
+                    <span>{String(currentPrayer.id).padStart(2, '0')} / {String(TOTAL_PRAYERS).padStart(2, '0')}</span>
                     <span className="h-1 w-1 rounded-full bg-[#0D9488]/40"></span>
                     <span>{currentPrayer.titleEn}</span>
                   </div>
@@ -412,9 +566,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
                 </div>
 
                 <div className="mt-7">
-                  <div className="he-serif text-[26px] sm:text-[28px] leading-[1.75] text-zinc-900 text-right whitespace-pre-wrap break-words" dir="rtl" lang="he">
-                    {currentPrayer.he_display}
-                  </div>
+                  <HebrewDisplay text={currentPrayer.he_display} />
                 </div>
 
                 <div className="mt-8 ui-sans">
@@ -503,7 +655,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
                       </button>
                       <div className="min-w-0">
                         <div className="text-[13px] font-semibold leading-none">Listen</div>
-                        <div className="text-[11px] text-zinc-500 mt-1 truncate">{currentPrayer.titleEn} • he-IL 0.72×</div>
+                        <div className="text-[11px] text-zinc-500 mt-1 truncate">{currentPrayer.titleEn} • he-IL 0.50×</div>
                       </div>
                     </div>
                     <div className="text-[11px] font-medium text-zinc-600 tabular-nums">{formatTime(currentSec)} / {formatTime(durationSec || 0)}</div>
@@ -519,7 +671,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
           {selected === null && (
             <div className="px-4 pt-2 pb-10 ui-sans">
               <div className="px-2 mb-4">
-                <p className="text-[13px] text-zinc-500 leading-5">Select a prayer to read, listen and translate. All 14 items in traditional order, last is Kaddish deRabbanan.</p>
+                <p className="text-[13px] text-zinc-500 leading-5">Select a prayer to read, listen and translate. All {TOTAL_PRAYERS} items in traditional order.</p>
               </div>
             <div className="space-y-2.5">
               {prayers.map((p, idx) => (
@@ -532,7 +684,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
                 >
                   <div className="flex items-center gap-4 min-w-0">
                     <div className={`h-8 w-8 rounded-full flex items-center justify-center text-[13px] font-semibold shrink-0 ${selected === idx ? 'bg-[#0D9488] text-white' : 'bg-zinc-100 group-hover:bg-teal-50 text-zinc-600 group-hover:text-[#0D9488]'}`}>
-                      {idx + 1}
+                      {p.id}
                     </div>
                     <div className="min-w-0">
                       <div className="font-medium text-[15px] leading-tight truncate">{p.titleEn}</div>
@@ -546,7 +698,7 @@ const ttsText = prayer.he_tts.replace(/יְהוָה|יְהֹוָה|יהוה/g, '
               ))}
             </div>
               <div className="mt-8 px-2 text-[11px] text-zinc-400 leading-4">
-                Text displayed with niqqud. Audio uses he-IL voice at 0.72x. Divine Name spoken as Adonai.
+                Text displayed with niqqud. Audio uses he-IL voice at 0.50x. Divine Name spoken as Adonai.
               </div>
             </div>
           )}
