@@ -440,7 +440,7 @@ const prayers: Prayer[] = [
   id: 36,
   titleEn: "Yotzer Or Uvore Choshech",
   titleHe: "יוֹצֵר אוֹר - בְּרָכָה רִאשׁוֹנָה לִקְרִיאַת שְׁמַע",
-  he_display: "[Full text for private siddur. Barechu skipped.]\nבָּרוּךְ אַתָּה יְיָ, אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, יוֹצֵר אוֹר, וּבוֹרֵא\nחֹשֶׁךְ, עֹשֶׂה שָׁלוֹם וּבוֹרֵא אֶת-הַכֹּל. הַמֵּאִיר לָאָרֶץ\nוְלַדָּרִים עָלֶיהָ בְּרַחֲמִים, וּבְטוּבוֹ מְחַדֵּשׁ בְּכָל-יוֹם תָּמִיד\nמַעֲשֵׂה בְרֵאשִׁית. מַה-רַבּוּ מַעֲשֶׂיךָ יְיָ, כֻּלָּם בְּחָכְמָה\nעָשִׂיתָ, מָלְאָה הָאָרֶץ קִנְיָנֶךָ. הַמֶּלֶךְ הַמְּרוֹמָם לְבַדּוֹ מֵאָז,\nהַמְשֻׁבָּח וְהַמְפֹאָר וְהַמִּתְנַשֵּׂא מִימוֹת עוֹלָם. אֱלֹהֵי עוֹלָם,\nבְּרַחֲמֶיךָ הָרַבִּים רַחֵם עָלֵינוּ, אֲדוֹן עֻזֵּנוּ צוּר מִשְׂגַּבֵּנוּ,\nמָגֵן יִשְׁעֵנוּ מִשְׂגָּב בַּעֲדֵנוּ.\nאֵל בָּרוּךְ גְּדוֹל דֵּעָה, הֵכִין וּפָעַל זָהֳרֵי חַמָּה, טוֹב יָצַר\nכָּבוֹד לִשְׁמוֹ, מְאוֹרוֹת נָתַן סְבִיבוֹת עֻזּוֹ, פִּנּוֹת צְבָאָיו\nקְדוֹשִׁים, רוֹמְמֵי שַׁדַּי, תָּמִיד מְסַפְּרִים כְּבוֹד אֵל\nוְקַדְשׁוֹ. תִּתְבָּרַךְ יְיָ אֱלֹהֵינוּ עַל שֶׁבַח מַעֲשֵׂה יָדֶיךָ, וְעַל\nמְאוֹרֵי אוֹר שֶׁעָשִׂיתָ יְפָאֲרוּךָ סֶלָה.\nכָּאָמוּר לְעֹשֵׂה אוֹרִים גְּדוֹלִים, כִּי לְעוֹלָם חַסְדּוֹ.\nאוֹר חָדָשׁ עַל-צִיּוֹן תָּאִיר וְנִזְכֶּה כֻלָּנוּ מְהֵרָה לְאוֹרוֹ.\nבָּרוּךְ אַתָּה יְיָ יוֹצֵר הַמְּאוֹרוֹת.",
+  he_display: "\nבָּרוּךְ אַתָּה יְיָ, אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, יוֹצֵר אוֹר, וּבוֹרֵא\nחֹשֶׁךְ, עֹשֶׂה שָׁלוֹם וּבוֹרֵא אֶת-הַכֹּל. הַמֵּאִיר לָאָרֶץ\nוְלַדָּרִים עָלֶיהָ בְּרַחֲמִים, וּבְטוּבוֹ מְחַדֵּשׁ בְּכָל-יוֹם תָּמִיד\nמַעֲשֵׂה בְרֵאשִׁית. מַה-רַבּוּ מַעֲשֶׂיךָ יְיָ, כֻּלָּם בְּחָכְמָה\nעָשִׂיתָ, מָלְאָה הָאָרֶץ קִנְיָנֶךָ. הַמֶּלֶךְ הַמְּרוֹמָם לְבַדּוֹ מֵאָז,\nהַמְשֻׁבָּח וְהַמְפֹאָר וְהַמִּתְנַשֵּׂא מִימוֹת עוֹלָם. אֱלֹהֵי עוֹלָם,\nבְּרַחֲמֶיךָ הָרַבִּים רַחֵם עָלֵינוּ, אֲדוֹן עֻזֵּנוּ צוּר מִשְׂגַּבֵּנוּ,\nמָגֵן יִשְׁעֵנוּ מִשְׂגָּב בַּעֲדֵנוּ.\nאֵל בָּרוּךְ גְּדוֹל דֵּעָה, הֵכִין וּפָעַל זָהֳרֵי חַמָּה, טוֹב יָצַר\nכָּבוֹד לִשְׁמוֹ, מְאוֹרוֹת נָתַן סְבִיבוֹת עֻזּוֹ, פִּנּוֹת צְבָאָיו\nקְדוֹשִׁים, רוֹמְמֵי שַׁדַּי, תָּמִיד מְסַפְּרִים כְּבוֹד אֵל\nוְקַדְשׁוֹ. תִּתְבָּרַךְ יְיָ אֱלֹהֵינוּ עַל שֶׁבַח מַעֲשֵׂה יָדֶיךָ, וְעַל\nמְאוֹרֵי אוֹר שֶׁעָשִׂיתָ יְפָאֲרוּךָ סֶלָה.\nכָּאָמוּר לְעֹשֵׂה אוֹרִים גְּדוֹלִים, כִּי לְעוֹלָם חַסְדּוֹ.\nאוֹר חָדָשׁ עַל-צִיּוֹן תָּאִיר וְנִזְכֶּה כֻלָּנוּ מְהֵרָה לְאוֹרוֹ.\nבָּרוּךְ אַתָּה יְיָ יוֹצֵר הַמְּאוֹרוֹת.",
   he_tts: "בָּרוּךְ אַתָּה יְיָ, אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, יוֹצֵר אוֹר, וּבוֹרֵא חֹשֶׁךְ, עֹשֶׂה שָׁלוֹם וּבוֹרֵא אֶת-הַכֹּל. הַמֵּאִיר לָאָרֶץ וְלַדָּרִים עָלֶיהָ בְּרַחֲמִים, וּבְטוּבוֹ מְחַדֵּשׁ בְּכָל-יוֹם תָּמִיד מַעֲשֵׂה בְרֵאשִׁית. מַה-רַבּוּ מַעֲשֶׂיךָ יְיָ, כֻּלָּם בְּחָכְמָה עָשִׂיתָ, מָלְאָה הָאָרֶץ קִנְיָנֶךָ. הַמֶּלֶךְ הַמְּרוֹמָם לְבַדּוֹ מֵאָז, הַמְשֻׁבָּח וְהַמְפֹאָר וְהַמִּתְנַשֵּׂא מִימוֹת עוֹלָם. אֱלֹהֵי עוֹלָם, בְּרַחֲמֶיךָ הָרַבִּים רַחֵם עָלֵינוּ, אֲדוֹן עֻזֵּנוּ צוּר מִשְׂגַּבֵּנוּ, מָגֵן יִשְׁעֵנוּ מִשְׂגָּב בַּעֲדֵנוּ. אֵל בָּרוּךְ גְּדוֹל דֵּעָה, הֵכִין וּפָעַל זָהֳרֵי חַמָּה, טוֹב יָצַר כָּבוֹד לִשְׁמוֹ, מְאוֹרוֹת נָתַן סְבִיבוֹת עֻזּוֹ, פִּנּוֹת צְבָאָיו קְדוֹשִׁים, רוֹמְמֵי שַׁדַּי, תָּמִיד מְסַפְּרִים כְּבוֹד אֵל וְקַדְשׁוֹ. תִּתְבָּרַךְ יְיָ אֱלֹהֵינוּ עַל שֶׁבַח מַעֲשֵׂה יָדֶיךָ, וְעַל מְאוֹרֵי אוֹר שֶׁעָשִׂיתָ יְפָאֲרוּךָ סֶלָה. כָּאָמוּר לְעֹשֵׂה אוֹרִים גְּדוֹלִים, כִּי לְעוֹלָם חַסְדּוֹ. אוֹר חָדָשׁ עַל-צִיּוֹן תָּאִיר וְנִזְכֶּה כֻלָּנוּ מְהֵרָה לְאוֹרוֹ. בָּרוּךְ אַתָּה יְיָ יוֹצֵר הַמְּאוֹרוֹת.",
   translit: "Baruch atah Adonai, Eloheinu melech ha'olam, yotzer or uvore choshech, oseh shalom uvore et-hakol. Hame'ir la'aretz veladarim aleha berachamim, uvetuvo mechadesh bechol-yom tamid ma'aseh bereshit. Ma-rabu ma'asecha Adonai, kulam bechochma asita, mal'ah ha'aretz kinyanecha. HaMelech hameromam levado me'az, hamshubach vehamefo'ar vehamitnase mimot olam. Elohei olam, berachamecha harabim rachem aleinu, Adon uzenu Tzur misgavenu, magen yish'enu misgav ba'adenu. El baruch gedol de'a, hechin ufa'al zoharei chama, tov yatzar kavod lishmo, me'orot natan sevivut uzo, pinot tzeva'av kedoshim, romemei Shaddai, tamid mesaprim kevod El ukedusho. Titbarach Adonai Eloheinu al shevach ma'aseh yadecha, ve'al me'orei or she'asita yefa'arucha sela. Ka'amur le'oseh orim gedolim, ki le'olam chasdo. Or chadash al-Tziyyon ta'ir venizkeh chulanu mehera le'oro. Baruch atah Adonai yotzer hame'orot.",
   ru: "Благословен Ты, Господь, Бог наш, Царь мира, Творящий свет и Сотворяющий тьму, Делающий мир и Сотворяющий все. Освещающий землю и живущих на ней по милосердию и по благости Своей обновляющий каждый день, всегда, творение начала. Как многочисленны дела Твои, Господи, все премудростью Ты сотворил, полна земля достоянием Твоим. Царь, Вознесенный Единый издревле, Восхваляемый и Прославляемый и Превозносимый от вечных времен. Бог вечный, по милосердию великому Твоему смилуйся над нами, Владыка силы нашей, Твердыня оплота нашего, Щит спасения нашего, Оплот за нас. Бог благословенный, великий ведением, уготовил и сотворил сияние солнца, благо сотворил славу Имени Своему, светила поставил вокруг могущества Своего, воинства святые, возносящие Всемогущего, всегда рассказывают о славе Бога и святости Его. Да будешь благословен, Господи, Бог наш, за хвалу деяний рук Твоих и за светила света, что сотворил Ты, да прославят Тебя вовек. Как сказано: Творящему светила великие, ибо вовеки милость Его. Свет новый над Сионом озари и удостоимся все мы вскоре света Его. Благословен Ты, Господь, Творец светил.",
@@ -541,13 +541,13 @@ const prayers: Prayer[] = [
   include_in_home: true,
   titleEn: "Avot Ve'Imahot - Elokei Avoteinu Ve'Imotenu - Egalitarian 1b",
   titleHe: "אָבוֹת וְאִמָּהוֹת - אֱלֹהֵי אֲבוֹתֵינוּ וְאִמּוֹתֵינוּ",
-  he_display: "[AWOT WE'IMAHOT - Egalitarian version with Patriarchs and Matriarchs]\nבָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ, אֱלֹהֵי אַבְרָהָם,\nאֱלֹהֵי יִצְחָק, וֵאלֹהֵי יַעֲקֹב, אֱלֹהֵי שָׂרָה, אֱלֹהֵי רִבְקָה,\nאֱלֹהֵי רָחֵל וֵאלֹהֵי לֵאָה, הָאֵל הַגָּדוֹל הַגִּבּוֹר וְהַנּוֹרָא,\nאֵל עֶלְיוֹן, גּוֹמֵל חֲסָדִים טוֹבִים, וְקוֹנֵה הַכֹּל, וְזוֹכֵר\nחַסְדֵי אָבוֹת וְאִמָּהוֹת, וּמֵבִיא גּוֹאֵל לִבְנֵי בְנֵיהֶם לְמַעַן\nשְׁמוֹ בְּאַהֲבָה.\n[Seasonal insertion - between Rosh HaShana and Yom Kippur - inside this bracha:]\nזָכְרֵנוּ לְחַיִּים, מֶלֶךְ חָפֵץ בַּחַיִּים, וְכָתְבֵנוּ בְּסֵפֶר הַחַיִּים,\nלְמַעַנְךָ אֱלֹהִים חַיִּים.\nמֶלֶךְ עוֹזֵר וּמוֹשִׁיעַ וּמָגֵן. בָּרוּךְ אַתָּה יְיָ, מָגֵן אַבְרָהָם\nוּפוֹקֵד שָׂרָה.",
+  he_display: "[Avot Ve'Imahot - Egalitarian version with Patriarchs and Matriarchs]\nבָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ, אֱלֹהֵי אַבְרָהָם,\nאֱלֹהֵי יִצְחָק, וֵאלֹהֵי יַעֲקֹב, אֱלֹהֵי שָׂרָה, אֱלֹהֵי רִבְקָה,\nאֱלֹהֵי רָחֵל וֵאלֹהֵי לֵאָה, הָאֵל הַגָּדוֹל הַגִּבּוֹר וְהַנּוֹרָא,\nאֵל עֶלְיוֹן, גּוֹמֵל חֲסָדִים טוֹבִים, וְקוֹנֵה הַכֹּל, וְזוֹכֵר\nחַסְדֵי אָבוֹת וְאִמָּהוֹת, וּמֵבִיא גּוֹאֵל לִבְנֵי בְנֵיהֶם לְמַעַן\nשְׁמוֹ בְּאַהֲבָה.\n[Seasonal insertion - between Rosh HaShana and Yom Kippur - inside this bracha:]\nזָכְרֵנוּ לְחַיִּים, מֶלֶךְ חָפֵץ בַּחַיִּים, וְכָתְבֵנוּ בְּסֵפֶר הַחַיִּים,\nלְמַעַנְךָ אֱלֹהִים חַיִּים.\nמֶלֶךְ עוֹזֵר וּמוֹשִׁיעַ וּמָגֵן. בָּרוּךְ אַתָּה יְיָ, מָגֵן אַבְרָהָם\nוּפוֹקֵד שָׂרָה.",
   he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ, אֱלֹהֵי אַבְרָהָם, אֱלֹהֵי יִצְחָק, וֵאלֹהֵי יַעֲקֹב, אֱלֹהֵי שָׂרָה, אֱלֹהֵי רִבְקָה, אֱלֹהֵי רָחֵל וֵאלֹהֵי לֵאָה, הָאֵל הַגָּדוֹל הַגִּבּוֹר וְהַנּוֹרָא, אֵל עֶלְיוֹן, גּוֹמֵל חֲסָדִים טוֹבִים, וְקוֹנֵה הַכֹּל, וְזוֹכֵר חַסְדֵי אָבוֹת וְאִמָּהוֹת, וּמֵבִיא גּוֹאֵל לִבְנֵי בְנֵיהֶם לְמַעַן שְׁמוֹ בְּאַהֲבָה. זָכְרֵנוּ לְחַיִּים, מֶלֶךְ חָפֵץ בַּחַיִּים, וְכָתְבֵנוּ בְּסֵפֶר הַחַיִּים, לְמַעַנְךָ אֱלֹהִים חַיִּים. מֶלֶךְ עוֹזֵר וּמוֹשִׁיעַ וּמָגֵן. בָּרוּךְ אַתָּה יְיָ, מָגֵן אַבְרָהָם וּפוֹקֵד שָׂרָה.",
   translit: "Baruch atah Adonai Eloheinu ve'Elohei avoteinu, Elohei Avraham, Elohei Yitzchak, ve'Elohei Ya'akov, Elohei Sara, Elohei Rivka, Elohei Rachel ve'Elohei Le'a, Ha'El hagadol hagibor vehanora, El Elyon, gomel chasadim tovim, vekoneh hakol, vezocher chasdei avot ve'imahot, umevi go'el livnei veneihem lema'an shemo be'ahava. Zochrenu lechayim, Melech chafetz bachayim, vechotvenu besefer hachayim, lema'ancha Elohim chayim. Melech ozer umoshia umagen. Baruch atah Adonai, Magen Avraham ufoked Sara.",
-  ru: "Благословен Ты, Господь Бог наш и Бог отцов наших, Бог Авраама, Бог Ицхака и Бог Яакова, Бог Сары, Бог Ривки, Бог Рахели и Бог Леи, Бог великий, могучий и грозный, Бог Всевышний, творящий добрые милости, и приобретающий всё, и помнящий милости отцов и матерей, и приводящий избавителя сынам сынов их ради Имени Своего с любовью. [Вставка между Рош а-Шана и Йом Кипур: Вспомни нас для жизни, Царь, желающий жизни, и запиши нас в Книгу Жизни, ради Тебя, Бог живой.] Царь помогающий и спасающий и Щит. Благословен Ты, Господь, Щит Авраама и Вспоминающий Сару.",
-  nl: "Gezegend bent U, Eeuwige onze God en God van onze vaderen, God van Abraham, God van Jitschak en God van Jakob, God van Sara, God van Rivka, God van Rachel en God van Lea, de grote, machtige en ontzagwekkende God, Opperste God, Die goede gunsten bewijst, en Alles verwerft, en Die de gunsten van vaders en moeders gedenkt, en Die een Verlosser brengt aan de kinderen van hun kinderen omwille van Zijn Naam met liefde. [Invoeging tussen Rosj Hasjana en Jom Kipoer: Gedenk ons ten leven, Koning Die behagen heeft in het leven, en schrijf ons in het Boek des Levens, omwille van U, levende God.] Koning, Helper en Redder en Schild. Gezegend bent U, Eeuwige, Schild van Abraham en Die Sara gedenkt.",
-  en: "Blessed are You, Lord our God and God of our fathers, God of Abraham, God of Isaac and God of Jacob, God of Sarah, God of Rebecca, God of Rachel and God of Leah, the great, mighty and awesome God, Most High God, Who bestows good kindnesses, and acquires all, and remembers the kindnesses of fathers and mothers, and brings a Redeemer to their children's children for the sake of His Name with love. [Seasonal insertion between Rosh HaShana and Yom Kippur: Remember us for life, King Who desires life, and inscribe us in the Book of Life, for Your sake, living God.] King, Helper and Savior and Shield. Blessed are You, Lord, Shield of Abraham and Who remembers Sarah.",
-  fr: "Béni sois-Tu, Éternel notre Dieu et Dieu de nos pères, Dieu d'Abraham, Dieu d'Isaac et Dieu de Jacob, Dieu de Sarah, Dieu de Rivka, Dieu de Rachel et Dieu de Léa, le Dieu grand, puissant et redoutable, Dieu Très-Haut, Qui accorde de bonnes bontés, et acquiert tout, et Se souvient des bontés des pères et des mères, et amène un Rédempteur aux enfants de leurs enfants pour Son Nom avec amour. [Insertion entre Roch Hachana et Kippour: Souviens-Toi de nous pour la vie, Roi qui désires la vie, et inscris-nous dans le Livre de la Vie, pour Toi, Dieu vivant.] Roi, Aide et Sauveur et Bouclier. Béni sois-Tu, Éternel, Bouclier d'Abraham et Qui Se souvient de Sarah."
+  ru: "[Авот ве-Имаот — эгалитарная версия с патриархами и матриархами] Благословен Ты, Господь Бог наш и Бог отцов наших, Бог Авраама, Бог Ицхака и Бог Яакова, Бог Сары, Бог Ривки, Бог Рахели и Бог Леи, Бог великий, могучий и грозный, Бог Всевышний, творящий добрые милости, и приобретающий всё, и помнящий милости отцов и матерей, и приводящий избавителя сынам сынов их ради Имени Своего с любовью. [Вставка между Рош а-Шана и Йом Кипур — внутри этой брахи:] Вспомни нас для жизни, Царь, желающий жизни, и запиши нас в Книгу Жизни, ради Тебя, Бог живой. Царь помогающий и спасающий и Щит. Благословен Ты, Господь, Щит Авраама и Вспоминающий Сару.",
+  nl: "[Avot Ve'Imahot - Egalitaire versie met voorvaders en voormoeders] Gezegend bent U, Eeuwige onze God en God van onze vaderen, God van Abraham, God van Jitschak en God van Jakob, God van Sara, God van Rivka, God van Rachel en God van Lea, de grote, machtige en ontzagwekkende God, Opperste God, Die goede gunsten bewijst, en Alles verwerft, en Die de gunsten van vaders en moeders gedenkt, en Die een Verlosser brengt aan de kinderen van hun kinderen omwille van Zijn Naam met liefde. [Seizoensinvoeging tussen Rosj Hasjana en Jom Kipoer — binnen deze beracha:] Gedenk ons ten leven, Koning Die behagen heeft in het leven, en schrijf ons in het Boek des Levens, omwille van U, levende God. Koning, Helper en Redder en Schild. Gezegend bent U, Eeuwige, Schild van Abraham en Die Sara gedenkt.",
+  en: "[Avot Ve'Imahot - Egalitarian version with Patriarchs and Matriarchs] Blessed are You, Lord our God and God of our fathers, God of Abraham, God of Isaac and God of Jacob, God of Sarah, God of Rebecca, God of Rachel and God of Leah, the great, mighty and awesome God, Most High God, Who bestows good kindnesses, and acquires all, and remembers the kindnesses of fathers and mothers, and brings a Redeemer to their children's children for the sake of His Name with love. [Seasonal insertion between Rosh HaShana and Yom Kippur - inside this bracha:] Remember us for life, King Who desires life, and inscribe us in the Book of Life, for Your sake, living God. King, Helper and Savior and Shield. Blessed are You, Lord, Shield of Abraham and Who remembers Sarah.",
+  fr: "[Avot Ve'Imahot - Version égalitaire avec Patriarches et Matriarches] Béni sois-Tu, Éternel notre Dieu et Dieu de nos pères, Dieu d'Abraham, Dieu d'Isaac et Dieu de Jacob, Dieu de Sarah, Dieu de Rivka, Dieu de Rachel et Dieu de Léa, le Dieu grand, puissant et redoutable, Dieu Très-Haut, Qui accorde de bonnes bontés, et acquiert tout, et Se souvient des bontés des pères et des mères, et amène un Rédempteur aux enfants de leurs enfants pour Son Nom avec amour. [Insertion saisonnière entre Roch Hachana et Kippour — à l'intérieur de cette bénédiction :] Souviens-Toi de nous pour la vie, Roi qui désires la vie, et inscris-nous dans le Livre de la Vie, pour Toi, Dieu vivant. Roi, Aide et Sauveur et Bouclier. Béni sois-Tu, Éternel, Bouclier d'Abraham et Qui Se souvient de Sarah."
 },
 {
   id: 45,
@@ -722,6 +722,20 @@ function isInstructionLine(line: string): boolean {
   return trimmed.startsWith('[') && trimmed.endsWith(']');
 }
 
+function toInstructionOnlyBracket(bracket: string): string {
+  const inner = bracket.slice(1, -1);
+  const match = inner.match(/^(.+?:)\s+(.+)$/s);
+  if (match && match[2].trim().length > 30) {
+    return `[${match[1]}]`;
+  }
+  return bracket;
+}
+
+function extractBracketInstructions(text: string): string[] {
+  const raw = text.match(/\[[^\]]+\]/g) ?? [];
+  return raw.map(toInstructionOnlyBracket);
+}
+
 function parseHeDisplay(text: string): DisplayBlock[] {
   const blocks: DisplayBlock[] = [];
 
@@ -741,19 +755,42 @@ function parseHeDisplay(text: string): DisplayBlock[] {
   return blocks;
 }
 
-function HebrewDisplay({ text }: { text: string }) {
+function HebrewDisplay({
+  heDisplay,
+  localizedTranslation,
+}: {
+  heDisplay: string;
+  localizedTranslation: string;
+}) {
+  const localizedInstructions = extractBracketInstructions(localizedTranslation);
+  let instructionIndex = 0;
+
   return (
     <div className="space-y-4">
-      {parseHeDisplay(text).map((block, index) =>
-        block.type === 'instruction' ? (
-          <p
-            key={index}
-            dir="ltr"
-            className="ui-sans text-[15px] leading-6 text-zinc-500 italic text-left"
-          >
-            {block.content}
-          </p>
-        ) : (
+      {parseHeDisplay(heDisplay).map((block, index) => {
+        if (block.type === 'instruction') {
+          const content = block.content
+            .split('\n')
+            .map((line) => {
+              if (!isInstructionLine(line)) return line;
+              const localized = localizedInstructions[instructionIndex];
+              instructionIndex += 1;
+              return localized ?? line;
+            })
+            .join('\n');
+
+          return (
+            <p
+              key={index}
+              dir="ltr"
+              className="ui-sans text-[15px] leading-6 text-zinc-500 italic text-left"
+            >
+              {content}
+            </p>
+          );
+        }
+
+        return (
           <p
             key={index}
             dir="rtl"
@@ -762,8 +799,8 @@ function HebrewDisplay({ text }: { text: string }) {
           >
             {block.content}
           </p>
-        )
-      )}
+        );
+      })}
     </div>
   );
 }
@@ -996,7 +1033,10 @@ const [lang, setLang] = useState<Lang>(() => {
                 </div>
 
                 <div className="mt-7">
-                  <HebrewDisplay text={currentPrayer.he_display} />
+                  <HebrewDisplay
+                    heDisplay={currentPrayer.he_display}
+                    localizedTranslation={currentPrayer[lang]}
+                  />
                 </div>
 
                 <div className="mt-8 ui-sans">
