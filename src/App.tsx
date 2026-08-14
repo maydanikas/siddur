@@ -857,9 +857,13 @@ function isAndroidDevice(): boolean {
 }
 
 function estimateSpeechDuration(text: string, rate: number): number {
-  // Android Chrome often ignores utter.rate and speaks near normal speed.
-  const effectiveRate = isAndroidDevice() ? 1 : rate;
-  return Math.max(4, Math.ceil((text.length * CHAR_SECONDS_AT_RATE) / effectiveRate));
+  if (!isAndroidDevice()) {
+    return Math.max(4, Math.ceil((text.length * CHAR_SECONDS_AT_RATE) / rate));
+  }
+
+  const len = text.length;
+  const stretch = Math.min(0.003, Math.max(0, len - 300) * 0.000004);
+  return Math.max(4, Math.ceil(len * (CHAR_SECONDS_AT_RATE + stretch)));
 }
 
 function buildWordEndTimes(ttsText: string, totalDuration: number): number[] {
@@ -881,6 +885,68 @@ function wordIndexAtElapsed(endTimes: number[], elapsedSec: number): number {
     if (elapsedSec < endTimes[i]) return i;
   }
   return Math.max(0, endTimes.length - 1);
+}
+
+type TtsPhrase = {
+  text: string;
+  wordStart: number;
+  wordCount: number;
+};
+
+function splitTtsIntoSentences(heTts: string): TtsPhrase[] {
+  const words = tokenizeTts(heTts);
+  const sentences: TtsPhrase[] = [];
+  let i = 0;
+
+  while (i < words.length) {
+    const chunk: string[] = [];
+    const wordStart = i;
+
+    while (i < words.length) {
+      chunk.push(words[i]);
+      i++;
+      if (/[.!?]$/.test(chunk[chunk.length - 1])) break;
+    }
+
+    if (chunk.length > 0) {
+      sentences.push({
+        text: chunk.join(' '),
+        wordStart,
+        wordCount: chunk.length,
+      });
+    }
+  }
+
+  return sentences;
+}
+
+function estimatePhraseDuration(text: string): number {
+  return Math.max(1, text.length * CHAR_SECONDS_AT_RATE);
+}
+
+type AndroidPlayState = {
+  phrases: TtsPhrase[];
+  phraseIndex: number;
+  estDuration: number;
+  totalWords: number;
+  cancelled: boolean;
+  durationScale: number;
+  phrasesMeasured: number;
+  currentPhraseStartTime: number;
+};
+
+function updateDurationScale(
+  state: AndroidPlayState,
+  phraseText: string,
+  actualSec: number,
+): void {
+  const baseEstimate = estimatePhraseDuration(phraseText);
+  if (baseEstimate <= 0) return;
+
+  const ratio = Math.min(1.6, Math.max(0.6, actualSec / baseEstimate));
+  state.durationScale =
+    state.phrasesMeasured === 0 ? ratio : state.durationScale * 0.55 + ratio * 0.45;
+  state.phrasesMeasured += 1;
 }
 
 function HebrewDisplay({
@@ -997,6 +1063,7 @@ const [lang, setLang] = useState<Lang>(() => {
 
   const intervalRef = useRef<number | null>(null);
   const wordHighlightRef = useRef<number | null>(null);
+  const androidPlayRef = useRef<AndroidPlayState | null>(null);
   const startRef = useRef<number>(0);
   const pausedAccumRef = useRef<number>(0);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -1033,6 +1100,8 @@ const [lang, setLang] = useState<Lang>(() => {
   }, []);
 
   const stopAudio = useCallback(() => {
+    if (androidPlayRef.current) androidPlayRef.current.cancelled = true;
+    androidPlayRef.current = null;
     window.speechSynthesis?.cancel();
     clearTimers();
     setIsPlaying(false);
@@ -1063,10 +1132,49 @@ const [lang, setLang] = useState<Lang>(() => {
     if (wordHighlightRef.current) window.clearInterval(wordHighlightRef.current);
     wordHighlightRef.current = window.setInterval(() => {
       const elapsed = (Date.now() - startRef.current) / 1000;
-      const adjusted = isAndroidDevice() ? elapsed * 1.06 : elapsed;
-      setActiveTtsIndex(wordIndexAtElapsed(endTimes, adjusted));
+      setActiveTtsIndex(wordIndexAtElapsed(endTimes, elapsed));
     }, 80);
   }, []);
+
+  const startProgressInterval = useCallback((estDuration: number) => {
+    intervalRef.current = window.setInterval(() => {
+      const elapsed = (Date.now() - startRef.current) / 1000;
+      if (elapsed >= estDuration) {
+        setCurrentSec(estDuration);
+        setProgress(100);
+      } else {
+        setCurrentSec(elapsed);
+        setProgress((elapsed / estDuration) * 100);
+      }
+    }, 120);
+  }, []);
+
+  const finishPlayback = useCallback((estDuration: number) => {
+    setIsPlaying(false);
+    setProgress(100);
+    setCurrentSec(estDuration);
+    setActiveTtsIndex(null);
+    clearTimers();
+    androidPlayRef.current = null;
+    utteranceRef.current = null;
+    pausedAccumRef.current = 0;
+  }, []);
+
+  const startPhraseWordHighlight = useCallback(
+    (phraseText: string, wordStart: number, phraseStartTime: number, durationScale: number) => {
+      const duration = estimatePhraseDuration(phraseText) * durationScale;
+      const endTimes = buildWordEndTimes(phraseText, duration);
+      if (endTimes.length === 0) return;
+
+      if (wordHighlightRef.current) window.clearInterval(wordHighlightRef.current);
+      wordHighlightRef.current = window.setInterval(() => {
+        const elapsed = (Date.now() - phraseStartTime) / 1000;
+        const localIdx = wordIndexAtElapsed(endTimes, elapsed);
+        setActiveTtsIndex(wordStart + localIdx);
+      }, 60);
+    },
+    [],
+  );
 
   const handlePrayerTouchStart = (e: React.TouchEvent) => {
     const touch = e.touches[0];
@@ -1142,70 +1250,142 @@ const [lang, setLang] = useState<Lang>(() => {
       return;
     }
 
-    if (synth.paused && utteranceRef.current) {
+    if (synth.paused && (utteranceRef.current || androidPlayRef.current)) {
       synth.resume();
       setIsPlaying(true);
       startRef.current = Date.now() - pausedAccumRef.current * 1000;
-      intervalRef.current = window.setInterval(() => {
-        const elapsed = (Date.now() - startRef.current) / 1000;
-        setCurrentSec(Math.min(elapsed, durationSec));
-        setProgress(Math.min((elapsed / durationSec) * 100, 100));
-      }, 120);
-      startWordHighlightFallback(prayers[selected].he_tts, durationSec);
+      startProgressInterval(durationSec);
+      const androidState = androidPlayRef.current;
+      if (androidState) {
+        const phrase = androidState.phrases[androidState.phraseIndex];
+        if (phrase) {
+          startPhraseWordHighlight(
+            phrase.text,
+            phrase.wordStart,
+            androidState.currentPhraseStartTime || Date.now(),
+            androidState.durationScale,
+          );
+        }
+      } else {
+        startWordHighlightFallback(prayers[selected].he_tts, durationSec);
+      }
       return;
     }
 
     const prayer = prayers[selected];
     const ttsText = prepareTtsText(prayer.he_tts);
+    const estDuration = estimateSpeechDuration(ttsText, SPEECH_RATE);
 
     synth.cancel();
     clearTimers();
-    const utter = new SpeechSynthesisUtterance(ttsText);
-    configureHebrewUtterance(utter);
-
-    const estDuration = estimateSpeechDuration(ttsText, SPEECH_RATE);
     setDurationSec(estDuration);
     setCurrentSec(0);
     setProgress(0);
     setActiveTtsIndex(0);
     pausedAccumRef.current = 0;
+    startRef.current = 0;
+
+    if (isAndroidDevice()) {
+      const words = tokenizeTts(prayer.he_tts);
+      const phrases = splitTtsIntoSentences(prayer.he_tts);
+      androidPlayRef.current = {
+        phrases,
+        phraseIndex: 0,
+        estDuration,
+        totalWords: words.length,
+        cancelled: false,
+        durationScale: 1,
+        phrasesMeasured: 0,
+        currentPhraseStartTime: 0,
+      };
+
+      const speakAndroidPhrase = (phraseIndex: number) => {
+        const state = androidPlayRef.current;
+        if (!state || state.cancelled || phraseIndex >= state.phrases.length) {
+          finishPlayback(estDuration);
+          return;
+        }
+
+        state.phraseIndex = phraseIndex;
+        const phrase = state.phrases[phraseIndex];
+        const utter = new SpeechSynthesisUtterance(phrase.text);
+        configureHebrewUtterance(utter);
+        utteranceRef.current = utter;
+
+        utter.onstart = () => {
+          const phraseStartTime = Date.now();
+          state.currentPhraseStartTime = phraseStartTime;
+          if (phraseIndex === 0) {
+            startRef.current = phraseStartTime;
+            startProgressInterval(estDuration);
+          }
+          setActiveTtsIndex(phrase.wordStart);
+          startPhraseWordHighlight(
+            phrase.text,
+            phrase.wordStart,
+            phraseStartTime,
+            state.durationScale,
+          );
+          setProgress((phrase.wordStart / state.totalWords) * 100);
+          setCurrentSec((phrase.wordStart / state.totalWords) * estDuration);
+        };
+
+        utter.onboundary = (event) => {
+          if (event.charIndex === undefined) return;
+          if (wordHighlightRef.current) {
+            window.clearInterval(wordHighlightRef.current);
+            wordHighlightRef.current = null;
+          }
+          const localIdx = charIndexToWordIndex(phrase.text, event.charIndex);
+          setActiveTtsIndex(phrase.wordStart + localIdx);
+        };
+
+        utter.onend = () => {
+          if (state.cancelled) return;
+          if (wordHighlightRef.current) {
+            window.clearInterval(wordHighlightRef.current);
+            wordHighlightRef.current = null;
+          }
+
+          const actualSec = (Date.now() - state.currentPhraseStartTime) / 1000;
+          updateDurationScale(state, phrase.text, actualSec);
+
+          const wordsDone = phrase.wordStart + phrase.wordCount;
+          setActiveTtsIndex(wordsDone - 1);
+          setProgress((wordsDone / state.totalWords) * 100);
+          setCurrentSec((wordsDone / state.totalWords) * estDuration);
+          speakAndroidPhrase(phraseIndex + 1);
+        };
+
+        utter.onerror = () => finishPlayback(estDuration);
+        synth.speak(utter);
+      };
+
+      speakAndroidPhrase(0);
+      setIsPlaying(true);
+      return;
+    }
+
+    const utter = new SpeechSynthesisUtterance(ttsText);
+    configureHebrewUtterance(utter);
 
     utter.onstart = () => {
       startRef.current = Date.now();
       setActiveTtsIndex(0);
       startWordHighlightFallback(prayer.he_tts, estDuration);
-
-      intervalRef.current = window.setInterval(() => {
-        const elapsed = (Date.now() - startRef.current) / 1000;
-        if (elapsed >= estDuration) {
-          setCurrentSec(estDuration);
-          setProgress(100);
-        } else {
-          setCurrentSec(elapsed);
-          setProgress((elapsed / estDuration) * 100);
-        }
-      }, 120);
+      startProgressInterval(estDuration);
     };
 
-    if (!isAndroidDevice()) {
-      utter.onboundary = (event) => {
-        if (event.name !== 'word' || event.charIndex === undefined) return;
-        if (wordHighlightRef.current) {
-          window.clearInterval(wordHighlightRef.current);
-          wordHighlightRef.current = null;
-        }
-        setActiveTtsIndex(charIndexToWordIndex(ttsText, event.charIndex));
-      };
-    }
-
-    utter.onend = () => {
-      setIsPlaying(false);
-      setProgress(100);
-      setCurrentSec(estDuration);
-      setActiveTtsIndex(null);
-      clearTimers();
-      pausedAccumRef.current = 0;
+    utter.onboundary = (event) => {
+      if (event.name !== 'word' || event.charIndex === undefined) return;
+      if (wordHighlightRef.current) {
+        window.clearInterval(wordHighlightRef.current);
+        wordHighlightRef.current = null;
+      }
+      setActiveTtsIndex(charIndexToWordIndex(ttsText, event.charIndex));
     };
+
+    utter.onend = () => finishPlayback(estDuration);
     utter.onerror = () => {
       setIsPlaying(false);
       setActiveTtsIndex(null);
@@ -1407,7 +1587,7 @@ const [lang, setLang] = useState<Lang>(() => {
               ))}
             </div>
               <div className="mt-8 px-2 text-[11px] text-zinc-400 leading-4">
-                Text displayed with niqqud. Tap a Hebrew word to hear it. Audio uses he-IL voice at 0.50x. Divine Name spoken as Adonai.
+                Text displayed with niqqud. Tap a Hebrew word to hear it. Audio uses he-IL voice at 0.50x. Version 2.1, 2026
               </div>
             </div>
           )}
