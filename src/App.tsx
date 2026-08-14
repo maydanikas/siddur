@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import SplashScreen from './components/SplashScreen';
 
 type Lang = 'ru' | 'nl' | 'en' | 'fr';
@@ -717,6 +717,17 @@ const TOTAL_PRAYERS = prayers[prayers.length - 1].id;
 
 type DisplayBlock = { type: 'instruction' | 'hebrew'; content: string };
 
+type WordSpan = {
+  text: string;
+  speak: string;
+  speakable: boolean;
+  ttsIndex: number | null;
+};
+
+type HebrewWordBlock = { type: 'hebrew'; lines: WordSpan[][] };
+type InstructionWordBlock = { type: 'instruction'; content: string };
+type LayoutBlock = HebrewWordBlock | InstructionWordBlock;
+
 function isInstructionLine(line: string): boolean {
   const trimmed = line.trim();
   return trimmed.startsWith('[') && trimmed.endsWith(']');
@@ -755,19 +766,166 @@ function parseHeDisplay(text: string): DisplayBlock[] {
   return blocks;
 }
 
+const DIVINE_NAME_FOR_TTS = /יְהוָה|יְהֹוָה|יהוה|יְיָ/g;
+
+function stripNikud(text: string): string {
+  return text.replace(/[\u0591-\u05C7]/g, '');
+}
+
+function normalizeWord(text: string): string {
+  return stripNikud(text.replace(DIVINE_NAME_FOR_TTS, 'אֲדֹנָי')).replace(/[^\u0590-\u05FF]/g, '');
+}
+
+function prepareTtsText(text: string): string {
+  return text.replace(DIVINE_NAME_FOR_TTS, 'אֲדֹנָי');
+}
+
+function tokenizeTts(heTts: string): string[] {
+  return prepareTtsText(heTts).split(/\s+/).filter(Boolean);
+}
+
+function tokenizeDisplayLine(line: string): WordSpan[] {
+  const spans: WordSpan[] = [];
+  const parts = line.split(/(\s+)/);
+
+  for (const part of parts) {
+    if (!part) continue;
+
+    if (/^\s+$/.test(part)) {
+      spans.push({ text: part, speak: '', speakable: false, ttsIndex: null });
+      continue;
+    }
+
+    const hebrew = part.replace(/[^\u0590-\u05FF]/g, '');
+    spans.push({
+      text: part,
+      speak: hebrew ? prepareTtsText(hebrew) : part,
+      speakable: hebrew.length > 0,
+      ttsIndex: null,
+    });
+  }
+
+  return spans;
+}
+
+function alignSpeakableWords(displayWords: WordSpan[], ttsWords: string[]): void {
+  let ti = 0;
+
+  for (let i = 0; i < displayWords.length; i++) {
+    const word = displayWords[i];
+    const norm = normalizeWord(word.speak);
+
+    if (ti >= ttsWords.length) {
+      word.ttsIndex = null;
+      continue;
+    }
+
+    const tNorm = normalizeWord(ttsWords[ti]);
+
+    if (norm === tNorm) {
+      word.ttsIndex = ti;
+      word.speak = ttsWords[ti];
+      ti++;
+      continue;
+    }
+
+    let matchedAt = -1;
+    for (let j = i + 1; j < Math.min(i + 12, displayWords.length); j++) {
+      if (normalizeWord(displayWords[j].speak) === tNorm) {
+        matchedAt = j;
+        break;
+      }
+    }
+
+    if (matchedAt >= 0) {
+      for (let k = i; k < matchedAt; k++) {
+        displayWords[k].ttsIndex = ti;
+      }
+      displayWords[matchedAt].ttsIndex = ti;
+      displayWords[matchedAt].speak = ttsWords[ti];
+      ti++;
+      i = matchedAt;
+      continue;
+    }
+
+    if (ti + 1 < ttsWords.length && norm === normalizeWord(ttsWords[ti + 1])) {
+      ti++;
+    }
+
+    word.ttsIndex = ti;
+    word.speak = ttsWords[ti] ?? word.speak;
+    ti++;
+  }
+}
+
+function buildHebrewWordLayout(heDisplay: string, heTts: string): LayoutBlock[] {
+  const ttsWords = tokenizeTts(heTts);
+  const speakableWords: WordSpan[] = [];
+  const layout: LayoutBlock[] = [];
+
+  for (const block of parseHeDisplay(heDisplay)) {
+    if (block.type === 'instruction') {
+      layout.push({ type: 'instruction', content: block.content });
+      continue;
+    }
+
+    const lines: WordSpan[][] = [];
+    for (const line of block.content.split('\n')) {
+      if (!line.trim()) continue;
+      const words = tokenizeDisplayLine(line);
+      lines.push(words);
+      for (const word of words) {
+        if (word.speakable) speakableWords.push(word);
+      }
+    }
+
+    layout.push({ type: 'hebrew', lines });
+  }
+
+  alignSpeakableWords(speakableWords, ttsWords);
+  return layout;
+}
+
+function charIndexToWordIndex(text: string, charIndex: number): number {
+  const words = text.split(/\s+/).filter(Boolean);
+  let pos = 0;
+
+  for (let i = 0; i < words.length; i++) {
+    const start = text.indexOf(words[i], pos);
+    if (start === -1) continue;
+    const end = start + words[i].length;
+    if (charIndex >= start && charIndex < end) return i;
+    pos = end;
+  }
+
+  return Math.max(0, words.length - 1);
+}
+
 function HebrewDisplay({
   heDisplay,
+  heTts,
   localizedTranslation,
+  activeTtsIndex,
+  onWordClick,
 }: {
   heDisplay: string;
+  heTts: string;
   localizedTranslation: string;
+  activeTtsIndex: number | null;
+  onWordClick: (speakText: string) => void;
 }) {
   const localizedInstructions = extractBracketInstructions(localizedTranslation);
+  const layout = useMemo(() => buildHebrewWordLayout(heDisplay, heTts), [heDisplay, heTts]);
+  const ttsWords = useMemo(() => tokenizeTts(heTts), [heTts]);
+  const activeSpoken =
+    activeTtsIndex !== null && activeTtsIndex < ttsWords.length
+      ? normalizeWord(ttsWords[activeTtsIndex])
+      : null;
   let instructionIndex = 0;
 
   return (
     <div className="space-y-4">
-      {parseHeDisplay(heDisplay).map((block, index) => {
+      {layout.map((block, index) => {
         if (block.type === 'instruction') {
           const content = block.content
             .split('\n')
@@ -795,17 +953,46 @@ function HebrewDisplay({
             key={index}
             dir="rtl"
             lang="he"
-            className="he-serif text-[26px] sm:text-[28px] leading-[1.75] text-zinc-900 text-right whitespace-pre-wrap break-words"
+            className="he-serif text-[26px] sm:text-[28px] leading-[1.75] text-zinc-900 text-right break-words"
           >
-            {block.content}
+            {block.lines.map((line, lineIndex) => (
+              <span key={lineIndex}>
+                {lineIndex > 0 && <br />}
+                {line.map((word, wordIndex) =>
+                  word.speakable ? (
+                    <span
+                      key={wordIndex}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => onWordClick(word.speak)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          onWordClick(word.speak);
+                        }
+                      }}
+                      className={`rounded-sm transition-colors ${
+                        activeSpoken !== null &&
+                        word.ttsIndex === activeTtsIndex &&
+                        normalizeWord(word.speak) === activeSpoken
+                          ? 'bg-teal-200/90 ring-1 ring-teal-400/70'
+                          : 'cursor-pointer hover:bg-teal-50/80 active:bg-teal-100'
+                      }`}
+                    >
+                      {word.text}
+                    </span>
+                  ) : (
+                    <span key={wordIndex}>{word.text}</span>
+                  ),
+                )}
+              </span>
+            ))}
           </p>
         );
       })}
     </div>
   );
 }
-
-const DIVINE_NAME_FOR_TTS = /יְהוָה|יְהֹוָה|יהוה|יְיָ/g;
 
 export default function App() {
   const [selected, setSelected] = useState<number | null>(null);
@@ -822,10 +1009,12 @@ const [lang, setLang] = useState<Lang>(() => {
   const [progress, setProgress] = useState(0);
   const [currentSec, setCurrentSec] = useState(0);
   const [durationSec, setDurationSec] = useState(0);
+  const [activeTtsIndex, setActiveTtsIndex] = useState<number | null>(null);
 
   const [showSplash, setShowSplash] = useState(true);
 
   const intervalRef = useRef<number | null>(null);
+  const wordHighlightRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
   const pausedAccumRef = useRef<number>(0);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -843,6 +1032,59 @@ const [lang, setLang] = useState<Lang>(() => {
     setSelected(idx);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const clearTimers = () => {
+    if (intervalRef.current) window.clearInterval(intervalRef.current);
+    if (wordHighlightRef.current) window.clearInterval(wordHighlightRef.current);
+    intervalRef.current = null;
+    wordHighlightRef.current = null;
+  };
+
+  const configureHebrewUtterance = useCallback((utter: SpeechSynthesisUtterance) => {
+    utter.rate = 0.50;
+    utter.pitch = 1;
+    utter.lang = 'he-IL';
+
+    const voices = window.speechSynthesis.getVoices();
+    const heVoice = voices.find((v) => v.lang.toLowerCase().includes('he'));
+    if (heVoice) utter.voice = heVoice;
+  }, []);
+
+  const stopAudio = useCallback(() => {
+    window.speechSynthesis?.cancel();
+    clearTimers();
+    setIsPlaying(false);
+    setActiveTtsIndex(null);
+    utteranceRef.current = null;
+  }, []);
+
+  const speakWord = useCallback(
+    (text: string) => {
+      const synth = window.speechSynthesis;
+      stopAudio();
+      setProgress(0);
+      setCurrentSec(0);
+      setDurationSec(0);
+      pausedAccumRef.current = 0;
+
+      const utter = new SpeechSynthesisUtterance(prepareTtsText(text));
+      configureHebrewUtterance(utter);
+      synth.speak(utter);
+    },
+    [configureHebrewUtterance, stopAudio],
+  );
+
+  const startWordHighlightFallback = useCallback((ttsText: string, estDuration: number) => {
+    const wordCount = tokenizeTts(ttsText).length;
+    if (wordCount === 0) return;
+
+    if (wordHighlightRef.current) window.clearInterval(wordHighlightRef.current);
+    wordHighlightRef.current = window.setInterval(() => {
+      const elapsed = (Date.now() - startRef.current) / 1000;
+      const idx = Math.min(wordCount - 1, Math.floor((elapsed / estDuration) * wordCount));
+      setActiveTtsIndex(idx);
+    }, 180);
+  }, []);
 
   const handlePrayerTouchStart = (e: React.TouchEvent) => {
     const touch = e.touches[0];
@@ -884,19 +1126,17 @@ const [lang, setLang] = useState<Lang>(() => {
   useEffect(() => {
     return () => {
       window.speechSynthesis?.cancel();
-      if (intervalRef.current) window.clearInterval(intervalRef.current);
+      clearTimers();
     };
   }, []);
 
   useEffect(() => {
-    window.speechSynthesis?.cancel();
-    setIsPlaying(false);
+    stopAudio();
     setProgress(0);
     setCurrentSec(0);
     setDurationSec(0);
     pausedAccumRef.current = 0;
-    if (intervalRef.current) window.clearInterval(intervalRef.current);
-  }, [selected]);
+  }, [selected, stopAudio]);
 
   useEffect(() => {
   localStorage.setItem('shacharis_lang', lang);
@@ -916,7 +1156,7 @@ const [lang, setLang] = useState<Lang>(() => {
       synth.pause();
       setIsPlaying(false);
       pausedAccumRef.current = (Date.now() - startRef.current) / 1000;
-      if (intervalRef.current) window.clearInterval(intervalRef.current);
+      clearTimers();
       return;
     }
 
@@ -929,46 +1169,53 @@ const [lang, setLang] = useState<Lang>(() => {
         setCurrentSec(Math.min(elapsed, durationSec));
         setProgress(Math.min((elapsed / durationSec) * 100, 100));
       }, 120);
+      startWordHighlightFallback(prayers[selected].he_tts, durationSec);
       return;
     }
 
     const prayer = prayers[selected];
-    const ttsText = prayer.he_tts.replace(DIVINE_NAME_FOR_TTS, 'אֲדֹנָי');
+    const ttsText = prepareTtsText(prayer.he_tts);
 
     synth.cancel();
+    clearTimers();
     const utter = new SpeechSynthesisUtterance(ttsText);
-    utter.rate = 0.50;
-    utter.pitch = 1;
-    utter.lang = 'he-IL';
-
-    const voices = synth.getVoices();
-    const heVoice = voices.find(v => v.lang.toLowerCase().includes('he'));
-    if (heVoice) utter.voice = heVoice;
+    configureHebrewUtterance(utter);
 
     const estDuration = Math.max(4, Math.ceil(ttsText.length * 0.085));
     setDurationSec(estDuration);
     setCurrentSec(0);
     setProgress(0);
+    setActiveTtsIndex(0);
     startRef.current = Date.now();
     pausedAccumRef.current = 0;
+
+    utter.onboundary = (event) => {
+      if (event.name !== 'word' || event.charIndex === undefined) return;
+      if (wordHighlightRef.current) {
+        window.clearInterval(wordHighlightRef.current);
+        wordHighlightRef.current = null;
+      }
+      setActiveTtsIndex(charIndexToWordIndex(ttsText, event.charIndex));
+    };
 
     utter.onend = () => {
       setIsPlaying(false);
       setProgress(100);
       setCurrentSec(estDuration);
-      if (intervalRef.current) window.clearInterval(intervalRef.current);
+      setActiveTtsIndex(null);
+      clearTimers();
       pausedAccumRef.current = 0;
     };
     utter.onerror = () => {
       setIsPlaying(false);
-      if (intervalRef.current) window.clearInterval(intervalRef.current);
+      setActiveTtsIndex(null);
+      clearTimers();
     };
 
     utteranceRef.current = utter;
     synth.speak(utter);
     setIsPlaying(true);
 
-    if (intervalRef.current) window.clearInterval(intervalRef.current);
     intervalRef.current = window.setInterval(() => {
       const elapsed = (Date.now() - startRef.current) / 1000;
       if (elapsed >= estDuration) {
@@ -979,6 +1226,7 @@ const [lang, setLang] = useState<Lang>(() => {
         setProgress((elapsed / estDuration) * 100);
       }
     }, 120);
+    startWordHighlightFallback(prayer.he_tts, estDuration);
   };
 
   const currentPrayer = selected !== null ? prayers[selected] : null;
@@ -1035,7 +1283,10 @@ const [lang, setLang] = useState<Lang>(() => {
                 <div className="mt-7">
                   <HebrewDisplay
                     heDisplay={currentPrayer.he_display}
+                    heTts={currentPrayer.he_tts}
                     localizedTranslation={currentPrayer[lang]}
+                    activeTtsIndex={activeTtsIndex}
+                    onWordClick={speakWord}
                   />
                 </div>
 
@@ -1168,7 +1419,7 @@ const [lang, setLang] = useState<Lang>(() => {
               ))}
             </div>
               <div className="mt-8 px-2 text-[11px] text-zinc-400 leading-4">
-                Text displayed with niqqud. Audio uses he-IL voice at 0.50x. Divine Name spoken as Adonai.
+                Text displayed with niqqud. Tap a Hebrew word to hear it. Audio uses he-IL voice at 0.50x. Divine Name spoken as Adonai.
               </div>
             </div>
           )}
