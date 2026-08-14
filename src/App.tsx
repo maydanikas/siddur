@@ -849,6 +849,40 @@ function charIndexToWordIndex(text: string, charIndex: number): number {
   return Math.max(0, words.length - 1);
 }
 
+const SPEECH_RATE = 0.5;
+const CHAR_SECONDS_AT_RATE = 0.085;
+
+function isAndroidDevice(): boolean {
+  return /Android/i.test(navigator.userAgent);
+}
+
+function estimateSpeechDuration(text: string, rate: number): number {
+  // Android Chrome often ignores utter.rate and speaks near normal speed.
+  const effectiveRate = isAndroidDevice() ? 1 : rate;
+  return Math.max(4, Math.ceil((text.length * CHAR_SECONDS_AT_RATE) / effectiveRate));
+}
+
+function buildWordEndTimes(ttsText: string, totalDuration: number): number[] {
+  const words = tokenizeTts(ttsText);
+  if (words.length === 0) return [];
+
+  const weights = words.map((word) => Math.max(1, word.length));
+  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+  let cumulative = 0;
+
+  return weights.map((weight) => {
+    cumulative += (weight / totalWeight) * totalDuration;
+    return cumulative;
+  });
+}
+
+function wordIndexAtElapsed(endTimes: number[], elapsedSec: number): number {
+  for (let i = 0; i < endTimes.length; i++) {
+    if (elapsedSec < endTimes[i]) return i;
+  }
+  return Math.max(0, endTimes.length - 1);
+}
+
 function HebrewDisplay({
   heDisplay,
   heTts,
@@ -989,7 +1023,7 @@ const [lang, setLang] = useState<Lang>(() => {
   };
 
   const configureHebrewUtterance = useCallback((utter: SpeechSynthesisUtterance) => {
-    utter.rate = 0.50;
+    utter.rate = SPEECH_RATE;
     utter.pitch = 1;
     utter.lang = 'he-IL';
 
@@ -1023,15 +1057,15 @@ const [lang, setLang] = useState<Lang>(() => {
   );
 
   const startWordHighlightFallback = useCallback((ttsText: string, estDuration: number) => {
-    const wordCount = tokenizeTts(ttsText).length;
-    if (wordCount === 0) return;
+    const endTimes = buildWordEndTimes(ttsText, estDuration);
+    if (endTimes.length === 0) return;
 
     if (wordHighlightRef.current) window.clearInterval(wordHighlightRef.current);
     wordHighlightRef.current = window.setInterval(() => {
       const elapsed = (Date.now() - startRef.current) / 1000;
-      const idx = Math.min(wordCount - 1, Math.floor((elapsed / estDuration) * wordCount));
-      setActiveTtsIndex(idx);
-    }, 180);
+      const adjusted = isAndroidDevice() ? elapsed * 1.06 : elapsed;
+      setActiveTtsIndex(wordIndexAtElapsed(endTimes, adjusted));
+    }, 80);
   }, []);
 
   const handlePrayerTouchStart = (e: React.TouchEvent) => {
@@ -1129,22 +1163,40 @@ const [lang, setLang] = useState<Lang>(() => {
     const utter = new SpeechSynthesisUtterance(ttsText);
     configureHebrewUtterance(utter);
 
-    const estDuration = Math.max(4, Math.ceil(ttsText.length * 0.085));
+    const estDuration = estimateSpeechDuration(ttsText, SPEECH_RATE);
     setDurationSec(estDuration);
     setCurrentSec(0);
     setProgress(0);
     setActiveTtsIndex(0);
-    startRef.current = Date.now();
     pausedAccumRef.current = 0;
 
-    utter.onboundary = (event) => {
-      if (event.name !== 'word' || event.charIndex === undefined) return;
-      if (wordHighlightRef.current) {
-        window.clearInterval(wordHighlightRef.current);
-        wordHighlightRef.current = null;
-      }
-      setActiveTtsIndex(charIndexToWordIndex(ttsText, event.charIndex));
+    utter.onstart = () => {
+      startRef.current = Date.now();
+      setActiveTtsIndex(0);
+      startWordHighlightFallback(prayer.he_tts, estDuration);
+
+      intervalRef.current = window.setInterval(() => {
+        const elapsed = (Date.now() - startRef.current) / 1000;
+        if (elapsed >= estDuration) {
+          setCurrentSec(estDuration);
+          setProgress(100);
+        } else {
+          setCurrentSec(elapsed);
+          setProgress((elapsed / estDuration) * 100);
+        }
+      }, 120);
     };
+
+    if (!isAndroidDevice()) {
+      utter.onboundary = (event) => {
+        if (event.name !== 'word' || event.charIndex === undefined) return;
+        if (wordHighlightRef.current) {
+          window.clearInterval(wordHighlightRef.current);
+          wordHighlightRef.current = null;
+        }
+        setActiveTtsIndex(charIndexToWordIndex(ttsText, event.charIndex));
+      };
+    }
 
     utter.onend = () => {
       setIsPlaying(false);
@@ -1163,18 +1215,6 @@ const [lang, setLang] = useState<Lang>(() => {
     utteranceRef.current = utter;
     synth.speak(utter);
     setIsPlaying(true);
-
-    intervalRef.current = window.setInterval(() => {
-      const elapsed = (Date.now() - startRef.current) / 1000;
-      if (elapsed >= estDuration) {
-        setCurrentSec(estDuration);
-        setProgress(100);
-      } else {
-        setCurrentSec(elapsed);
-        setProgress((elapsed / estDuration) * 100);
-      }
-    }, 120);
-    startWordHighlightFallback(prayer.he_tts, estDuration);
   };
 
   const currentPrayer = selected !== null ? prayers[selected] : null;
