@@ -566,6 +566,7 @@ const prayers: Prayer[] = [
 },
 {
   id: 46,
+  include_in_home: true,
   titleEn: "Kedushat Hashem - Atah Kadosh - Silent Amida",
   titleHe: "קְדֻשַּׁת הַשֵּׁם - אַתָּה קָדוֹשׁ",
   he_display: "[3. KEDOESJAT HASJEM - For silent private Amida - Do NOT use chazzan Kedusha]\nאַתָּה קָדוֹשׁ וְשִׁמְךָ קָדוֹשׁ, וּקְדוֹשִׁים בְּכָל-יוֹם יְהַלְּלוּךָ,\nסֶלָה. בָּרוּךְ אַתָּה יְיָ, הָאֵל הַקָּדוֹשׁ.\n[Seasonal replacement - Tussen Rosj Hasjana en Jom Kipoer - Replace last words:]\nבָּרוּךְ אַתָּה יְיָ, הַמֶּלֶךְ הַקָּדוֹשׁ.",
@@ -575,59 +576,6 @@ const prayers: Prayer[] = [
   nl: "U bent heilig en Uw Naam is heilig, en heiligen loven U elke dag, sela. Gezegend bent U, Eeuwige, de heilige God. [Seizoensvervanging tussen Rosj Hasjana en Jom Kipoer: Gezegend bent U, Eeuwige, de heilige Koning.] [Opmerking: Voor stille privé Amida, niet de Kedoesja van de chazzan gebruiken van de volgende pagina]",
   en: "You are holy and Your Name is holy, and holy ones praise You every day, selah. Blessed are You, Lord, the holy God. [Seasonal replacement between Rosh HaShana and Yom Kippur: Blessed are You, Lord, the holy King.] [Note: For silent private Amida, do not use chazzan Kedusha from next page]",
   fr: "Tu es saint et Ton Nom est saint, et des saints Te louent chaque jour, sela. Béni sois-Tu, Éternel, le Dieu saint. [Remplacement saisonnier entre Roch Hachana et Kippour: Béni sois-Tu, Éternel, le Roi saint.] [Note: Pour la Amida silencieuse privée, ne pas utiliser la Kedoucha du hazzan de la page suivante]"
-},
-{
-  id: 43,
-  include_in_home: true,
-  no_interruption: true,
-  said_softly: true,
-  titleEn: "Adonai Sefatai Tiftach",
-  titleHe: "פְּתִיחַת הָעֲמִידָה",
-  he_display: "אֲדֹנָי שְׂפָתַי תִּפְתָּח וּפִי יַגִּיד תְּהִלָּתֶךָ.",
-  he_tts: "אֲדֹנָי שְׂפָתַי תִּפְתָּח וּפִי יַגִּיד תְּהִלָּתֶךָ.",
-  translit: "Adonai sefatai tiftach ufi yagid tehilatecha.",
-  ru: "Господь, уста мои открой и рот мой возвестит хвалу Твою.",
-  nl: "Eeuwige, open mijn lippen en mijn mond zal Uw lof verkondigen.",
-  en: "Lord, open my lips and my mouth shall declare Your praise.",
-  fr: "Seigneur, ouvre mes lèvres et ma bouche annoncera Ta louange."
-},
-{
-  id: 44,
-  include_in_home: true,
-  titleEn: "Avot Ve'Imahot",
-  titleHe: "אָבוֹת וְאִמָּהוֹת",
-  he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ, אֱלֹהֵי אַבְרָהָם, אֱלֹהֵי יִצְחָק, וֵאלֹהֵי יַעֲקֹב, אֱלֹהֵי שָׂרָה, אֱלֹהֵי רִבְקָה, אֱלֹהֵי רָחֵל וֵאלֹהֵי לֵאָה, הָאֵל הַגָּדוֹל הַגִּבּוֹר וְהַנּוֹרָא, אֵל עֶלְיוֹן, גּוֹמֵל חֲסָדִים טוֹבִים, וְקוֹנֵה הַכֹּל, וְזוֹכֵר חַסְדֵי אָבוֹת וְאִמָּהוֹת, וּמֵבִיא גוֹאֵל לִבְנֵי בְנֵיהֶם לְמַעַן שְׁמוֹ בְּאַהֲבָה.\nזָכְרֵנוּ לְחַיִּים, מֶלֶךְ חָפֵץ בַּחַיִּים, וְכָתְבֵנוּ בְּסֵפֶר הַחַיִּים, לְמַעַנְךָ אֱלֹהִים חַיִּים.\nמֶלֶךְ עוֹזֵר וּמוֹשִׁיעַ וּמָגֵן. בָּרוּךְ אַתָּה יְיָ, מָגֵן אַבְרָהָם וּפוֹקֵד שָׂרָה.",
-  he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ, אֱלֹהֵי אַבְרָהָם, אֱלֹהֵי יִצְחָק, וֵאלֹהֵי יַעֲקֹב, אֱלֹהֵי שָׂרָה, אֱלֹהֵי רִבְקָה, אֱלֹהֵי רָחֵל וֵאלֹהֵי לֵאָה, הָאֵל הַגָּדוֹל הַגִּבּוֹר וְהַנּוֹרָא, אֵל עֶלְיוֹן, גּוֹמֵל חֲסָדִים טוֹבִים, וְקוֹנֵה הַכֹּל, וְזוֹכֵר חַסְדֵי אָבוֹת וְאִמָּהוֹת, וּמֵבִיא גוֹאֵל לִבְנֵי בְנֵיהֶם לְמַעַן שְׁמוֹ בְּאַהֲבָה. זָכְרֵנוּ לְחַיִּים, מֶלֶךְ חָפֵץ בַּחַיִּים, וְכָתְבֵנוּ בְּסֵפֶר הַחַיִּים, לְמַעַנְךָ אֱלֹהִים חַיִּים. מֶלֶךְ עוֹזֵר וּמוֹשִׁיעַ וּמָגֵן. בָּרוּךְ אַתָּה יְיָ, מָגֵן אַבְרָהָם וּפוֹקֵד שָׂרָה.",
-  translit: "Baruch atah Adonai Eloheinu ve'Elohei avoteinu, Elohei Avraham, Elohei Yitzchak, ve'Elohei Ya'akov, Elohei Sara, Elohei Rivka, Elohei Rachel ve'Elohei Le'a, Ha'El hagadol hagibor vehanora, El Elyon, gomel chasadim tovim, vekoneh hakol, vezocher chasdei avot ve'imahot, umevi go'el livnei veneihem lema'an shemo be'ahava. Zochrenu lechayim, Melech chafetz bachayim, vechotvenu besefer hachayim, lema'ancha Elohim chayim. Melech ozer umoshia umagen. Baruch atah Adonai, Magen Avraham ufoked Sara.",
-  ru: "Благословен Ты, Господь Бог наш и Бог отцов наших, Бог Авраама, Бог Ицхака и Бог Яакова, Бог Сары, Бог Ривки, Бог Рахели и Бог Леи, Бог великий, могучий и грозный, Бог Всевышний, творящий добрые милости, и приобретающий всё, и помнящий милости отцов и матерей, и приводящий избавителя сынам сынов их ради Имени Своего с любовью. Вспомни нас для жизни, Царь, желающий жизни, и запиши нас в Книгу Жизни, ради Тебя, Бог живой. Царь помогающий и спасающий и Щит. Благословен Ты, Господь, Щит Авраама и Вспоминающий Сару.",
-  nl: "Gezegend bent U, Eeuwige onze God en God van onze vaderen, God van Abraham, God van Jitschak en God van Jakob, God van Sara, God van Rivka, God van Rachel en God van Lea, de grote, machtige en ontzagwekkende God, Opperste God, Die goede gunsten bewijst, en Alles verwerft, en Die de gunsten van vaders en moeders gedenkt, en Die een Verlosser brengt aan de kinderen van hun kinderen omwille van Zijn Naam met liefde. Gedenk ons ten leven, Koning Die behagen heeft in het leven, en schrijf ons in het Boek des Levens, omwille van U, levende God. Koning, Helper en Redder en Schild. Gezegend bent U, Eeuwige, Schild van Abraham en Die Sara gedenkt.",
-  en: "Blessed are You, Lord our God and God of our fathers, God of Abraham, God of Isaac and God of Jacob, God of Sarah, God of Rebecca, God of Rachel and God of Leah, the great, mighty and awesome God, Most High God, Who bestows good kindnesses, and acquires all, and remembers the kindnesses of fathers and mothers, and brings a Redeemer to their children's children for the sake of His Name with love. Remember us for life, King Who desires life, and inscribe us in the Book of Life, for Your sake, living God. King, Helper and Savior and Shield. Blessed are You, Lord, Shield of Abraham and Who remembers Sarah.",
-  fr: "Béni sois-Tu, Éternel notre Dieu et Dieu de nos pères, Dieu d'Abraham, Dieu d'Isaac et Dieu de Jacob, Dieu de Sarah, Dieu de Rivka, Dieu de Rachel et Dieu de Léa, le Dieu grand, puissant et redoutable, Dieu Très-Haut, Qui accorde de bonnes bontés, et acquiert tout, et Se souvient des bontés des pères et des mères, et amène un Rédempteur aux enfants de leurs enfants pour Son Nom avec amour. Souviens-Toi de nous pour la vie, Roi qui désires la vie, et inscris-nous dans le Livre de la Vie, pour Toi, Dieu vivant. Roi, Aide et Sauveur et Bouclier. Béni sois-Tu, Éternel, Bouclier d'Abraham et Qui Se souvient de Sarah."
-},
-{
-  id: 45,
-  include_in_home: true,
-  titleEn: "Gevurot - Atah Gibor",
-  titleHe: "גְּבוּרוֹת",
-  he_display: "אַתָּה גִּבּוֹר לְעוֹלָם אֲדֹנָי, מְחַיֵּה מֵתִים אַתָּה, רַב לְהוֹשִׁיעַ.\nמַשִּׁיב הָרוּחַ וּמוֹרִיד הַגָּשֶׁם.\nמְכַלְכֵּל חַיִּים בְּחֶסֶד, מְחַיֵּה מֵתִים בְּרַחֲמִים רַבִּים, סוֹמֵךְ נוֹפְלִים, וְרוֹפֵא חוֹלִים, וּמַתִּיר אֲסוּרִים, וּמְקַיֵּם אֱמוּנָתוֹ לִישֵׁנֵי עָפָר, מִי כָמוֹךָ בַּעַל גְּבוּרוֹת וּמִי דוֹמֶה לָךְ, מֶלֶךְ מֵמִית וּמְחַיֶּה וּמַצְמִיחַ יְשׁוּעָה.\nמִי כָמוֹךָ אַב הָרַחֲמִים, זוֹכֵר יְצוּרָיו לְחַיִּים בְּרַחֲמִים.\nוְנֶאֱמָן אַתָּה לְהַחֲיוֹת מֵתִים.\nבָּרוּךְ אַתָּה יְיָ, מְחַיֵּה הַמֵּתִים.",
-  he_tts: "אַתָּה גִּבּוֹר לְעוֹלָם אֲדֹנָי, מְחַיֵּה מֵתִים אַתָּה, רַב לְהוֹשִׁיעַ. מַשִּׁיב הָרוּחַ וּמוֹרִיד הַגָּשֶׁם. מְכַלְכֵּל חַיִּים בְּחֶסֶד, מְחַיֵּה מֵתִים בְּרַחֲמִים רַבִּים, סוֹמֵךְ נוֹפְלִים, וְרוֹפֵא חוֹלִים, וּמַתִּיר אֲסוּרִים, וּמְקַיֵּם אֱמוּנָתוֹ לִישֵׁנֵי עָפָר, מִי כָמוֹךָ בַּעַל גְּבוּרוֹת וּמִי דוֹמֶה לָךְ, מֶלֶךְ מֵמִית וּמְחַיֶּה וּמַצְמִיחַ יְשׁוּעָה. מִי כָמוֹךָ אַב הָרַחֲמִים, זוֹכֵר יְצוּרָיו לְחַיִּים בְּרַחֲמִים. וְנֶאֱמָן אַתָּה לְהַחֲיוֹת מֵתִים. בָּרוּךְ אַתָּה יְיָ, מְחַיֵּה הַמֵּתִים.",
-  translit: "Atah gibor le'olam Adonai, mechayeh metim atah, rav lehoshia. Mashiv haruach umorid hagashem. Mechalkel chayim bechesed, mechayeh metim berachamim rabim, somech noflim, verofeh cholim, umatir asurim, umekayem emunato lishenei afar, mi chamocha ba'al gevurot umi domeh lach, Melech memit umechayeh umatzmiach yeshua. Mi chamocha Av harachamim, zocher yetzurav lechayim berachamim. Vene'eman atah lehachayot metim. Baruch atah Adonai, mechayeh hametim.",
-  ru: "Ты могуч вовеки, Господь, оживляющий мертвых Ты, велик в спасении. Заставляющий дуть ветер и низводящий дождь. Питающий живых милостью, оживляющий мертвых милосердием великим, поддерживающий падающих, и исцеляющий больных, и освобождающий узников, и исполняющий верность Свою спящим в прахе, кто как Ты, Владыка могуществ и кто подобен Тебе, Царь умерщвляющий и оживляющий и взращивающий спасение. Кто как Ты, Отец милосердия, помнящий творения Свои для жизни в милосердии. И верен Ты в оживлении мертвых. Благословен Ты, Господь, оживляющий мертвых.",
-  nl: "U bent machtig in eeuwigheid, Eeuwige, Die doden levend maakt, groot in verlossing. Die de wind doet waaien en de regen doet neerdalen. Die levenden voedt met liefde, doden levend maakt met grote barmhartigheid, Die vallenden ondersteunt, en zieken geneest, en gevangenen bevrijdt, en Zijn trouw handhaaft aan hen die in het stof slapen, wie is als U, Meester van machten en wie is U gelijk, Koning Die doodt en levend maakt en heil doet ontspruiten. Wie is als U, Vader der barmhartigheid, Die Zijn schepselen gedenkt ten leven in barmhartigheid. En betrouwbaar bent U om doden te doen herleven. Gezegend bent U, Eeuwige, Die de doden levend maakt.",
-  en: "You are mighty forever, Lord, You revive the dead, great in salvation. Who causes the wind to blow and the rain to fall. Who sustains the living with kindness, revives the dead with great mercy, supports the falling, heals the sick, releases the bound, and keeps His faith to those who sleep in the dust, who is like You, Master of mighty deeds and who is comparable to You, King Who causes death and restores life and causes salvation to sprout. Who is like You, Father of mercy, Who remembers His creatures for life in mercy. And faithful are You to revive the dead. Blessed are You, Lord, Who revives the dead.",
-  fr: "Tu es puissant à jamais, Seigneur, Toi qui fais revivre les morts, grand pour sauver. Qui fais souffler le vent et tomber la pluie. Qui nourris les vivants avec bonté, fais revivre les morts avec grande miséricorde, soutiens les tombants, guéris les malades, libères les captifs, et gardes Ta fidélité à ceux qui dorment dans la poussière, qui est comme Toi, Maître des puissances et qui Te ressemble, Roi qui fais mourir et vivre et fais germer le salut. Qui est comme Toi, Père de miséricorde, Qui Se souvient de Ses créatures pour la vie avec miséricorde. Et fidèle Tu es pour faire revivre les morts. Béni sois-Tu, Éternel, Qui fais revivre les morts."
-},
-{
-  id: 46,
-  titleEn: "Kedushat Hashem",
-  titleHe: "קְדֻשַּׁת הַשֵּׁם",
-  he_display: "אַתָּה קָדוֹשׁ וְשִׁמְךָ קָדוֹשׁ, וּקְדוֹשִׁים בְּכָל-יוֹם יְהַלְלוּךָ, סֶלָה. בָּרוּךְ אַתָּה יְיָ, הָאֵל הַקָּדוֹשׁ.\n[בימים נוראים: הַמֶּלֶךְ הַקָּדוֹשׁ]",
-  he_tts: "אַתָּה קָדוֹשׁ וְשִׁמְךָ קָדוֹשׁ, וּקְדוֹשִׁים בְּכָל-יוֹם יְהַלְלוּךָ, סֶלָה. בָּרוּךְ אַתָּה יְיָ, הָאֵל הַקָּדוֹשׁ. בָּרוּךְ אַתָּה יְיָ, הַמֶּלֶךְ הַקָּדוֹשׁ.",
-  translit: "Atah kadosh veshimcha kadosh, ukedoshim bechol-yom yehalelucha, sela. Baruch atah Adonai, Ha'El hakadosh. HaMelech hakadosh.",
-  ru: "Ты свят и Имя Твое свято, и святые каждый день восхваляют Тебя, села. Благословен Ты, Господь, Бог святой. [В Ямим Нораим: Царь святой.]",
-  nl: "U bent heilig en Uw Naam is heilig, en heiligen loven U elke dag, sela. Gezegend bent U, Eeuwige, de heilige God. [In Yamim Noraim: de heilige Koning.]",
-  en: "You are holy and Your Name is holy, and holy ones praise You every day, selah. Blessed are You, Lord, the holy God. [In Yamim Noraim: the holy King.]",
-  fr: "Tu es saint et Ton Nom est saint, et des saints Te louent chaque jour, sela. Béni sois-Tu, Éternel, le Dieu saint. [En Yamim Noraim: le Roi saint.]"
 },
 {
   id: 47,
