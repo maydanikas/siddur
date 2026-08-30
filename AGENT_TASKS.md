@@ -27,8 +27,9 @@
 1. **Перед стартом:** `PROJECT.md` + этот файл.
 2. **Одна ветка — одна активная задача** (или явное разделение файлов).
 3. **`src/App.tsx`:** не трогать `prayers[]` и TTS одновременно разным агентам.
-4. **Deploy:** `version-2.0` → Vercel **siddur** · `version-2.1` → **siddur-beta**.
+4. **Deploy:** `version-2.0` → Vercel **siddur** (основная) · `version-2.1` → **siddur-beta**.
 5. **Git:** не commit/push без запроса пользователя.
+6. **По умолчанию работать на `version-2.0`**, если пользователь не указал другую ветку.
 
 ---
 
@@ -42,17 +43,18 @@
 | 2026-08-14 | version-2.1 | Android TTS: итерации таймера, предложения, автокалибровка |
 | 2026-08-14 | version-2.1 | Футер Version 2.1, 2026; vite `host: true` для теста с телефона |
 | 2026-08-30 | version-2.1 | База знаний `PROJECT.md`, правила агентов, `AGENT_TASKS.md`, `AGENTS.md` |
+| 2026-08-30 | version-2.0 | Cherry-pick agent docs; version-2.0 — основная ветка |
 
 ---
 
 ## Шаблон новой записи (Active)
 
 ```markdown
-| 2026-08-30 | Краткое описание | version-2.1 | src/App.tsx | cursor-chat |
+| 2026-08-30 | Краткое описание | version-2.0 | src/App.tsx | cursor-chat |
 ```
 
 ## Шаблон завершения (Completed)
 
 ```markdown
-| 2026-08-30 | version-2.1 | Что именно сделано и зачем |
+| 2026-08-30 | version-2.0 | Что именно сделано и зачем |
 ```

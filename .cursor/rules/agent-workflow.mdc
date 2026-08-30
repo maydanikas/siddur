@@ -29,4 +29,4 @@ alwaysApply: true
 
 - Одна активная задача на ветку.
 - Не редактировать `prayers[]` и TTS параллельно разным агентам.
-- Production: `version-2.0` · Beta: `version-2.1` — не смешивать без cherry-pick.
+- Production и основная разработка: **`version-2.0`** · Beta: `version-2.1` — не смешивать без cherry-pick.

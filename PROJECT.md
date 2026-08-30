@@ -33,15 +33,15 @@ PWA-молитвенник **Шахарит** (утренние молитвы) 
 
 | Vercel-проект | Git-ветка | Назначение |
 |---------------|-----------|------------|
-| **siddur** | `version-2.0` | Production (стабильная) |
-| **siddur-beta** | `version-2.1` | Beta / разработка |
+| **siddur** | `version-2.0` | **Основная** — production и активная разработка |
+| **siddur-beta** | `version-2.1` | Beta / эксперименты (TTS Android, новые фичи) |
 
 | Ветка | Статус |
 |-------|--------|
-| `main` | Главная ветка на GitHub |
+| `main` | Главная ветка на GitHub (legacy) |
 | `version-1.0` | Старая стабильная v1 |
-| `version-2.0` | Production-код |
-| `version-2.1` | Активная разработка (TTS, подсветка слов, Amida) |
+| **`version-2.0`** | **Основная рабочая ветка** — prod + новые задачи |
+| `version-2.1` | Beta: TTS, подсветка слов, Amida (cherry-pick в 2.0 по необходимости) |
 
 **Важно:** вкладка Changes в Cursor может показывать diff **ветки vs main**, а не uncommitted changes.
 
@@ -251,6 +251,7 @@ git push origin version-2.0
 | 2026-08-14 | Android: предложения + автокалибровка подсветки |
 | 2026-08-14 | Футер Version 2.1, 2026; vite host для теста с телефона |
 | 2026-08-30 | PROJECT.md, AGENT_TASKS.md, AGENTS.md, cursor rule agent-workflow |
+| 2026-08-30 | version-2.0 — основная ветка; agent docs на production |
 
 ---
 
@@ -273,7 +274,7 @@ git push origin version-2.0
 2. Прочитай AGENT_TASKS.md
 3. Смотри AGENTS.md и .cursor/rules/agent-workflow.mdc
 
-Ветка: version-2.1 (beta) / version-2.0 (prod)
+Ветка: version-2.0 (основная) · version-2.1 (beta, cherry-pick при необходимости)
 Путь: C:\dev\shacharis-pwa\shacharis-pwa
 
 Задача: [описание]
