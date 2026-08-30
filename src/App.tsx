@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import SplashScreen from './components/SplashScreen';
-import AboutScreen from './components/AboutScreen';
-import { ABOUT_COPY, resolveSystemLang } from './supportCopy';
 
 type Lang = 'ru' | 'nl' | 'en' | 'fr';
 type Prayer = {
@@ -1062,12 +1060,6 @@ const [lang, setLang] = useState<Lang>(() => {
   const [activeTtsIndex, setActiveTtsIndex] = useState<number | null>(null);
 
   const [showSplash, setShowSplash] = useState(true);
-  const [showAbout, setShowAbout] = useState(false);
-
-  const openAbout = () => {
-    setShowAbout(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   const intervalRef = useRef<number | null>(null);
   const wordHighlightRef = useRef<number | null>(null);
@@ -1419,30 +1411,22 @@ const [lang, setLang] = useState<Lang>(() => {
       <div className="max-w-[720px] mx-auto min-h-screen flex flex-col">
         {/* Header */}
         <header className="px-6 pt-8 pb-5 ui-sans">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="h-9 w-9 rounded-full bg-[#0D9488] flex items-center justify-center text-white font-semibold text-[15px]">ש</div>
-              <div>
-                <h1 className="text-[22px] font-semibold tracking-tight leading-none">Shacharis</h1>
-                <p className="text-[13px] text-zinc-500 mt-1 font-medium">Shaharit • Morning Prayers</p>
-              </div>
+          <button
+            type="button"
+            onClick={() => goToPrayer(null)}
+            className="flex items-center gap-3 min-w-0 text-left"
+            aria-label="Back to list"
+          >
+            <div className="h-9 w-9 rounded-full bg-[#0D9488] flex items-center justify-center text-white font-semibold text-[15px]">ש</div>
+            <div>
+              <h1 className="text-[22px] font-semibold tracking-tight leading-none">Shacharis</h1>
+              <p className="text-[13px] text-zinc-500 mt-1 font-medium">Shaharit • Morning Prayers</p>
             </div>
-            {selected === null && !showAbout && (
-              <button
-                type="button"
-                onClick={openAbout}
-                className="shrink-0 text-[13px] font-semibold text-[#0D9488] hover:text-teal-700 py-1"
-              >
-                {ABOUT_COPY[resolveSystemLang()].aboutLink}
-              </button>
-            )}
-          </div>
+          </button>
         </header>
 
         <main className="flex-1 flex flex-col min-h-0">
-          {showAbout ? (
-            <AboutScreen onBack={() => setShowAbout(false)} />
-          ) : selected !== null && currentPrayer ? (
+          {selected !== null && currentPrayer ? (
             <div
               className="flex-1 flex flex-col min-h-0"
               onTouchStart={handlePrayerTouchStart}
@@ -1578,7 +1562,7 @@ const [lang, setLang] = useState<Lang>(() => {
             </div>
           ) : null}
 
-          {selected === null && !showAbout && (
+          {selected === null && (
             <div className="px-4 pt-2 pb-10 ui-sans">
               <div className="px-2 mb-4">
                 <p className="text-[13px] text-zinc-500 leading-5">Select a prayer to read, listen and translate. All {TOTAL_PRAYERS} items in traditional order.</p>
