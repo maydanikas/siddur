@@ -1105,6 +1105,11 @@ const [lang, setLang] = useState<Lang>(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const goHome = () => {
+    setShowAbout(false);
+    goToPrayer(null);
+  };
+
   const clearTimers = () => {
     if (intervalRef.current) window.clearInterval(intervalRef.current);
     if (wordHighlightRef.current) window.clearInterval(wordHighlightRef.current);
@@ -1435,13 +1440,18 @@ const [lang, setLang] = useState<Lang>(() => {
         {/* Header */}
         <header className="px-6 pt-8 pb-5 ui-sans">
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
+            <button
+              type="button"
+              onClick={goHome}
+              aria-label="Back to prayer list"
+              className="flex items-center gap-3 min-w-0 text-left appearance-none bg-transparent p-0 m-0 border-0 font-[inherit] text-inherit"
+            >
               <div className="h-9 w-9 rounded-full bg-[#0D9488] flex items-center justify-center text-white font-semibold text-[15px]">ש</div>
               <div>
                 <h1 className="text-[22px] font-semibold tracking-tight leading-none">Shacharis</h1>
                 <p className="text-[13px] text-zinc-500 mt-1 font-medium">Shaharit • Morning Prayers</p>
               </div>
-            </div>
+            </button>
             {selected === null && !showAbout && (
               <button
                 type="button"
