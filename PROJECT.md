@@ -1,12 +1,55 @@
-# Shacharis PWA — Project Summary
+# Siddur / Shacharis PWA — база знаний
 
-Last updated: 2026-08-04
+Последнее обновление: **2026-08-30**
 
-## What this is
+## Что это
 
-PWA on **Vite + React + TypeScript + Tailwind** — morning prayers (Shacharis) with Hebrew text, transliteration, translations (RU/NL/EN/FR), and TTS audio.
+PWA-молитвенник **Шахарит** (утренние молитвы) с:
+- ивритом с никудом на экране;
+- транслитерацией (опционально);
+- переводами: RU / NL / EN / FR;
+- TTS (озвучка) через Web Speech API;
+- офлайн-режимом (service worker).
 
-## Local development
+**Репозиторий:** [github.com/maydanikas/siddur](https://github.com/maydanikas/siddur)  
+**Локальный путь:** `C:\dev\shacharis-pwa\shacharis-pwa`
+
+---
+
+## Стек
+
+| Слой | Технология |
+|------|------------|
+| Сборка | Vite 5 |
+| UI | React 18 + TypeScript |
+| Стили | Tailwind CSS 3 |
+| PWA | vite-plugin-pwa + Workbox |
+| Аналитика | @vercel/analytics |
+| Данные | Inline-массив `prayers[]` в `src/App.tsx` (~1600 строк) |
+
+---
+
+## Ветки и деплой (Vercel)
+
+| Vercel-проект | Git-ветка | Назначение |
+|---------------|-----------|------------|
+| **siddur** | `version-2.0` | Production (стабильная) |
+| **siddur-beta** | `version-2.1` | Beta / разработка |
+
+| Ветка | Статус |
+|-------|--------|
+| `main` | Главная ветка на GitHub |
+| `version-1.0` | Старая стабильная v1 |
+| `version-2.0` | Production-код |
+| `version-2.1` | Активная разработка (TTS, подсветка слов, Amida) |
+
+**Важно:** вкладка Changes в Cursor может показывать diff **ветки vs main**, а не uncommitted changes.
+
+Триггер деплоя: push в соответствующую ветку (или empty commit `chore: trigger deploy`).
+
+---
+
+## Локальная разработка
 
 ```powershell
 cd C:\dev\shacharis-pwa\shacharis-pwa
@@ -14,95 +57,243 @@ npm install
 npm run dev
 ```
 
-Open **http://localhost:5173/** in Chrome/Edge (not the embedded Cursor preview).
+- Браузер: **http://localhost:5173/**
+- На телефоне в той же Wi‑Fi: **http://<IP-компьютера>:5173/** (Vite настроен с `host: true`)
+- `localhost` на телефоне **не работает** — это сам телефон, не ПК
 
-If changes don't appear: `Ctrl+Shift+R`, or DevTools → Application → Unregister Service Worker.
+Если изменения не видны:
+1. `Ctrl+Shift+R` (hard reload)
+2. DevTools → Application → Unregister Service Worker
 
-## Git branches
+Сборка: `npm run build` → выход в `dist/`
 
-| Branch | Purpose |
-|--------|---------|
-| `version-1.0` | Stable v1 for production deploy |
-| `version-2.0` | Active development |
-| `main` | Main branch |
+---
 
-Deploy on Vercel: **Settings → Environments → Production → Branch Tracking** → choose branch.
+## Структура файлов
 
-## Prayer data structure
+| Файл | Назначение |
+|------|------------|
+| `src/App.tsx` | Все данные молитв, UI, навигация, TTS, подсветка слов |
+| `src/components/SplashScreen.tsx` | Анимированный splash (2 с + 0.6 с fade) |
+| `src/main.tsx` | Точка входа React |
+| `src/index.css` | Tailwind + шрифты (he-serif, ui-sans) |
+| `index.html` | Static splash для браузера, PWA meta, teal `#0D9488` |
+| `vite.config.js` | PWA manifest, Workbox, dev server `host: true` |
+| `tailwind.config.js` | Конфиг Tailwind |
+| `public/icon-192.png`, `icon-512.png` | Иконки PWA |
 
-Each prayer in `src/App.tsx`:
+---
+
+## Данные молитв
+
+### Счётчик
 
 ```typescript
-{
-  id: number,
-  titleEn: string,
-  titleHe: string,
-  he_display: string,  // shown on screen
-  he_tts: string,      // sent to TTS (Divine Name replaced at runtime)
-  translit: string,
-  ru: string,
-  nl: string,
-  en: string,
-  fr: string,
-}
+const TOTAL_PRAYERS = prayers[prayers.length - 1].id; // сейчас 52
 ```
 
-Total prayers: dynamic — `TOTAL_PRAYERS = prayers[prayers.length - 1].id` (currently **22**).
+В массиве **52 карточки**, id от **1 до 52** (без пропусков).
 
-## Key files
+### Базовая схема `Prayer`
 
-| File | Role |
-|------|------|
-| `src/App.tsx` | Prayers data, UI, swipe navigation, TTS |
-| `src/components/SplashScreen.tsx` | Animated splash (2s + 0.6s fade) |
-| `index.html` | Static splash bridge, PWA meta, teal background |
-| `vite.config.js` | PWA manifest, Workbox |
-
-## Completed features
-
-### Splash screen
-- Static HTML splash in browser only (hidden in installed PWA via `display-mode: standalone`)
-- React `SplashScreen`: 2 seconds visible, then 0.6s fade-out
-- Avoids triple-flash on Android (native → static → react)
-
-### Navigation
-- Swipe from **right edge → left**: next prayer
-- Swipe from **left edge → right**: previous prayer
-- From first prayer → back to list; from last → stay
-
-### TTS
-- Rate: **0.50**
-- Divine Name replacement before speak: `יְהוָה|יְהֹוָה|יהוה|יְיָ` → `אֲדֹנָי`
-
-### Hebrew display
-- `HebrewDisplay` component splits `[English instruction lines]` (LTR, italic) from Hebrew (RTL)
-- Used for reform notes and stage directions in `he_display`
-
-### Content (version-2.0)
-- Prayers **1–22** (expanded from original 14)
-- Reform/inclusive morning blessings (cards 13–16, 22)
-- English `[...]` notes separated from Hebrew text
-- Prayer counter shows `id / TOTAL_PRAYERS` (not hardcoded)
-
-## TODO / next steps
-
-- [ ] iOS startup images (`apple-touch-startup-image`) to remove white flash on PWA launch
-- [ ] Add remaining Shaharit prayers after #22
-- [ ] Align PWA manifest name (currently "Siddur") with "Shacharis" if desired
-- [ ] Verify `icon-192.png` and `icon-512.png` in repo / production
-- [ ] Deploy `version-2.0` to Vercel when ready
-- [ ] Commit and push ongoing `version-2.0` changes
-
-## Prompt template for new chat
-
-```
-Project: Shacharis PWA — read PROJECT.md for context.
-Branch: version-2.0
-Path: C:\dev\shacharis-pwa\shacharis-pwa
-
-Next task: [describe here]
+```typescript
+type Prayer = {
+  id: number;
+  titleEn: string;
+  titleHe: string;
+  he_display: string;  // текст на экране (может содержать инструкции, /, ○)
+  he_tts: string;      // текст для TTS (без инструкций, плоский)
+  translit: string;
+  ru: string;
+  nl: string;
+  en: string;
+  fr: string;
+};
 ```
 
-## Changelog (high level)
+### Опциональные поля (есть в данных, не в type)
 
-- **2026-08-04**: Branches `version-1.0` and `version-2.0` created; splash unified; swipe nav; TTS 0.50; prayers 13–22; HebrewDisplay; dynamic prayer count.
+| Поле | Пример | Смысл |
+|------|--------|-------|
+| `include_in_home: true` | карточки 41–52 | Метаданные (пока список показывает все `prayers`) |
+| `no_interruption: true` | 43 | Не перебивать (Amida) |
+| `said_softly: true` | 43 | Тихая молитва |
+| `replaces: "4-16"` | 47 (Havinenu) | Заменяет другие брахот |
+| `version: "reform_inclusive"` | 51 | Reform-версия |
+| `skip_traditional_version_I: true` | 51 | Пропуск традиционной Aleinu I |
+
+### `he_display` vs `he_tts`
+
+- **`he_display`** — что видит пользователь: переносы строк, `[инструкции на EN/NL]`, варианты через `/`, маркеры `○`.
+- **`he_tts`** — что читает TTS: без `[скобок]`, без переносов внутри предложений, иногда больше текста (сезонные вставки для озвучки).
+
+**Имя Божие на экране:** `יְיָ` и варианты.  
+**В TTS:** заменяется на `אֲדֹנָי` через `prepareTtsText()` перед speak.
+
+### Редакционные особенности
+
+- Reform/inclusive благословения (утренние 13–16, Aleinu II).
+- Amida: полные карточки 43–46 с инструкциями (дубликаты удалены).
+- Сезонные вставки в переводах в `[скобках]`; в `he_display` — краткие подсказки, в `he_tts` — полный текст для чтения.
+
+---
+
+## UI и навигация
+
+### Главный экран
+- Список всех 52 молитв (id + titleEn + titleHe).
+- Футер: *Text displayed with niqqud. Tap a Hebrew word to hear it. Audio uses he-IL voice at 0.50x. Version 2.1, 2026*
+
+### Экран молитвы
+- Счётчик `id / TOTAL_PRAYERS`
+- HebrewDisplay (RTL) + переключатель транслитерации
+- Переключатель языка перевода: RU / NL / EN / FR (сохраняется в `localStorage` ключ `shacharis_lang`)
+- Previous / Next
+- Fixed footer: Play/Pause, progress bar, таймер
+
+### Свайпы (на экране молитвы)
+| Жест | Действие |
+|------|----------|
+| От правого края (48 px) влево ≥ 60 px | Следующая молитва |
+| От левого края вправо ≥ 60 px | Предыдущая / на первой → список |
+
+---
+
+## TTS и подсветка слов
+
+### Общие параметры
+- Язык: `he-IL`
+- Скорость: **0.50** (`SPEECH_RATE`)
+- Голос: первый доступный с `lang` содержащим `he`
+
+### Tap-to-speak
+Каждое ивритское слово — кликабельный `<span>`. Тап → `speakWord()` произносит одно слово.
+
+### Подсветка при Play
+
+**iPhone / Desktop (Chrome, Safari):**
+- Один длинный `SpeechSynthesisUtterance` на всю молитву.
+- Подсветка через `utter.onboundary` (`name === 'word'`) — **точная синхронизация**.
+- Fallback-таймер до первого boundary.
+
+**Android Chrome:**
+- Web Speech API **не даёт надёжных word-boundary** на длинных текстах.
+- **Алгоритм:** текст делится на **предложения** (до `.` `!` `?`), каждое — отдельный utterance (естественная интонация).
+- В начале каждого предложения — точная подсветка (`onstart`).
+- Внутри предложения — короткий таймер + `onboundary` если приходит.
+- **Автокалибровка** внутри одного Play: после каждого предложения сравнивается реальная длительность с оценкой, коэффициент подстраивается для следующих предложений. Сбрасывается при новом Play.
+
+### Ключевые функции (App.tsx)
+
+| Функция | Роль |
+|---------|------|
+| `buildHebrewWordLayout()` | Связка he_display ↔ he_tts по словам |
+| `alignSpeakableWords()` | Выравнивание display-слов с TTS-индексами |
+| `HebrewDisplay` | Рендер слов, подсветка, клики |
+| `splitTtsIntoSentences()` | Разбивка для Android |
+| `updateDurationScale()` | Автокалибровка Android |
+| `prepareTtsText()` | Замена Divine Name для TTS |
+
+### Известные ограничения TTS
+
+- Android: подсветка **не идеальна** — зависит от нагрузки CPU, длины предложения, движка TTS.
+- Пословное чтение (отдельный utterance на слово) — точное, но **некрасивое** (отвергнуто).
+- Идеальная синхронизация на Android потребует облачного TTS с таймкодами или pre-recorded audio.
+
+---
+
+## Splash screen
+
+1. **Static HTML** (`index.html`) — только в браузере, скрыт в installed PWA (`display-mode: standalone`).
+2. **React SplashScreen** — 2 с видим, 0.6 с fade, удаляет static splash.
+
+Цвет: `#0D9488` (teal). Логотип: ש + SHAHARIS.
+
+---
+
+## PWA
+
+- Manifest name: **Siddur** (short: Siddur)
+- `index.html` title: **Shacharis**
+- Display: standalone, portrait
+- `registerType: autoUpdate` — SW обновляется автоматически
+- Workbox: precache JS/CSS/HTML/icons, runtime cache для Google Fonts
+
+---
+
+## Git: типичные операции
+
+```powershell
+# Текущая beta-ветка
+git checkout version-2.1
+
+# Коммит (только по запросу)
+git add .
+git commit -m "описание"
+git push origin version-2.1
+
+# Cherry-pick фикса на production
+git checkout version-2.0
+git cherry-pick <commit-hash>
+git push origin version-2.0
+```
+
+---
+
+## История изменений (кратко)
+
+| Дата | Что |
+|------|-----|
+| 2026-08-04 | Splash, swipe, TTS 0.50, молитвы 1–22, HebrewDisplay |
+| 2026-08-14 | Ветки 2.0/2.1, Vercel prod/beta, молитвы до 52, Amida |
+| 2026-08-14 | Tap-to-speak, подсветка слов (onboundary) |
+| 2026-08-14 | Удалены дубликаты карточек Amida 43–46 |
+| 2026-08-14 | Android: предложения + автокалибровка подсветки |
+| 2026-08-14 | Футер Version 2.1, 2026; vite host для теста с телефона |
+| 2026-08-30 | PROJECT.md, AGENT_TASKS.md, AGENTS.md, cursor rule agent-workflow |
+
+---
+
+## TODO / идеи на будущее
+
+- [ ] iOS startup images (убрать белую вспышку при запуске PWA)
+- [ ] Добавить оставшиеся молитвы Шахарита после #52
+- [ ] Использовать `include_in_home` для фильтрации списка
+- [ ] Вынести `prayers[]` в отдельный JSON/TS файл
+- [ ] Облачный TTS с word timestamps (идеальная Android-синхронизация)
+- [ ] Согласовать naming: Siddur vs Shacharis в manifest
+
+---
+
+## Шаблон для нового чата в Cursor
+
+```
+Проект: Siddur / Shacharis PWA
+1. Прочитай PROJECT.md
+2. Прочитай AGENT_TASKS.md
+3. Смотри AGENTS.md и .cursor/rules/agent-workflow.mdc
+
+Ветка: version-2.1 (beta) / version-2.0 (prod)
+Путь: C:\dev\shacharis-pwa\shacharis-pwa
+
+Задача: [описание]
+```
+
+---
+
+## Файлы для агентов
+
+| Файл | Назначение |
+|------|------------|
+| `PROJECT.md` | База знаний (этот файл) |
+| `AGENT_TASKS.md` | Стек задач, Active/Queue, журнал выполненного |
+| `AGENTS.md` | Точка входа для AI-агентов |
+| `.cursor/rules/agent-workflow.mdc` | Правило Cursor: always apply |
+
+**Workflow:** перед задачей — читать базу + стек; после задачи — записать в Completed log в `AGENT_TASKS.md`.
+
+---
+
+## Контакты / автор
+
+GitHub: **maydanikas/siddur**
