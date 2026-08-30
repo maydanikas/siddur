@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from 'react';
 export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
   const [isExiting, setIsExiting] = useState(false);
   const started = useRef(false);
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
 
   useEffect(() => {
     if (started.current) return;
@@ -11,13 +13,13 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
     document.getElementById('static-splash')?.remove();
 
     const fadeTimer = setTimeout(() => setIsExiting(true), 2000);
-    const finishTimer = setTimeout(() => onFinish(), 2600);
+    const finishTimer = setTimeout(() => onFinishRef.current(), 2600);
 
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(finishTimer);
     };
-  }, [onFinish]);
+  }, []);
 
   return (
     <div
