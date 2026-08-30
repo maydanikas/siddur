@@ -4,8 +4,8 @@ export const SUPPORT_CYCLE_MS = 30 * 24 * 60 * 60 * 1000;
 /** Set to false before release. When true, the envelope ignores localStorage and stays available. */
 export const FORCE_SUPPORT_ENVELOPE = true;
 
-/** Ko-fi or PayPal page. Leave empty until the page exists — the button stays hidden. */
-export const SUPPORT_DONATE_URL = '';
+/** Public Ko-fi page (PayPal payouts). */
+export const SUPPORT_DONATE_URL = 'https://ko-fi.com/maydanikas';
 
 export function shouldShowSupportEnvelope(): boolean {
   if (FORCE_SUPPORT_ENVELOPE) return true;
