@@ -5,7 +5,7 @@ export const SUPPORT_CYCLE_MS = 30 * 24 * 60 * 60 * 1000;
 export const FORCE_SUPPORT_ENVELOPE = true;
 
 /** Public Ko-fi page (PayPal payouts). */
-export const SUPPORT_DONATE_URL = 'https://ko-fi.com/maydanikas';
+export const SUPPORT_DONATE_URL = 'https://ko-fi.com/siddur';
 
 export function shouldShowSupportEnvelope(): boolean {
   if (FORCE_SUPPORT_ENVELOPE) return true;
