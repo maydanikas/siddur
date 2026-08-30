@@ -4,3 +4,9 @@ build
 .vercel
 .env
 .env.local
+
+# Local agent docs and Cursor rules (not for public repo)
+PROJECT.md
+AGENT_TASKS.md
+AGENTS.md
+.cursor/
