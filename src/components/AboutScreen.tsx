@@ -1,0 +1,43 @@
+import { ABOUT_COPY, resolveSystemLang } from '../supportCopy';
+import { SUPPORT_DONATE_URL } from '../support';
+
+type AboutScreenProps = {
+  onBack: () => void;
+};
+
+export default function AboutScreen({ onBack }: AboutScreenProps) {
+  const copy = ABOUT_COPY[resolveSystemLang()];
+
+  return (
+    <div className="px-5 pt-2 pb-16 ui-sans">
+      <button
+        onClick={onBack}
+        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-zinc-600 hover:text-zinc-900 py-1"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M15 18l-6-6 6-6"/></svg>
+        {copy.back}
+      </button>
+
+      <h2 className="mt-6 text-[22px] font-semibold tracking-tight leading-tight">{copy.title}</h2>
+      <p className="mt-4 text-[15px] leading-7 text-zinc-800">{copy.source}</p>
+      <p className="mt-3 text-[15px] leading-7 text-zinc-800 font-medium">{copy.principle}</p>
+      <p className="mt-3 text-[15px] leading-7 text-zinc-800">{copy.free}</p>
+      <p className="mt-3 text-[15px] leading-7 text-zinc-800">{copy.support}</p>
+
+      {SUPPORT_DONATE_URL ? (
+        <a
+          href={SUPPORT_DONATE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-8 flex h-12 items-center justify-center rounded-full bg-[#0D9488] text-white text-[15px] font-semibold shadow-sm hover:bg-teal-700 active:scale-[0.99] transition"
+        >
+          {copy.button}
+        </a>
+      ) : (
+        <div className="mt-8 flex h-12 items-center justify-center rounded-full bg-[#0D9488] text-white text-[15px] font-semibold shadow-sm">
+          {copy.button}
+        </div>
+      )}
+    </div>
+  );
+}
