@@ -1,5 +1,5 @@
 import { ABOUT_COPY, resolveSystemLang } from '../supportCopy';
-import { SUPPORT_DONATE_URL } from '../support';
+import { APP_SHARE_URL, SUPPORT_DONATE_URL } from '../support';
 
 type AboutScreenProps = {
   onBack: () => void;
@@ -38,6 +38,27 @@ export default function AboutScreen({ onBack }: AboutScreenProps) {
           {copy.button}
         </div>
       )}
+
+      <section className="mt-12 pt-10 border-t border-zinc-100 text-center">
+        <h3 className="text-[15px] font-semibold tracking-tight leading-snug text-zinc-800">
+          {copy.shareTitle}
+        </h3>
+        <a
+          href={APP_SHARE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={copy.shareTitle}
+          className="mt-5 inline-block rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm hover:border-[#0D9488]/40 transition"
+        >
+          <img
+            src="/share-qr.svg"
+            alt={copy.shareTitle}
+            width={176}
+            height={176}
+            className="h-44 w-44"
+          />
+        </a>
+      </section>
     </div>
   );
 }

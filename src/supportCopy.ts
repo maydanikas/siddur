@@ -25,6 +25,7 @@ type AboutCopy = {
   button: string;
   back: string;
   aboutLink: string;
+  shareTitle: string;
 };
 
 export const ABOUT_COPY: Record<Lang, AboutCopy> = {
@@ -37,6 +38,7 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     button: 'Support the project',
     back: 'Back to list',
     aboutLink: 'About',
+    shareTitle: 'Share the Shacharis app',
   },
   ru: {
     title: 'О приложении',
@@ -47,6 +49,7 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     button: 'Поддержать проект',
     back: 'К списку',
     aboutLink: 'О проекте',
+    shareTitle: 'Поделитесь приложением Shacharis',
   },
   nl: {
     title: 'Over deze app',
@@ -57,6 +60,7 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     button: 'Steun het project',
     back: 'Terug naar de lijst',
     aboutLink: 'Over',
+    shareTitle: 'Deel de Shacharis-app',
   },
   fr: {
     title: 'À propos',
@@ -67,5 +71,6 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     button: 'Soutenir le projet',
     back: 'Retour à la liste',
     aboutLink: 'À propos',
+    shareTitle: 'Partagez l’application Shacharis',
   },
 };

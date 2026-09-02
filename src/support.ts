@@ -7,6 +7,9 @@ export const FORCE_SUPPORT_ENVELOPE = true;
 /** Public Ko-fi page (PayPal payouts). */
 export const SUPPORT_DONATE_URL = 'https://ko-fi.com/siddur';
 
+/** Canonical URL encoded in the About-page QR (install / share the PWA). */
+export const APP_SHARE_URL = 'https://siddur-beta.vercel.app';
+
 export function shouldShowSupportEnvelope(): boolean {
   if (FORCE_SUPPORT_ENVELOPE) return true;
   try {
