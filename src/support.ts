@@ -5,7 +5,7 @@ export const SUPPORT_CYCLE_MS = 30 * 24 * 60 * 60 * 1000;
 export const FORCE_SUPPORT_ENVELOPE = true;
 
 /** Public Ko-fi page (PayPal payouts). */
-export const SUPPORT_DONATE_URL = 'https://ko-fi.com/siddur';
+export const SUPPORT_DONATE_URL = 'https://ko-fi.com/shacharis';
 
 /** Canonical URL encoded in the About-page QR (install / share the PWA). */
 export const APP_SHARE_URL = 'https://siddur-beta.vercel.app';
