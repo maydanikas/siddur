@@ -1066,16 +1066,29 @@ const [lang, setLang] = useState<Lang>(() => {
   const [showSplash, setShowSplash] = useState(true);
   const [showAbout, setShowAbout] = useState(false);
   const [showEnvelope, setShowEnvelope] = useState(() => shouldShowSupportEnvelope());
+  const mainRef = useRef<HTMLElement>(null);
+  const prayerScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollShellToTop = () => {
+    window.scrollTo({ top: 0 });
+    mainRef.current?.scrollTo({ top: 0 });
+    prayerScrollRef.current?.scrollTo({ top: 0 });
+  };
 
   const refreshEnvelope = () => {
     setShowEnvelope(shouldShowSupportEnvelope());
+  };
+
+  const closeAbout = () => {
+    setShowAbout(false);
+    refreshEnvelope();
   };
 
   const openAbout = () => {
     setShowAbout(true);
     snoozeSupportEnvelope();
     setShowEnvelope(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollShellToTop();
   };
 
   const dismissEnvelope = () => {
@@ -1102,7 +1115,7 @@ const [lang, setLang] = useState<Lang>(() => {
   const goToPrayer = (idx: number | null) => {
     setSelected(idx);
     if (idx === null) refreshEnvelope();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollShellToTop();
   };
 
   const goHome = () => {
@@ -1428,7 +1441,7 @@ const [lang, setLang] = useState<Lang>(() => {
   const currentPrayer = selected !== null ? prayers[selected] : null;
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900 antialiased selection:bg-teal-100">
+      <div className="h-full bg-white text-zinc-900 antialiased selection:bg-teal-100">
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500&family=Inter:wght@400;500;600&display=swap');
@@ -1436,9 +1449,9 @@ const [lang, setLang] = useState<Lang>(() => {
         .ui-sans { font-family: Inter, system-ui, sans-serif; }
       `}</style>
 
-      <div className="max-w-[720px] mx-auto min-h-screen flex flex-col">
-        {/* Header */}
-        <header className="px-6 pt-8 pb-5 ui-sans">
+      <div className="max-w-[720px] mx-auto h-full overflow-hidden flex flex-col">
+        {/* Header stays outside the scroller so the i-button does not jump */}
+        <header className="px-6 pt-8 pb-5 ui-sans shrink-0 z-10 bg-white">
           <div className="flex items-center justify-between gap-3">
             <button
               type="button"
@@ -1452,39 +1465,38 @@ const [lang, setLang] = useState<Lang>(() => {
                 <p className="text-[13px] text-zinc-500 mt-1 font-medium">Shaharit • Morning Prayers</p>
               </div>
             </button>
-            {selected === null && !showAbout && (
-              <button
-                type="button"
-                onClick={openAbout}
-                className="shrink-0 text-[13px] font-semibold text-[#0D9488] hover:text-teal-700 py-1"
-              >
-                {ABOUT_COPY[resolveSystemLang()].aboutLink}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={showAbout ? closeAbout : openAbout}
+              aria-label={ABOUT_COPY[resolveSystemLang()].aboutLink}
+              aria-pressed={showAbout}
+              className="group shrink-0 h-9 w-9 flex items-center justify-center appearance-none bg-transparent p-0 m-0 border-0"
+            >
+              <span className={`h-7 w-7 rounded-full border flex items-center justify-center text-[13px] italic font-serif leading-none group-active:bg-zinc-50 ${
+                showAbout ? 'border-zinc-400 text-zinc-600' : 'border-zinc-300 text-zinc-400'
+              }`}>
+                i
+              </span>
+            </button>
           </div>
         </header>
 
-        <main className="flex-1 flex flex-col min-h-0">
+        <main
+          ref={mainRef}
+          className={`flex-1 flex flex-col min-h-0 ${
+            selected !== null && !showAbout ? 'overflow-hidden' : 'overflow-y-auto'
+          }`}
+        >
           {showAbout ? (
-            <AboutScreen onBack={() => { setShowAbout(false); refreshEnvelope(); }} />
+            <AboutScreen />
           ) : selected !== null && currentPrayer ? (
             <div
               className="flex-1 flex flex-col min-h-0"
               onTouchStart={handlePrayerTouchStart}
               onTouchEnd={handlePrayerTouchEnd}
             >
-              <div className="px-4 pt-2 pb-3 ui-sans sticky top-0 bg-white/90 backdrop-blur z-10 border-b border-zinc-50">
-                <button
-                  onClick={() => goToPrayer(null)}
-                  className="inline-flex items-center gap-1.5 text-[13px] font-medium text-zinc-600 hover:text-zinc-900 py-1"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M15 18l-6-6 6-6"/></svg>
-                  Back to list
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-auto px-5 pb-[168px]">
-                <div className="pt-3 pb-6 border-b border-zinc-100">
+              <div ref={prayerScrollRef} className="flex-1 overflow-auto px-5 pb-[168px]">
+                <div className="pt-1 pb-6 border-b border-zinc-100">
                   <div className="flex items-center gap-2 text-[11px] tracking-widest text-[#0D9488] font-semibold uppercase ui-sans">
                     <span>{String(currentPrayer.id).padStart(2, '0')} / {String(TOTAL_PRAYERS).padStart(2, '0')}</span>
                     <span className="h-1 w-1 rounded-full bg-[#0D9488]/40"></span>

@@ -1,24 +1,12 @@
 import { ABOUT_COPY, resolveSystemLang } from '../supportCopy';
 import { APP_SHARE_URL, SUPPORT_DONATE_URL } from '../support';
 
-type AboutScreenProps = {
-  onBack: () => void;
-};
-
-export default function AboutScreen({ onBack }: AboutScreenProps) {
+export default function AboutScreen() {
   const copy = ABOUT_COPY[resolveSystemLang()];
 
   return (
-    <div className="px-5 pt-2 pb-16 ui-sans">
-      <button
-        onClick={onBack}
-        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-zinc-600 hover:text-zinc-900 py-1"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M15 18l-6-6 6-6"/></svg>
-        {copy.back}
-      </button>
-
-      <h2 className="mt-6 text-[22px] font-semibold tracking-tight leading-tight">{copy.title}</h2>
+    <div className="px-5 pt-1 pb-16 ui-sans">
+      <h2 className="text-[22px] font-semibold tracking-tight leading-tight">{copy.title}</h2>
       <p className="mt-4 text-[15px] leading-7 text-zinc-800">{copy.source}</p>
       <p className="mt-3 text-[15px] leading-7 text-zinc-800 font-medium">{copy.principle}</p>
       <p className="mt-3 text-[15px] leading-7 text-zinc-800">{copy.free}</p>

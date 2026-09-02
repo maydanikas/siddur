@@ -23,7 +23,6 @@ type AboutCopy = {
   free: string;
   support: string;
   button: string;
-  back: string;
   aboutLink: string;
   shareTitle: string;
 };
@@ -36,7 +35,6 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     free: 'The siddur is free and will stay free.',
     support: 'Your support is not payment for prayers. It is help so the project can live and grow. Thank you for helping us fulfill this mitzvah.',
     button: 'Support the project',
-    back: 'Back to list',
     aboutLink: 'About',
     shareTitle: 'Share the Shacharis app',
   },
@@ -47,7 +45,6 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     free: 'Сидур бесплатный и таким останется.',
     support: 'Ваша поддержка — это не плата за молитвы, это помощь в том, чтобы проект жил и развивался. Спасибо, что помогаете нам исполнять эту заповедь.',
     button: 'Поддержать проект',
-    back: 'К списку',
     aboutLink: 'О проекте',
     shareTitle: 'Поделитесь приложением Shacharis',
   },
@@ -58,7 +55,6 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     free: 'Het siddur is gratis en blijft gratis.',
     support: 'Uw steun is geen betaling voor gebeden. Het is hulp zodat het project kan leven en groeien. Dank dat u ons helpt deze mitswa te vervullen.',
     button: 'Steun het project',
-    back: 'Terug naar de lijst',
     aboutLink: 'Over',
     shareTitle: 'Deel de Shacharis-app',
   },
@@ -69,7 +65,6 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     free: 'Le siddour est libre et le restera.',
     support: 'Votre soutien n’est pas un paiement pour les prières. C’est une aide pour que le projet vive et se développe. Merci de nous aider à accomplir cette mitsva.',
     button: 'Soutenir le projet',
-    back: 'Retour à la liste',
     aboutLink: 'À propos',
     shareTitle: 'Partagez l’application Shacharis',
   },
