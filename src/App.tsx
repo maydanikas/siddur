@@ -1528,17 +1528,18 @@ const [lang, setLang] = useState<Lang>(() => {
               onTouchEnd={handlePrayerTouchEnd}
             >
               <div ref={prayerScrollRef} className="flex-1 overflow-auto px-5 pb-[168px]">
-                <div className="pt-1 pb-6 border-b border-zinc-100">
+                <div className="pt-1 pb-4 border-b border-zinc-100">
                   <div className="flex items-center gap-2 text-[11px] tracking-widest text-[#0D9488] font-semibold uppercase ui-sans">
                     <span>{String(currentPrayer.id).padStart(2, '0')} / {String(TOTAL_PRAYERS).padStart(2, '0')}</span>
                     <span className="h-1 w-1 rounded-full bg-[#0D9488]/40"></span>
                     <span>{currentPrayer.titleEn}</span>
                   </div>
-                  <h2 className="mt-3 text-[22px] font-semibold ui-sans leading-tight">{currentPrayer.titleEn}</h2>
-                  <div className="he-serif text-[15px] text-zinc-500 mt-1" dir="rtl">{currentPrayer.titleHe}</div>
+                  <h2 className="he-serif mt-1 text-[15px] font-normal leading-snug text-zinc-500" dir="rtl">
+                    {currentPrayer.titleHe}
+                  </h2>
                 </div>
 
-                <div className="mt-7">
+                <div className="mt-6">
                   <HebrewDisplay
                     heDisplay={currentPrayer.he_display}
                     heTts={currentPrayer.he_tts}
