@@ -1,14 +1,21 @@
 export type Lang = 'ru' | 'nl' | 'en' | 'fr';
 
-const SUPPORTED_LANGS: Lang[] = ['ru', 'nl', 'en', 'fr'];
+export function isLang(value: string | null | undefined): value is Lang {
+  return value === 'ru' || value === 'nl' || value === 'en' || value === 'fr';
+}
 
-/** UI copy (About) follows the device language. Prayer translation (`shacharis_lang`) is separate. */
+/** Unknown / missing → English. */
+export function resolveLang(value: string | null | undefined): Lang {
+  return isLang(value) ? value : 'en';
+}
+
+/** Device language if supported, otherwise English. */
 export function resolveSystemLang(): Lang {
   try {
     const tags = [...(navigator.languages ?? []), navigator.language].filter(Boolean);
     for (const tag of tags) {
-      const base = tag.toLowerCase().split('-')[0] as Lang;
-      if (SUPPORTED_LANGS.includes(base)) return base;
+      const base = tag.toLowerCase().split('-')[0];
+      if (isLang(base)) return base;
     }
   } catch {
     /* private mode / non-browser */
@@ -69,3 +76,90 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     shareTitle: 'Partagez l’application Shacharis',
   },
 };
+
+type ControlsCopy = {
+  tagline: string;
+  previous: string;
+  next: string;
+  listen: string;
+  play: string;
+  pause: string;
+  transliteration: string;
+  translation: string;
+  backToList: string;
+  selectPrayer: string;
+  footer: string;
+  dismiss: string;
+  envelope: string;
+};
+
+export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
+  en: {
+    tagline: 'Shaharit • Morning Prayers',
+    previous: 'Previous',
+    next: 'Next',
+    listen: 'Listen',
+    play: 'Play',
+    pause: 'Pause',
+    transliteration: 'Transliteration',
+    translation: 'Translation',
+    backToList: 'Back to prayer list',
+    selectPrayer: 'Select a prayer to read, listen and translate. All {n} items in traditional order.',
+    footer: 'Text displayed with niqqud. Tap a Hebrew word to hear it. Audio uses he-IL voice at 0.50x. Version 2.2, 2026',
+    dismiss: 'Dismiss',
+    envelope: 'A note from the project',
+  },
+  ru: {
+    tagline: 'Шахарит • Утренние молитвы',
+    previous: 'Назад',
+    next: 'Далее',
+    listen: 'Слушать',
+    play: 'Воспроизвести',
+    pause: 'Пауза',
+    transliteration: 'Транслитерация',
+    translation: 'Перевод',
+    backToList: 'К списку молитв',
+    selectPrayer: 'Выберите молитву: читать, слушать и переводить. Все {n} в традиционном порядке.',
+    footer: 'Текст с никудом. Нажмите на ивритское слово, чтобы услышать его. Озвучка: голос he-IL, 0.50×. Version 2.2, 2026',
+    dismiss: 'Закрыть',
+    envelope: 'Записка от проекта',
+  },
+  nl: {
+    tagline: 'Sjachariet • Ochtendgebeden',
+    previous: 'Vorige',
+    next: 'Volgende',
+    listen: 'Luisteren',
+    play: 'Afspelen',
+    pause: 'Pauzeren',
+    transliteration: 'Transliteratie',
+    translation: 'Vertaling',
+    backToList: 'Terug naar de lijst',
+    selectPrayer: 'Kies een gebed om te lezen, te beluisteren en te vertalen. Alle {n} in traditionele volgorde.',
+    footer: 'Tekst met nikud. Tik op een Hebreeuws woord om het te horen. Audio: he-IL-stem, 0.50×. Versie 2.2, 2026',
+    dismiss: 'Sluiten',
+    envelope: 'Een briefje van het project',
+  },
+  fr: {
+    tagline: 'Chaharit • Prières du matin',
+    previous: 'Précédent',
+    next: 'Suivant',
+    listen: 'Écouter',
+    play: 'Lecture',
+    pause: 'Pause',
+    transliteration: 'Translittération',
+    translation: 'Traduction',
+    backToList: 'Retour à la liste',
+    selectPrayer: 'Choisissez une prière pour lire, écouter et traduire. Les {n} dans l’ordre traditionnel.',
+    footer: 'Texte avec niqqud. Touchez un mot hébreu pour l’entendre. Audio : voix he-IL, 0.50×. Version 2.2, 2026',
+    dismiss: 'Fermer',
+    envelope: 'Un mot du projet',
+  },
+};
+
+export function controlsCopy(lang: Lang): ControlsCopy {
+  return CONTROLS_COPY[resolveLang(lang)];
+}
+
+export function aboutCopy(lang: Lang): AboutCopy {
+  return ABOUT_COPY[resolveLang(lang)];
+}

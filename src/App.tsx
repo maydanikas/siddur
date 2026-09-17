@@ -3,9 +3,8 @@ import SplashScreen from './components/SplashScreen';
 import AboutScreen from './components/AboutScreen';
 import SupportEnvelope from './components/SupportEnvelope';
 import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
-import { ABOUT_COPY, resolveSystemLang } from './supportCopy';
+import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
 
-type Lang = 'ru' | 'nl' | 'en' | 'fr';
 type Prayer = {
   id: number;
   titleEn: string;
@@ -171,10 +170,10 @@ const prayers: Prayer[] = [
   he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי בְּצַלְמוֹ.\n[Reform inclusive form]",
   he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי בְּצַלְמוֹ.",
   translit: "Baruch atah Adonai Eloheinu melech ha'olam, she'asani betzalmo.",
-  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что создал меня по образу Своему.",
-  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die mij naar Zijn beeld gemaakt heeft.",
-  en: "Blessed are You, Lord our God, King of the universe, Who made me in His image.",
-  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui m'a fait à Son image."
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что создал меня по образу Своему. [Реформистская инклюзивная форма]",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die mij naar Zijn beeld gemaakt heeft. [Reformatorische inclusieve vorm]",
+  en: "Blessed are You, Lord our God, King of the universe, Who made me in His image. [Reform inclusive form]",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui m'a fait à Son image. [Forme inclusive réformée]"
 },
 {
   id: 14,
@@ -183,10 +182,10 @@ const prayers: Prayer[] = [
   he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי יִשְׂרָאֵל.\n[Reform replacement for 'who did not make me a non-Jew']",
   he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי יִשְׂרָאֵל.",
   translit: "Baruch atah Adonai Eloheinu melech ha'olam, she'asani Yisrael.",
-  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что создал меня Исраэлем.",
-  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die mij tot Israëliet gemaakt heeft.",
-  en: "Blessed are You, Lord our God, King of the universe, Who made me an Israelite.",
-  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui m'a fait Israël."
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что создал меня Исраэлем. [Реформистская замена формулы «что не сделал меня неевреем»]",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die mij tot Israëliet gemaakt heeft. [Reformatorische vervanging van 'die mij niet tot niet-Jood heeft gemaakt']",
+  en: "Blessed are You, Lord our God, King of the universe, Who made me an Israelite. [Reform replacement for 'who did not make me a non-Jew']",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui m'a fait Israël. [Remplacement réformé de « qui ne m'a pas fait non-juif »]"
 },
 {
   id: 15,
@@ -195,10 +194,10 @@ const prayers: Prayer[] = [
   he_display: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי / בֶן- / בַּת- / חוֹרִין.\n[/ ben / bat / chorin - inclusive form: son/daughter of freedom. Replaces 'who did not make me a slave']",
   he_tts: "בָּרוּךְ אַתָּה יְיָ אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, שֶׁעָשַׂנִי בֶן־חוֹרִין.",
   translit: "Baruch atah Adonai Eloheinu melech ha'olam, she'asani ben/bat/chorin.",
-  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что создал меня свободным человеком.",
-  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die mij als een vrij mens gemaakt heeft.",
-  en: "Blessed are You, Lord our God, King of the universe, Who made me a free person.",
-  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui m'a fait une personne libre."
+  ru: "Благословен Ты, Господь, Бог наш, Царь мира, что создал меня свободным человеком. [Инклюзивная форма — сын / дочь / свободный. Заменяет «что не сделал меня рабом»]",
+  nl: "Gezegend bent U, Eeuwige, onze God, Koning van de wereld, Die mij als een vrij mens gemaakt heeft. [Inclusieve vorm — zoon / dochter / vrije. Vervangt 'die mij niet tot slaaf heeft gemaakt']",
+  en: "Blessed are You, Lord our God, King of the universe, Who made me a free person. [/ ben / bat / chorin — inclusive form: son/daughter of freedom. Replaces 'who did not make me a slave']",
+  fr: "Béni sois-Tu, Éternel, notre Dieu, Roi de l'univers, qui m'a fait une personne libre. [Forme inclusive — fils / fille / libre. Remplace « qui ne m'a pas fait esclave »]"
 },
 {
   id: 16,
@@ -267,10 +266,10 @@ const prayers: Prayer[] = [
   he_display: "[Inclusive form kept as in this edition: God of our fathers and our mothers]\nוִיהִי רָצוֹן מִלְּפָנֶיךָ יְיָ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ וְאִמּוֹתֵינוּ, שֶׁתַּרְגִּילֵנוּ בְּתוֹרָתֶךָ וְדַבְּקֵנוּ בְּמִצְוֹתֶיךָ, וְאַל תְּבִיאֵנוּ לֹא לִידֵי חֵטְא, וְלֹא לִידֵי עֲבֵירָה וְעָוֹן, וְלֹא לִידֵי נִסָּיוֹן, וְלֹא לִידֵי בִזָּיוֹן, וְאַל תַּשְׁלֶט־בָּנוּ יֵצֶר הָרַע, וְהַרְחִיקֵנוּ מֵאָדָם רָע וּמֵחָבֵר רָע, וְדַבְּקֵנוּ בְּיֵצֶר הַטּוֹב וּבְמַעֲשִׂים טוֹבִים, וְכוֹף אֶת־יִצְרֵנוּ לְהִשְׁתַּעְבֶּד־לָךְ, וּתְנֵנוּ הַיּוֹם, וּבְכָל־יוֹם לְחֵן וּלְחֶסֶד וּלְרַחֲמִים בְּעֵינֶיךָ וּבְעֵינֵי כָל־רוֹאֵינוּ וְתִגְמְלֵנוּ חֲסָדִים טוֹבִים. בָּרוּךְ אַתָּה יְיָ, גּוֹמֵל חֲסָדִים טוֹבִים לְעַמּוֹ יִשְׂרָאֵל.",
   he_tts: "וִיהִי רָצוֹן מִלְּפָנֶיךָ יְיָ אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ וְאִמּוֹתֵינוּ, שֶׁתַּרְגִּילֵנוּ בְּתוֹרָתֶךָ וְדַבְּקֵנוּ בְּמִצְוֹתֶיךָ, וְאַל תְּבִיאֵנוּ לֹא לִידֵי חֵטְא, וְלֹא לִידֵי עֲבֵירָה וְעָוֹן, וְלֹא לִידֵי נִסָּיוֹן, וְלֹא לִידֵי בִזָּיוֹן, וְאַל תַּשְׁלֶט־בָּנוּ יֵצֶר הָרַע, וְהַרְחִיקֵנוּ מֵאָדָם רָע וּמֵחָבֵר רָע, וְדַבְּקֵנוּ בְּיֵצֶר הַטּוֹב וּבְמַעֲשִׂים טוֹבִים, וְכוֹף אֶת־יִצְרֵנוּ לְהִשְׁתַּעְבֶּד־לָךְ, וּתְנֵנוּ הַיּוֹם, וּבְכָל־יוֹם לְחֵן וּלְחֶסֶד וּלְרַחֲמִים בְּעֵינֶיךָ וּבְעֵינֵי כָל־רוֹאֵינוּ וְתִגְמְלֵנוּ חֲסָדִים טוֹבִים. בָּרוּךְ אַתָּה יְיָ, גּוֹמֵל חֲסָדִים טוֹבִים לְעַמּוֹ יִשְׂרָאֵל.",
   translit: "Vihi ratzon milfanecha Adonai Eloheinu velohei avoteinu ve'imoteinu, shetargilenu beToratecha vedabkenu bemitzvotecha, ve'al tevi'enu lo lidei chet, velo lidei avera va'avon, velo lidei nisayon, velo lidei vizayon, ve'al tashlet-banu yetzer hara, veharchikenu me'adam ra umechaver ra, vedabkenu beyetzer hatov uvma'asim tovim, vechof et-yitzrenu lehishta'abed-lach, utnenu hayom uvchol-yom lechen ulechesed ulerachamim be'einecha uv'einei chol-ro'einu vetigmilenu chasadim tovim. Baruch atah Adonai, gomel chasadim tovim le'amo Yisrael.",
-  ru: "Да будет воля Твоя, Господь, Бог наш и Бог отцов наших и матерей наших, приучить нас к Торе Твоей и приблизить к заповедям Твоим. И не приводи нас ни к греху, ни к проступку, ни к преступлению, ни к испытанию, ни к позору, и не давай злому началу властвовать над нами, и удали нас от дурного человека и от дурного товарища, и прилепи нас к доброму началу и к добрым делам, и склони волю нашу служить Тебе, и дай нам сегодня и каждый день обрести милость и благоволение и милосердие в глазах Твоих и в глазах всех видящих нас, и воздай нам добрыми милостями. Благословен Ты, Господь, воздающий добрыми милостями народу Своему Исраэлю.",
-  nl: "Moge het Uw wil zijn, Eeuwige, onze God en God van onze vaders en onze moeders, dat U ons vertrouwd maakt met Uw Tora en ons hecht aan Uw geboden. Breng ons niet tot zonde, overtreding, ongerechtigheid, beproeving of schande, en laat de kwade neiging niet over ons heersen. Verwijder ons van een slecht mens en een slechte vriend, en hecht ons aan de goede neiging en aan goede daden, en dwing onze neiging om U te dienen. En geef ons vandaag en elke dag genade, gunst en barmhartigheid in Uw ogen en in de ogen van allen die ons zien, en bewijs ons goede weldaden. Gezegend bent U, Eeuwige, Die goede weldaden bewijst aan Zijn volk Israël.",
-  en: "May it be Your will, Lord our God and God of our fathers and our mothers, to accustom us to Your Torah and cleave us to Your commandments. Do not bring us to sin, transgression, iniquity, trial or disgrace, and do not let the evil inclination rule over us. Keep us far from an evil person and an evil companion, cleave us to the good inclination and to good deeds, and subdue our inclination to be subservient to You. Grant us today and every day grace, kindness and mercy in Your eyes and in the eyes of all who see us, and bestow upon us good kindnesses. Blessed are You, Lord, Who bestows good kindnesses upon His people Israel.",
-  fr: "Que ce soit Ta volonté, Éternel, notre Dieu et Dieu de nos pères et de nos mères, de nous habituer à Ta Torah et de nous attacher à Tes commandements. Ne nous amène pas à la faute, à la transgression, à l'iniquité, à l'épreuve ni à la honte, et ne laisse pas le mauvais penchant dominer sur nous. Éloigne-nous de l'homme mauvais et du mauvais compagnon, attache-nous au bon penchant et aux bonnes œuvres, et soumets notre penchant à Te servir. Accorde-nous aujourd'hui et chaque jour grâce, bienveillance et miséricorde à Tes yeux et aux yeux de tous ceux qui nous voient, et comble-nous de bonnes grâces. Béni sois-Tu, Éternel, qui comble Son peuple Israël de bonnes grâces."
+  ru: "[Инклюзивная форма этого издания — Бог отцов наших и матерей наших] Да будет воля Твоя, Господь, Бог наш и Бог отцов наших и матерей наших, приучить нас к Торе Твоей и приблизить к заповедям Твоим. И не приводи нас ни к греху, ни к проступку, ни к преступлению, ни к испытанию, ни к позору, и не давай злому началу властвовать над нами, и удали нас от дурного человека и от дурного товарища, и прилепи нас к доброму началу и к добрым делам, и склони волю нашу служить Тебе, и дай нам сегодня и каждый день обрести милость и благоволение и милосердие в глазах Твоих и в глазах всех видящих нас, и воздай нам добрыми милостями. Благословен Ты, Господь, воздающий добрыми милостями народу Своему Исраэлю.",
+  nl: "[Inclusieve vorm in deze uitgave — God van onze vaders en onze moeders] Moge het Uw wil zijn, Eeuwige, onze God en God van onze vaders en onze moeders, dat U ons vertrouwd maakt met Uw Tora en ons hecht aan Uw geboden. Breng ons niet tot zonde, overtreding, ongerechtigheid, beproeving of schande, en laat de kwade neiging niet over ons heersen. Verwijder ons van een slecht mens en een slechte vriend, en hecht ons aan de goede neiging en aan goede daden, en dwing onze neiging om U te dienen. En geef ons vandaag en elke dag genade, gunst en barmhartigheid in Uw ogen en in de ogen van allen die ons zien, en bewijs ons goede weldaden. Gezegend bent U, Eeuwige, Die goede weldaden bewijst aan Zijn volk Israël.",
+  en: "[Inclusive form kept as in this edition — God of our fathers and our mothers] May it be Your will, Lord our God and God of our fathers and our mothers, to accustom us to Your Torah and cleave us to Your commandments. Do not bring us to sin, transgression, iniquity, trial or disgrace, and do not let the evil inclination rule over us. Keep us far from an evil person and an evil companion, cleave us to the good inclination and to good deeds, and subdue our inclination to be subservient to You. Grant us today and every day grace, kindness and mercy in Your eyes and in the eyes of all who see us, and bestow upon us good kindnesses. Blessed are You, Lord, Who bestows good kindnesses upon His people Israel.",
+  fr: "[Forme inclusive conservée dans cette édition — Dieu de nos pères et de nos mères] Que ce soit Ta volonté, Éternel, notre Dieu et Dieu de nos pères et de nos mères, de nous habituer à Ta Torah et de nous attacher à Tes commandements. Ne nous amène pas à la faute, à la transgression, à l'iniquité, à l'épreuve ni à la honte, et ne laisse pas le mauvais penchant dominer sur nous. Éloigne-nous de l'homme mauvais et du mauvais compagnon, attache-nous au bon penchant et aux bonnes œuvres, et soumets notre penchant à Te servir. Accorde-nous aujourd'hui et chaque jour grâce, bienveillance et miséricorde à Tes yeux et aux yeux de tous ceux qui nous voient, et comble-nous de bonnes grâces. Béni sois-Tu, Éternel, qui comble Son peuple Israël de bonnes grâces."
 },
 {
   id: 22,
@@ -460,9 +459,9 @@ const prayers: Prayer[] = [
   he_tts: "אַהֲבָה רַבָּה אֲהַבְתָּנוּ, יְיָ אֱלֹהֵינוּ, חֶמְלָה גְדוֹלָה וִיתֵרָה חָמַלְתָּ עָלֵינוּ. אָבִינוּ מַלְכֵּנוּ, בַּעֲבוּר אֲבוֹתֵינוּ שֶׁבָּטְחוּ בְךָ, וַתְּלַמְּדֵם חֻקֵּי חַיִּים, כֵּן תְּחָנֵּנוּ וּתְלַמְּדֵנוּ. אָבִינוּ, הָאָב הָרַחֲמָן, הַמְרַחֵם, רַחֵם עָלֵינוּ, וְתֵן בְּלִבֵּנוּ לְהָבִין וּלְהַשְׂכִּיל, לִשְׁמֹעַ, לִלְמֹד וּלְלַמֵּד, לִשְׁמֹר וְלַעֲשׂוֹת וּלְקַיֵּם אֶת-כָּל-דִּבְרֵי תַלְמוּד תּוֹרָתֶךָ בְּאַהֲבָה. וְהָאֵר עֵינֵינוּ בְּתוֹרָתֶךָ, וְדַבֵּק לִבֵּנוּ בְּמִצְוֹתֶיךָ, וְיַחֵד לְבָבֵנוּ לְאַהֲבָה וּלְיִרְאָה אֶת-שְׁמֶךָ, וְלֹא נֵבוֹשׁ וְלֹא נִכָּלֵם וְלֹא נִכָּשֵׁל לְעוֹלָם וָעֶד. כִּי בְשֵׁם קָדְשְׁךָ הַגָּדוֹל וְהַנּוֹרָא בָּטַחְנוּ, נָגִילָה וְנִשְׂמְחָה בִּישׁוּעָתֶךָ. וַהֲבִיאֵנוּ לְשָׁלוֹם מֵאַרְבַּע כַּנְפוֹת הָאָרֶץ, וְתוֹלִיכֵנוּ קוֹמְמִיּוּת לְאַרְצֵנוּ, כִּי אֵל פּוֹעֵל יְשׁוּעוֹת אָתָּה, וּבָנוּ בָחַרְתָּ מִכָּל-עַם וְלָשׁוֹן, וְקֵרַבְתָּנוּ לְשִׁמְךָ הַגָּדוֹל סֶלָה בֶּאֱמֶת, לְהוֹדוֹת לְךָ וּלְיַחֶדְךָ בְּאַהֲבָה. בָּרוּךְ אַתָּה יְיָ, הַבּוֹחֵר בְּעַמּוֹ יִשְׂרָאֵל בְּאַהֲבָה.",
   translit: "Ahava rabba ahavtanu, Adonai Eloheinu, chemla gedola vitera chamalta aleinu. Avinu Malkenu, ba'avur avoteinu shebatchu vecha, vatelamdem chukei chayim, ken techonenu utelamdenu. Avinu, HaAv HaRachaman, haMerachem, rachem aleinu, veten belibenu lehavin ulhaskil, lishmoa, lilmod ul'lamed, lishmor vela'asot ulkayem et-kol-divrei talmud Toratecha be'ahava.\nVeha'er eineinu beToratecha, vedabek libenu bemitzvotecha, veyached levavenu le'ahava uleyir'ah et-shmecha, velo nevosh velo nikolem velo nikashel le'olam va'ed. Ki veshem kodshecha hagadol vehanora batachnu, nagila venismecha bishuatecha.\nVahavi'enu leshalom me'arba kanfot ha'aretz, vetolichenu komemiyut le'artzenu, ki El po'el yeshuot atah, uvanu vacharta mikol-am velashon, vekeravtanu leshimcha hagadol sela be'emet, lehodot lecha uleyachedcha be'ahava. Baruch atah Adonai, habocher be'amo Yisrael be'ahava.",
   ru: "[Вторая браха]\nВеликою любовью возлюбил Ты нас, Господь, Бог наш, великой и безмерной жалостью сжалился Ты над нами. Отец наш, Царь наш, ради отцов наших, уповавших на Тебя, и Ты обучал их законам жизни, так смилуйся над нами и обучи нас. Отец наш, Отец милосердный, Милующий, смилуйся над нами и вложи в сердце наше понимать и разуметь, слушать, учить и обучать, хранить и исполнять и осуществлять все слова учения Торы Твоей с любовью.\nИ просвети очи наши Торой Твоей, и прилепи сердце наше к заповедям Твоим, и объедини сердце наше для любви и трепета пред Именем Твоим, и не устыдимся и не посрамимся и не преткнемся во веки веков. Ибо на святое Имя Твое великое и грозное уповали мы, возрадуемся и возвеселимся в спасении Твоем.\n[Здесь берут четыре цицит в левую руку]\nИ приведи нас с миром от четырех концов земли и веди нас прямо в страну нашу, ибо Ты Бог, творящий спасение, и нас избрал Ты из всякого народа и языка, и приблизил нас к великому Имени Твоему вовек истинно, чтобы благодарить Тебя и провозглашать единство Твое с любовью. Благословен Ты, Господь, Избирающий народ Свой Израиль с любовью.",
-  nl: "[Tweede Beracha]\nMet grote liefde hebt U ons liefgehad, Eeuwige, onze God, met groot en overvloedig erbarmen hebt U Zich over ons ontfermd. Onze Vader, onze Koning, omwille van onze vaderen die op U vertrouwden en U hun levenswetten leerde, wees ook ons genadig en leer ons. Onze Vader, barmhartige Vader, Erbarmer, ontferm U over ons en geef in ons hart te begrijpen en te doorgronden, te horen, te leren en te onderwijzen, te bewaken en te doen en te volbrengen alle woorden van de studie van Uw Tora met liefde.\nVerlicht onze ogen met Uw Tora, hecht ons hart aan Uw geboden, verenig ons hart om Uw Naam lief te hebben en te vrezen, opdat wij niet beschaamd worden en niet te schande en niet struikelen voor eeuwig. Want op Uw grote, heilige en ontzagwekkende Naam hebben wij vertrouwd, wij zullen juichen en ons verheugen in Uw heil.\nBreng ons in vrede van de vier hoeken der aarde en leid ons fier naar ons land, want U bent een God Die redding bewerkt, en ons hebt U gekozen uit alle volken en talen, en U hebt ons nabij Uw grote Naam gebracht, sela, in waarheid, om U te danken en U in liefde als Eén te belijden. Gezegend bent U, Eeuwige, Die Zijn volk Israël kiest in liefde.",
-  en: "[Second Beracha]\nWith great love You have loved us, Lord our God, with great and abundant mercy You have had mercy upon us. Our Father, our King, for the sake of our fathers who trusted in You and You taught them statutes of life, so be gracious to us and teach us. Our Father, merciful Father, Merciful One, have mercy upon us and put in our heart to understand and to be wise, to hear, to learn and to teach, to keep and to do and to fulfill all the words of the study of Your Torah with love.\nEnlighten our eyes with Your Torah, cleave our heart to Your commandments, unite our heart to love and to fear Your Name, and we shall not be ashamed nor confounded nor stumble forever. For in Your great, holy and awesome Name we trusted, we shall rejoice and be glad in Your salvation.\nBring us in peace from the four corners of the earth and lead us upright to our land, for You are a God Who works salvation, and us You have chosen from all peoples and tongues, and You have brought us close to Your great Name forever in truth, to thank You and to proclaim Your unity with love. Blessed are You, Lord, Who chooses His people Israel with love.",
-  fr: "[Deuxième Beracha]\nD'un grand amour Tu nous as aimés, Éternel, notre Dieu, d'une grande et immense miséricorde Tu as eu pitié de nous. Notre Père, notre Roi, à cause de nos pères qui ont mis leur confiance en Toi et Tu leur as enseigné les lois de vie, ainsi fais-nous grâce et enseigne-nous. Notre Père, Père miséricordieux, Miséricordieux, aie pitié de nous et mets en notre cœur de comprendre et de discerner, d'écouter, d'apprendre et d'enseigner, de garder et de faire et d'accomplir toutes les paroles de l'étude de Ta Torah avec amour.\nÉclaire nos yeux par Ta Torah, attache notre cœur à Tes commandements, unifie notre cœur pour aimer et craindre Ton Nom, et que nous ne soyons pas honteux ni confus ni trébuchants à jamais. Car en Ton grand Nom saint et redoutable nous avons mis notre confiance, nous jubilerons et nous réjouirons en Ton salut.\nAmène-nous en paix des quatre coins de la terre et conduis-nous fièrement vers notre terre, car Tu es un Dieu qui opère des délivrances, et nous Tu nous as choisis parmi tous les peuples et langues, et Tu nous as rapprochés de Ton grand Nom sela en vérité, pour Te remercier et proclamer Ton unité avec amour. Béni sois-Tu, Éternel, qui choisis Son peuple Israël avec amour."
+  nl: "[Tweede Beracha]\nMet grote liefde hebt U ons liefgehad, Eeuwige, onze God, met groot en overvloedig erbarmen hebt U Zich over ons ontfermd. Onze Vader, onze Koning, omwille van onze vaderen die op U vertrouwden en U hun levenswetten leerde, wees ook ons genadig en leer ons. Onze Vader, barmhartige Vader, Erbarmer, ontferm U over ons en geef in ons hart te begrijpen en te doorgronden, te horen, te leren en te onderwijzen, te bewaken en te doen en te volbrengen alle woorden van de studie van Uw Tora met liefde.\nVerlicht onze ogen met Uw Tora, hecht ons hart aan Uw geboden, verenig ons hart om Uw Naam lief te hebben en te vrezen, opdat wij niet beschaamd worden en niet te schande en niet struikelen voor eeuwig. Want op Uw grote, heilige en ontzagwekkende Naam hebben wij vertrouwd, wij zullen juichen en ons verheugen in Uw heil.\n[Men neemt de vier tsitsit in de linkerhand]\nBreng ons in vrede van de vier hoeken der aarde en leid ons fier naar ons land, want U bent een God Die redding bewerkt, en ons hebt U gekozen uit alle volken en talen, en U hebt ons nabij Uw grote Naam gebracht, sela, in waarheid, om U te danken en U in liefde als Eén te belijden. Gezegend bent U, Eeuwige, Die Zijn volk Israël kiest in liefde.",
+  en: "[Second Beracha]\nWith great love You have loved us, Lord our God, with great and abundant mercy You have had mercy upon us. Our Father, our King, for the sake of our fathers who trusted in You and You taught them statutes of life, so be gracious to us and teach us. Our Father, merciful Father, Merciful One, have mercy upon us and put in our heart to understand and to be wise, to hear, to learn and to teach, to keep and to do and to fulfill all the words of the study of Your Torah with love.\nEnlighten our eyes with Your Torah, cleave our heart to Your commandments, unite our heart to love and to fear Your Name, and we shall not be ashamed nor confounded nor stumble forever. For in Your great, holy and awesome Name we trusted, we shall rejoice and be glad in Your salvation.\n[One takes the four tzitzit in the left hand]\nBring us in peace from the four corners of the earth and lead us upright to our land, for You are a God Who works salvation, and us You have chosen from all peoples and tongues, and You have brought us close to Your great Name forever in truth, to thank You and to proclaim Your unity with love. Blessed are You, Lord, Who chooses His people Israel with love.",
+  fr: "[Deuxième Beracha]\nD'un grand amour Tu nous as aimés, Éternel, notre Dieu, d'une grande et immense miséricorde Tu as eu pitié de nous. Notre Père, notre Roi, à cause de nos pères qui ont mis leur confiance en Toi et Tu leur as enseigné les lois de vie, ainsi fais-nous grâce et enseigne-nous. Notre Père, Père miséricordieux, Miséricordieux, aie pitié de nous et mets en notre cœur de comprendre et de discerner, d'écouter, d'apprendre et d'enseigner, de garder et de faire et d'accomplir toutes les paroles de l'étude de Ta Torah avec amour.\nÉclaire nos yeux par Ta Torah, attache notre cœur à Tes commandements, unifie notre cœur pour aimer et craindre Ton Nom, et que nous ne soyons pas honteux ni confus ni trébuchants à jamais. Car en Ton grand Nom saint et redoutable nous avons mis notre confiance, nous jubilerons et nous réjouirons en Ton salut.\n[On prend les quatre tsitsit dans la main gauche]\nAmène-nous en paix des quatre coins de la terre et conduis-nous fièrement vers notre terre, car Tu es un Dieu qui opère des délivrances, et nous Tu nous as choisis parmi tous les peuples et langues, et Tu nous as rapprochés de Ton grand Nom sela en vérité, pour Te remercier et proclamer Ton unité avec amour. Béni sois-Tu, Éternel, qui choisis Son peuple Israël avec amour."
 },
 {
   id: 38,
@@ -563,10 +562,10 @@ const prayers: Prayer[] = [
   he_display: "[2. GEWOEROT]\nאַתָּה גִּבּוֹר לְעוֹלָם אֲדֹנָי, מְחַיֵּה מֵתִים אַתָּה, רַב לְהוֹשִׁיעַ.\n[Seasonal 1 - Winter - Tussen Simchat Tora en Pesach - Insert after first line:]\nמַשִּׁיב הָרוּחַ וּמוֹרִיד הַגָּשֶׁם.\nמְכַלְכֵּל חַיִּים בְּחֶסֶד, מְחַיֵּה מֵתִים בְּרַחֲמִים רַבִּים, סוֹמֵךְ\nנוֹפְלִים, וְרוֹפֵא חוֹלִים, וּמַתִּיר אֲסוּרִים, וּמְקַיֵּם אֱמוּנָתוֹ\nלִישֵׁנֵי עָפָר, מִי כָמוֹךָ בַּעַל גְּבוּרוֹת וּמִי דוֹמֶה לָךְ, מֶלֶךְ\nמֵמִית וּמְחַיֶּה וּמַצְמִיחַ יְשׁוּעָה.\n[Seasonal 2 - Yamim Noraim - Tussen Rosh HaShana en Yom Kippur - Insert here:]\nמִי כָמוֹךָ אַב הָרַחֲמִים, זוֹכֵר יְצוּרָיו לְחַיִּים בְּרַחֲמִים.\nוְנֶאֱמָן אַתָּה לְהַחֲיוֹת מֵתִים.\nבָּרוּךְ אַתָּה יְיָ, מְחַיֵּה הַמֵּתִים.",
   he_tts: "אַתָּה גִּבּוֹר לְעוֹלָם אֲדֹנָי, מְחַיֵּה מֵתִים אַתָּה, רַב לְהוֹשִׁיעַ. מַשִּׁיב הָרוּחַ וּמוֹרִיד הַגָּשֶׁם. מְכַלְכֵּל חַיִּים בְּחֶסֶד, מְחַיֵּה מֵתִים בְּרַחֲמִים רַבִּים, סוֹמֵךְ נוֹפְלִים, וְרוֹפֵא חוֹלִים, וּמַתִּיר אֲסוּרִים, וּמְקַיֵּם אֱמוּנָתוֹ לִישֵׁנֵי עָפָר, מִי כָמוֹךָ בַּעַל גְּבוּרוֹת וּמִי דוֹמֶה לָךְ, מֶלֶךְ מֵמִית וּמְחַיֶּה וּמַצְמִיחַ יְשׁוּעָה. מִי כָמוֹךָ אַב הָרַחֲמִים, זוֹכֵר יְצוּרָיו לְחַיִּים בְּרַחֲמִים. וְנֶאֱמָן אַתָּה לְהַחֲיוֹת מֵתִים. בָּרוּךְ אַתָּה יְיָ, מְחַיֵּה הַמֵּתִים.",
   translit: "Atah gibor le'olam Adonai, mechayeh metim atah, rav lehoshia. Mashiv haruach umorid hagashem. Mechalkel chayim bechesed, mechayeh metim berachamim rabim, somech noflim, verofeh cholim, umatir asurim, umekayem emunato lishenei afar, mi chamocha ba'al gevurot umi domeh lach, Melech memit umechayeh umatzmiach yeshua. Mi chamocha Av harachamim, zocher yetzurav lechayim berachamim. Vene'eman atah lehachayot metim. Baruch atah Adonai, mechayeh hametim.",
-  ru: "Ты могуч вовеки, Господь, оживляющий мертвых Ты, велик в спасении. [Зимняя вставка между Симхат Тора и Песах: Заставляющий дуть ветер и низводящий дождь.] Питающий живых милостью, оживляющий мертвых милосердием великим, поддерживающий падающих, и исцеляющий больных, и освобождающий узников, и исполняющий верность Свою спящим в прахе, кто как Ты, Владыка могуществ и кто подобен Тебе, Царь умерщвляющий и оживляющий и взращивающий спасение. [Вставка в Ямим Нораим между Рош а-Шана и Йом Кипур: Кто как Ты, Отец милосердия, помнящий творения Свои для жизни в милосердии. И верен Ты в оживлении мертвых.] Благословен Ты, Господь, оживляющий мертвых.",
-  nl: "U bent machtig in eeuwigheid, Eeuwige, Die doden levend maakt, groot in verlossing. [Winter invoeging tussen Simchat Tora en Pesach: Die de wind doet waaien en de regen doet neerdalen.] Die levenden voedt met liefde, doden levend maakt met grote barmhartigheid, Die vallenden ondersteunt, en zieken geneest, en gevangenen bevrijdt, en Zijn trouw handhaaft aan hen die in het stof slapen, wie is als U, Meester van machten en wie is U gelijk, Koning Die doodt en levend maakt en heil doet ontspruiten. [Invoeging Yamim Noraim tussen Rosj Hasjana en Jom Kipoer: Wie is als U, Vader der barmhartigheid, Die Zijn schepselen gedenkt ten leven in barmhartigheid. En betrouwbaar bent U om doden te doen herleven.] Gezegend bent U, Eeuwige, Die de doden levend maakt.",
-  en: "You are mighty forever, Lord, You revive the dead, great in salvation. [Winter insertion between Simchat Torah and Pesach: Who causes the wind to blow and the rain to fall.] Who sustains the living with kindness, revives the dead with great mercy, supports the falling, heals the sick, releases the bound, and keeps His faith to those who sleep in the dust, who is like You, Master of mighty deeds and who is comparable to You, King Who causes death and restores life and causes salvation to sprout. [Yamim Noraim insertion between Rosh HaShana and Yom Kippur: Who is like You, Father of mercy, Who remembers His creatures for life in mercy. And faithful are You to revive the dead.] Blessed are You, Lord, Who revives the dead.",
-  fr: "Tu es puissant à jamais, Seigneur, Toi qui fais revivre les morts, grand pour sauver. [Insertion d'hiver entre Sim'hat Torah et Pessa'h: Qui fais souffler le vent et tomber la pluie.] Qui nourris les vivants avec bonté, fais revivre les morts avec grande miséricorde, soutiens les tombants, guéris les malades, libères les captifs, et gardes Ta fidélité à ceux qui dorment dans la poussière, qui est comme Toi, Maître des puissances et qui Te ressemble, Roi qui fais mourir et vivre et fais germer le salut. [Insertion Yamim Noraim entre Roch Hachana et Kippour: Qui est comme Toi, Père de miséricorde, Qui Se souvient de Ses créatures pour la vie avec miséricorde. Et fidèle Tu es pour faire revivre les morts.] Béni sois-Tu, Éternel, Qui fais revivre les morts."
+  ru: "[2. Гевурот] Ты могуч вовеки, Господь, оживляющий мертвых Ты, велик в спасении. [Зимняя вставка между Симхат Тора и Песах: Заставляющий дуть ветер и низводящий дождь.] Питающий живых милостью, оживляющий мертвых милосердием великим, поддерживающий падающих, и исцеляющий больных, и освобождающий узников, и исполняющий верность Свою спящим в прахе, кто как Ты, Владыка могуществ и кто подобен Тебе, Царь умерщвляющий и оживляющий и взращивающий спасение. [Вставка в Ямим Нораим между Рош а-Шана и Йом Кипур: Кто как Ты, Отец милосердия, помнящий творения Свои для жизни в милосердии. И верен Ты в оживлении мертвых.] Благословен Ты, Господь, оживляющий мертвых.",
+  nl: "[2. Gewoerot] U bent machtig in eeuwigheid, Eeuwige, Die doden levend maakt, groot in verlossing. [Winter invoeging tussen Simchat Tora en Pesach: Die de wind doet waaien en de regen doet neerdalen.] Die levenden voedt met liefde, doden levend maakt met grote barmhartigheid, Die vallenden ondersteunt, en zieken geneest, en gevangenen bevrijdt, en Zijn trouw handhaaft aan hen die in het stof slapen, wie is als U, Meester van machten en wie is U gelijk, Koning Die doodt en levend maakt en heil doet ontspruiten. [Invoeging Yamim Noraim tussen Rosj Hasjana en Jom Kipoer: Wie is als U, Vader der barmhartigheid, Die Zijn schepselen gedenkt ten leven in barmhartigheid. En betrouwbaar bent U om doden te doen herleven.] Gezegend bent U, Eeuwige, Die de doden levend maakt.",
+  en: "[2. Gevurot] You are mighty forever, Lord, You revive the dead, great in salvation. [Winter insertion between Simchat Torah and Pesach: Who causes the wind to blow and the rain to fall.] Who sustains the living with kindness, revives the dead with great mercy, supports the falling, heals the sick, releases the bound, and keeps His faith to those who sleep in the dust, who is like You, Master of mighty deeds and who is comparable to You, King Who causes death and restores life and causes salvation to sprout. [Yamim Noraim insertion between Rosh HaShana and Yom Kippur: Who is like You, Father of mercy, Who remembers His creatures for life in mercy. And faithful are You to revive the dead.] Blessed are You, Lord, Who revives the dead.",
+  fr: "[2. Guevourot] Tu es puissant à jamais, Seigneur, Toi qui fais revivre les morts, grand pour sauver. [Insertion d'hiver entre Sim'hat Torah et Pessa'h: Qui fais souffler le vent et tomber la pluie.] Qui nourris les vivants avec bonté, fais revivre les morts avec grande miséricorde, soutiens les tombants, guéris les malades, libères les captifs, et gardes Ta fidélité à ceux qui dorment dans la poussière, qui est comme Toi, Maître des puissances et qui Te ressemble, Roi qui fais mourir et vivre et fais germer le salut. [Insertion Yamim Noraim entre Roch Hachana et Kippour: Qui est comme Toi, Père de miséricorde, Qui Se souvient de Ses créatures pour la vie avec miséricorde. Et fidèle Tu es pour faire revivre les morts.] Béni sois-Tu, Éternel, Qui fais revivre les morts."
 },
 {
   id: 46,
@@ -576,10 +575,10 @@ const prayers: Prayer[] = [
   he_display: "[3. KEDOESJAT HASJEM - For silent private Amida - Do NOT use chazzan Kedusha]\nאַתָּה קָדוֹשׁ וְשִׁמְךָ קָדוֹשׁ, וּקְדוֹשִׁים בְּכָל-יוֹם יְהַלְּלוּךָ,\nסֶלָה. בָּרוּךְ אַתָּה יְיָ, הָאֵל הַקָּדוֹשׁ.\n[Seasonal replacement - Tussen Rosj Hasjana en Jom Kipoer - Replace last words:]\nבָּרוּךְ אַתָּה יְיָ, הַמֶּלֶךְ הַקָּדוֹשׁ.",
   he_tts: "אַתָּה קָדוֹשׁ וְשִׁמְךָ קָדוֹשׁ, וּקְדוֹשִׁים בְּכָל-יוֹם יְהַלְּלוּךָ, סֶלָה. בָּרוּךְ אַתָּה יְיָ, הָאֵל הַקָּדוֹשׁ. בָּרוּךְ אַתָּה יְיָ, הַמֶּלֶךְ הַקָּדוֹשׁ.",
   translit: "Atah kadosh veshimcha kadosh, ukedoshim bechol-yom yehalelucha, sela. Baruch atah Adonai, Ha'El hakadosh. Baruch atah Adonai, HaMelech hakadosh.",
-  ru: "Ты свят и Имя Твое свято, и святые каждый день восхваляют Тебя, села. Благословен Ты, Господь, Бог святой. [Сезонная замена между Рош а-Шана и Йом Кипур: Благословен Ты, Господь, Царь святой.] [Примечание: Для тихой частной Амиды, не использовать Кедушу хаззана со следующей страницы]",
-  nl: "U bent heilig en Uw Naam is heilig, en heiligen loven U elke dag, sela. Gezegend bent U, Eeuwige, de heilige God. [Seizoensvervanging tussen Rosj Hasjana en Jom Kipoer: Gezegend bent U, Eeuwige, de heilige Koning.] [Opmerking: Voor stille privé Amida, niet de Kedoesja van de chazzan gebruiken van de volgende pagina]",
-  en: "You are holy and Your Name is holy, and holy ones praise You every day, selah. Blessed are You, Lord, the holy God. [Seasonal replacement between Rosh HaShana and Yom Kippur: Blessed are You, Lord, the holy King.] [Note: For silent private Amida, do not use chazzan Kedusha from next page]",
-  fr: "Tu es saint et Ton Nom est saint, et des saints Te louent chaque jour, sela. Béni sois-Tu, Éternel, le Dieu saint. [Remplacement saisonnier entre Roch Hachana et Kippour: Béni sois-Tu, Éternel, le Roi saint.] [Note: Pour la Amida silencieuse privée, ne pas utiliser la Kedoucha du hazzan de la page suivante]"
+  ru: "[Для тихой частной Амиды — не использовать Кедушу хаззана со следующей страницы] Ты свят и Имя Твое свято, и святые каждый день восхваляют Тебя, села. Благословен Ты, Господь, Бог святой. [Сезонная замена между Рош а-Шана и Йом Кипур: Благословен Ты, Господь, Царь святой.]",
+  nl: "[Voor stille privé Amida — niet de Kedoesja van de chazzan gebruiken van de volgende pagina] U bent heilig en Uw Naam is heilig, en heiligen loven U elke dag, sela. Gezegend bent U, Eeuwige, de heilige God. [Seizoensvervanging tussen Rosj Hasjana en Jom Kipoer: Gezegend bent U, Eeuwige, de heilige Koning.]",
+  en: "[For silent private Amida — do not use chazzan Kedusha from next page] You are holy and Your Name is holy, and holy ones praise You every day, selah. Blessed are You, Lord, the holy God. [Seasonal replacement between Rosh HaShana and Yom Kippur: Blessed are You, Lord, the holy King.]",
+  fr: "[Pour la Amida silencieuse privée — ne pas utiliser la Kedoucha du hazzan de la page suivante] Tu es saint et Ton Nom est saint, et des saints Te louent chaque jour, sela. Béni sois-Tu, Éternel, le Dieu saint. [Remplacement saisonnier entre Roch Hachana et Kippour: Béni sois-Tu, Éternel, le Roi saint.]"
 },
 {
   id: 47,
@@ -629,10 +628,10 @@ const prayers: Prayer[] = [
   he_display: "[Sim Shalom - For Shacharit lechol with Hawinenu]\nשִׂים שָׁלוֹם טוֹבָה וּבְרָכָה, חֵן וָחֶסֶד וְרַחֲמִים, עָלֵינוּ\nוְעַל כָּל-יִשְׂרָאֵל עַמֶּךָ. בָּרְכֵנוּ, אָבִינוּ, כֻּלָּנוּ כְּאֶחָד בְּאוֹר\nפָּנֶיךָ, כִּי בְאוֹר פָּנֶיךָ נָתַתָּ לָּנוּ, יְיָ אֱלֹהֵינוּ, תּוֹרַת חַיִּים\nוְאַהֲבַת חֶסֶד, וּצְדָקָה וּבְרָכָה וְרַחֲמִים וְחַיִּים וְשָׁלוֹם,\nוְטוֹב בְּעֵינֶיךָ לְבָרֵךְ אֶת-עַמְּךָ יִשְׂרָאֵל בְּכָל-עֵת וּבְכָל-\nשָׁעָה בִּשְׁלוֹמֶךָ.\n[Seasonal insertion - Tussen Rosj Hasjana en Jom Kipoer - Insert before final bracha:]\nבְּסֵפֶר חַיִּים, בְּרָכָה וְשָׁלוֹם\nוּפַרְנָסָה טוֹבָה, נִזָּכֵר וְנִכָּתֵב\nלְפָנֶיךָ, אֲנַחְנוּ וְכָל-עַמְּךָ בֵּית\nיִשְׂרָאֵל, לְחַיִּים טוֹבִים וּלְשָׁלוֹם.\nבָּרוּךְ אַתָּה יְיָ, הַמְבָרֵךְ\nאֶת-עַמּוֹ יִשְׂרָאֵל בַּשָּׁלוֹם.\n[Alternative seasonal closing: בָּרוּךְ אַתָּה יְיָ, עוֹשֵׂה הַשָּׁלוֹם.]",
   he_tts: "שִׂים שָׁלוֹם טוֹבָה וּבְרָכָה, חֵן וָחֶסֶד וְרַחֲמִים, עָלֵינוּ וְעַל כָּל-יִשְׂרָאֵל עַמֶּךָ. בָּרְכֵנוּ, אָבִינוּ, כֻּלָּנוּ כְּאֶחָד בְּאוֹר פָּנֶיךָ, כִּי בְאוֹר פָּנֶיךָ נָתַתָּ לָּנוּ, יְיָ אֱלֹהֵינוּ, תּוֹרַת חַיִּים וְאַהֲבַת חֶסֶד, וּצְדָקָה וּבְרָכָה וְרַחֲמִים וְחַיִּים וְשָׁלוֹם, וְטוֹב בְּעֵינֶיךָ לְבָרֵךְ אֶת-עַמְּךָ יִשְׂרָאֵל בְּכָל-עֵת וּבְכָל-שָׁעָה בִּשְׁלוֹמֶךָ. בְּסֵפֶר חַיִּים, בְּרָכָה וְשָׁלוֹם וּפַרְנָסָה טוֹבָה, נִזָּכֵר וְנִכָּתֵב לְפָנֶיךָ, אֲנַחְנוּ וְכָל-עַמְּךָ בֵּית יִשְׂרָאֵל, לְחַיִּים טוֹבִים וּלְשָׁלוֹם. בָּרוּךְ אַתָּה יְיָ, הַמְבָרֵךְ אֶת-עַמּוֹ יִשְׂרָאֵל בַּשָּׁלוֹם. בָּרוּךְ אַתָּה יְיָ, עוֹשֵׂה הַשָּׁלוֹם.",
   translit: "Sim shalom tova uveracha, chen vachesed verachamim, aleinu ve'al kol-Yisrael amecha. Barchenu, Avinu, kulanu ke'echad be'or panecha, ki ve'or panecha natata lanu, Adonai Eloheinu, Torat chayim ve'ahavat chesed, utzdaka uveracha verachamim vechayim veshalom, vetov be'einecha levarech et-amcha Yisrael bechol-et uvechol-sha'a bishlomecha. Besefer chayim, beracha veshalom ufarnasa tova, nizacher venikatev lefanecha, anachnu vechol-amcha beit Yisrael, lechayim tovim uleshalom. Baruch atah Adonai, hamvarech et-amo Yisrael bashalom. Baruch atah Adonai, oseh hashalom.",
-  ru: "Установи мир, благо и благословение, милость и милосердие и жалость, на нас и на весь Израиль народ Твой. Благослови нас, Отец наш, всех нас как одного светом лика Твоего, ибо светом лика Твоего дал Ты нам, Господь Бог наш, Тору жизни и любовь милости, и справедливость и благословение и милосердие и жизнь и мир, и благо в глазах Твоих благословить народ Твой Израиль во всякое время и во всякий час миром Твоим. [Вставка между Рош а-Шана и Йом Кипур: В Книге жизни, благословения и мира и пропитания доброго будем вспомянуты и записаны пред Тобою, мы и весь народ Твой дом Израиля, к жизни доброй и к миру.] Благословен Ты, Господь, благословляющий народ Свой Израиль миром. [Альтернативное сезонное окончание: Благословен Ты, Господь, творящий мир.]",
-  nl: "Stel vrede, goedheid en zegen, gunst en liefde en barmhartigheid, op ons en op heel Israël Uw volk. Zegen ons, onze Vader, allen tezamen met het licht van Uw aangezicht, want met het licht van Uw aangezicht gaf U ons, Eeuwige onze God, Tora van leven en liefdevolle goedheid, en gerechtigheid en zegen en barmhartigheid en leven en vrede, en goed is het in Uw ogen om Uw volk Israël te zegenen te allen tijde en te allen ure met Uw vrede. [Seizoensinvoeging Tussen Rosj Hasjana en Jom Kipoer: In het Boek van leven, zegen en vrede en goed levensonderhoud, mogen wij herdacht en ingeschreven worden voor U, wij en heel Uw volk het huis van Israël, voor een goed leven en voor vrede.] Gezegend bent U, Eeuwige, Die Zijn volk Israël zegent met vrede. [Alternatieve seizoenssluiting: Gezegend bent U, Eeuwige, Die vrede sticht.]",
-  en: "Grant peace, goodness and blessing, grace and kindness and mercy, upon us and upon all Israel Your people. Bless us, our Father, all of us as one with the light of Your face, for with the light of Your face You gave us, Lord our God, Torah of life and love of kindness, and righteousness and blessing and mercy and life and peace, and may it be good in Your eyes to bless Your people Israel at all times and at every hour with Your peace. [Seasonal insertion Between Rosh HaShana and Yom Kippur: In the Book of life, blessing and peace and good sustenance, may we be remembered and inscribed before You, we and all Your people the house of Israel, for good life and for peace.] Blessed are You, Lord, Who blesses His people Israel with peace. [Alternative seasonal closing: Blessed are You, Lord, Who makes peace.]",
-  fr: "Accorde paix, bonté et bénédiction, grâce et bonté et miséricorde, sur nous et sur tout Israël Ton peuple. Bénis-nous, notre Père, tous ensemble à la lumière de Ta face, car à la lumière de Ta face Tu nous as donné, Éternel notre Dieu, Torah de vie et amour de bonté, et justice et bénédiction et miséricorde et vie et paix, et qu'il soit bon à Tes yeux de bénir Ton peuple Israël en tout temps et à toute heure de Ta paix. [Insertion saisonnière Entre Roch Hachana et Kippour: Dans le Livre de vie, bénédiction et paix et bonne subsistance, puissions-nous être rappelés et inscrits devant Toi, nous et tout Ton peuple la maison d'Israël, pour une bonne vie et pour la paix.] Béni sois-Tu, Éternel, Qui bénit Son peuple Israël par la paix. [Clôture saisonnière alternative: Béni sois-Tu, Éternel, Qui fais la paix.]"
+  ru: "[Сим шалом — для будничного Шахарит вместе с Хавинену] Установи мир, благо и благословение, милость и милосердие и жалость, на нас и на весь Израиль народ Твой. Благослови нас, Отец наш, всех нас как одного светом лика Твоего, ибо светом лика Твоего дал Ты нам, Господь Бог наш, Тору жизни и любовь милости, и справедливость и благословение и милосердие и жизнь и мир, и благо в глазах Твоих благословить народ Твой Израиль во всякое время и во всякий час миром Твоим. [Вставка между Рош а-Шана и Йом Кипур: В Книге жизни, благословения и мира и пропитания доброго будем вспомянуты и записаны пред Тобою, мы и весь народ Твой дом Израиля, к жизни доброй и к миру.] Благословен Ты, Господь, благословляющий народ Свой Израиль миром. [Альтернативное сезонное окончание: Благословен Ты, Господь, творящий мир.]",
+  nl: "[Sim Shalom — voor Sjachariet doordeweeks met Hawinenu] Stel vrede, goedheid en zegen, gunst en liefde en barmhartigheid, op ons en op heel Israël Uw volk. Zegen ons, onze Vader, allen tezamen met het licht van Uw aangezicht, want met het licht van Uw aangezicht gaf U ons, Eeuwige onze God, Tora van leven en liefdevolle goedheid, en gerechtigheid en zegen en barmhartigheid en leven en vrede, en goed is het in Uw ogen om Uw volk Israël te zegenen te allen tijde en te allen ure met Uw vrede. [Seizoensinvoeging Tussen Rosj Hasjana en Jom Kipoer: In het Boek van leven, zegen en vrede en goed levensonderhoud, mogen wij herdacht en ingeschreven worden voor U, wij en heel Uw volk het huis van Israël, voor een goed leven en voor vrede.] Gezegend bent U, Eeuwige, Die Zijn volk Israël zegent met vrede. [Alternatieve seizoenssluiting: Gezegend bent U, Eeuwige, Die vrede sticht.]",
+  en: "[Sim Shalom - For Shacharit lechol with Hawinenu] Grant peace, goodness and blessing, grace and kindness and mercy, upon us and upon all Israel Your people. Bless us, our Father, all of us as one with the light of Your face, for with the light of Your face You gave us, Lord our God, Torah of life and love of kindness, and righteousness and blessing and mercy and life and peace, and may it be good in Your eyes to bless Your people Israel at all times and at every hour with Your peace. [Seasonal insertion Between Rosh HaShana and Yom Kippur: In the Book of life, blessing and peace and good sustenance, may we be remembered and inscribed before You, we and all Your people the house of Israel, for good life and for peace.] Blessed are You, Lord, Who blesses His people Israel with peace. [Alternative seasonal closing: Blessed are You, Lord, Who makes peace.]",
+  fr: "[Sim Shalom — pour Chaharit en semaine avec Hawinénou] Accorde paix, bonté et bénédiction, grâce et bonté et miséricorde, sur nous et sur tout Israël Ton peuple. Bénis-nous, notre Père, tous ensemble à la lumière de Ta face, car à la lumière de Ta face Tu nous as donné, Éternel notre Dieu, Torah de vie et amour de bonté, et justice et bénédiction et miséricorde et vie et paix, et qu'il soit bon à Tes yeux de bénir Ton peuple Israël en tout temps et à toute heure de Ta paix. [Insertion saisonnière Entre Roch Hachana et Kippour: Dans le Livre de vie, bénédiction et paix et bonne subsistance, puissions-nous être rappelés et inscrits devant Toi, nous et tout Ton peuple la maison d'Israël, pour une bonne vie et pour la paix.] Béni sois-Tu, Éternel, Qui bénit Son peuple Israël par la paix. [Clôture saisonnière alternative: Béni sois-Tu, Éternel, Qui fais la paix.]"
 },
 {
   id: 51,
@@ -644,10 +643,10 @@ const prayers: Prayer[] = [
   he_display: "[II - LJG Reform version]\nעָלֵינוּ לְשַׁבֵּחַ לַאֲדוֹן הַכֹּל, לָתֵת גְּדֻלָּה לְיוֹצֵר בְּרֵאשִׁית,\nשֶׁבָּחַר-בָּנוּ לְיַחֵד אֶת-שְׁמוֹ וְקֵרְבָנוּ לְעָבְדָתוֹ, וַאֲנַחְנוּ\nכּוֹרְעִים וּמִשְׁתַּחֲוִים וּמוֹדִים לִפְנֵי מֶלֶךְ מַלְכֵי הַמְּלָכִים\nהַקָּדוֹשׁ בָּרוּךְ הוּא, ○ שֶׁהוּא נוֹטֶה שָׁמַיִם וְיוֹסֵד אָרֶץ,\nוּמוֹשַׁב יְקָרוֹ בַּשָּׁמַיִם מִמַּעַל, וּשְׁכִינַת עֻזּוֹ בְּגָבְהֵי\nמְרוֹמִים. הוּא אֱלֹהֵינוּ, אֵין עוֹד. אֱמֶת מַלְכֵּנוּ, אֶפֶס\nזוּלָתוֹ, כַּכָּתוּב בְּתוֹרָתוֹ: וְיָדַעְתָּ הַיּוֹם וַהֲשֵׁבֹתָ אֶל לְבָבֶךָ,\nכִּי יְיָ הוּא הָאֱלֹהִים בַּשָּׁמַיִם מִמַּעַל וְעַל הָאָרֶץ מִתַּחַת,\nאֵין עוֹד.",
   he_tts: "עָלֵינוּ לְשַׁבֵּחַ לַאֲדוֹן הַכֹּל, לָתֵת גְּדֻלָּה לְיוֹצֵר בְּרֵאשִׁית, שֶׁבָּחַר-בָּנוּ לְיַחֵד אֶת-שְׁמוֹ וְקֵרְבָנוּ לְעָבְדָתוֹ, וַאֲנַחְנוּ כּוֹרְעִים וּמִשְׁתַּחֲוִים וּמוֹדִים לִפְנֵי מֶלֶךְ מַלְכֵי הַמְּלָכִים הַקָּדוֹשׁ בָּרוּךְ הוּא, שֶׁהוּא נוֹטֶה שָׁמַיִם וְיוֹסֵד אָרֶץ, וּמוֹשַׁב יְקָרוֹ בַּשָּׁמַיִם מִמַּעַל, וּשְׁכִינַת עֻזּוֹ בְּגָבְהֵי מְרוֹמִים. הוּא אֱלֹהֵינוּ, אֵין עוֹד. אֱמֶת מַלְכֵּנוּ, אֶפֶס זוּלָתוֹ, כַּכָּתוּב בְּתוֹרָתוֹ: וְיָדַעְתָּ הַיּוֹם וַהֲשֵׁבֹתָ אֶל לְבָבֶךָ, כִּי יְיָ הוּא הָאֱלֹהִים בַּשָּׁמַיִם מִמַּעַל וְעַל הָאָרֶץ מִתַּחַת, אֵין עוֹד.",
   translit: "Aleinu leshabe'ach la'adon hakol, latet gedula leyotzer bereshit, shebachar-banu leyached et-shemo vekervanu le'avdato, va'anachnu kor'im umishtachavim umodim lifnei Melech malchei hamlachim HaKadosh baruch Hu, shehu noteh shamayim veyosed aretz, umoshav yekaro bashamayim mima'al, ushechinat uzo begavhei meromim. Hu Eloheinu, ein od. Emet Malkenu, efes zulato, kakatuv beTorato: veyadata hayom vahashavota el levavecha, ki Adonai Hu HaElohim bashamayim mima'al ve'al ha'aretz mitachat, ein od.",
-  ru: "На нас — восхвалять Господина всего, воздать величие Творцу начала, что избрал нас единить Имя Его и приблизил нас к служению Ему, а мы преклоняемся и падаем ниц и благодарим пред Царем царей царей Святым, благословен Он, что Он простирает небеса и основывает землю, и обитель величия Его в небесах свыше, и Шхина мощи Его в высотах высот. Он Бог наш, нет иного. Истинно Царь наш, нет ничего кроме Него, как написано в Торе Его: И познай сегодня и верни к сердцу твоему, что Господь Он Бог на небесах свыше и на земле внизу, нет иного. ",
-  nl: "Op ons rust de plicht te loven de Heer van alles, grootheid te geven aan de Schepper van het begin, Die ons koos om Zijn Naam te verenigen en ons nabij bracht tot Zijn dienst, en wij knielen en buigen ons neer en danken voor de Koning der koningen der koningen de Heilige, gezegend is Hij, Die de hemelen uitspant en de aarde grondvest, en de zetel van Zijn heerlijkheid is in de hemelen daarboven, en de woonplaats van Zijn macht in de hoogten der hoogten. Hij is onze God, er is geen ander. Waarachtig onze Koning, er is niets buiten Hem, zoals geschreven staat in Zijn Tora: En gij zult heden weten en tot uw hart wederbrengen, dat de Eeuwige Hij is God in de hemel daarboven en op de aarde beneden, er is geen ander. ",
-  en: "It is upon us to praise the Lord of all, to give greatness to the Creator of beginning, Who chose us to unify His Name and brought us near to His service, and we kneel and bow and give thanks before the King of kings of kings the Holy One, blessed is He, Who stretches out heavens and founds earth, and the seat of His glory is in the heavens above, and the dwelling of His might is in the highest heights. He is our God, there is no other. True is our King, there is nothing besides Him, as it is written in His Torah: And you shall know today and bring back to your heart, that the Lord He is God in the heavens above and upon the earth below, there is no other. ",
-  fr: "C'est à nous de louer le Seigneur de tout, de donner grandeur au Créateur du commencement, Qui nous a choisis pour unifier Son Nom et nous a rapprochés de Son service, et nous nous agenouillons et nous prosternons et rendons grâce devant le Roi des rois des rois le Saint, béni soit-Il, Qui étend les cieux et fonde la terre, et le siège de Sa gloire est dans les cieux en haut, et la demeure de Sa puissance dans les hauteurs des hauteurs. Il est notre Dieu, il n'y en a pas d'autre. Vrai est notre Roi, rien en dehors de Lui, comme il est écrit dans Sa Torah: Et tu sauras aujourd'hui et tu ramèneras à ton cœur, que l'Éternel Lui est Dieu dans les cieux en haut et sur la terre en bas, il n'y en a pas d'autre. "
+  ru: "[II — реформистская версия LJG] На нас — восхвалять Господина всего, воздать величие Творцу начала, что избрал нас единить Имя Его и приблизил нас к служению Ему, а мы преклоняемся и падаем ниц и благодарим пред Царем царей царей Святым, благословен Он, что Он простирает небеса и основывает землю, и обитель величия Его в небесах свыше, и Шхина мощи Его в высотах высот. Он Бог наш, нет иного. Истинно Царь наш, нет ничего кроме Него, как написано в Торе Его: И познай сегодня и верни к сердцу твоему, что Господь Он Бог на небесах свыше и на земле внизу, нет иного. ",
+  nl: "[II - LJG Reform versie] Op ons rust de plicht te loven de Heer van alles, grootheid te geven aan de Schepper van het begin, Die ons koos om Zijn Naam te verenigen en ons nabij bracht tot Zijn dienst, en wij knielen en buigen ons neer en danken voor de Koning der koningen der koningen de Heilige, gezegend is Hij, Die de hemelen uitspant en de aarde grondvest, en de zetel van Zijn heerlijkheid is in de hemelen daarboven, en de woonplaats van Zijn macht in de hoogten der hoogten. Hij is onze God, er is geen ander. Waarachtig onze Koning, er is niets buiten Hem, zoals geschreven staat in Zijn Tora: En gij zult heden weten en tot uw hart wederbrengen, dat de Eeuwige Hij is God in de hemel daarboven en op de aarde beneden, er is geen ander. ",
+  en: "[II - LJG Reform version] It is upon us to praise the Lord of all, to give greatness to the Creator of beginning, Who chose us to unify His Name and brought us near to His service, and we kneel and bow and give thanks before the King of kings of kings the Holy One, blessed is He, Who stretches out heavens and founds earth, and the seat of His glory is in the heavens above, and the dwelling of His might is in the highest heights. He is our God, there is no other. True is our King, there is nothing besides Him, as it is written in His Torah: And you shall know today and bring back to your heart, that the Lord He is God in the heavens above and upon the earth below, there is no other. ",
+  fr: "[II - Version réformée LJG] C'est à nous de louer le Seigneur de tout, de donner grandeur au Créateur du commencement, Qui nous a choisis pour unifier Son Nom et nous a rapprochés de Son service, et nous nous agenouillons et nous prosternons et rendons grâce devant le Roi des rois des rois le Saint, béni soit-Il, Qui étend les cieux et fonde la terre, et le siège de Sa gloire est dans les cieux en haut, et la demeure de Sa puissance dans les hauteurs des hauteurs. Il est notre Dieu, il n'y en a pas d'autre. Vrai est notre Roi, rien en dehors de Lui, comme il est écrit dans Sa Torah: Et tu sauras aujourd'hui et tu ramèneras à ton cœur, que l'Éternel Lui est Dieu dans les cieux en haut et sur la terre en bas, il n'y en a pas d'autre. "
 },
 {
   id: 52,
@@ -666,6 +665,36 @@ const prayers: Prayer[] = [
 ];
 
 const TOTAL_PRAYERS = prayers[prayers.length - 1].id;
+
+/** Shir Shel Yom: ids 24–30 (Sun–Sat). List keeps all seven; Next/Previous skip to today, then to 31. */
+const SHIR_SHEL_YOM_START_ID = 24;
+const SHIR_SHEL_YOM_END_ID = 30;
+const BEFORE_SHIR_SHEL_YOM_ID = 23;
+const AFTER_SHIR_SHEL_YOM_ID = 31;
+
+const prayerIndexById = (id: number) => prayers.findIndex((p) => p.id === id);
+
+const isShirShelYomId = (id: number) =>
+  id >= SHIR_SHEL_YOM_START_ID && id <= SHIR_SHEL_YOM_END_ID;
+
+const todayShirShelYomIndex = () =>
+  prayerIndexById(SHIR_SHEL_YOM_START_ID + new Date().getDay());
+
+const nextPrayerIndex = (idx: number): number | null => {
+  if (idx >= prayers.length - 1) return null;
+  const id = prayers[idx].id;
+  if (id === BEFORE_SHIR_SHEL_YOM_ID) return todayShirShelYomIndex();
+  if (isShirShelYomId(id)) return prayerIndexById(AFTER_SHIR_SHEL_YOM_ID);
+  return idx + 1;
+};
+
+const prevPrayerIndex = (idx: number): number | null => {
+  if (idx <= 0) return null;
+  const id = prayers[idx].id;
+  if (id === AFTER_SHIR_SHEL_YOM_ID) return todayShirShelYomIndex();
+  if (isShirShelYomId(id)) return prayerIndexById(BEFORE_SHIR_SHEL_YOM_ID);
+  return idx - 1;
+};
 
 type DisplayBlock = { type: 'instruction' | 'hebrew'; content: string };
 
@@ -1051,10 +1080,11 @@ export default function App() {
   const [showTranslit, setShowTranslit] = useState(false);
 const [lang, setLang] = useState<Lang>(() => {
   try {
-    const saved = localStorage.getItem('shacharis_lang') as Lang | null;
-    return saved || 'en';
+    const saved = localStorage.getItem('shacharis_lang');
+    if (saved === null) return resolveSystemLang();
+    return resolveLang(saved);
   } catch {
-    return 'en';
+    return resolveSystemLang();
   }
 });
   const [isPlaying, setIsPlaying] = useState(false);
@@ -1244,13 +1274,14 @@ const [lang, setLang] = useState<Lang>(() => {
     if (dy > SWIPE_MAX_VERTICAL_PX) return;
 
     if (edge === 'right' && dx < -SWIPE_MIN_PX) {
-      if (selected < prayers.length - 1) goToPrayer(selected + 1);
+      const next = nextPrayerIndex(selected);
+      if (next !== null) goToPrayer(next);
       return;
     }
 
     if (edge === 'left' && dx > SWIPE_MIN_PX) {
-      if (selected > 0) goToPrayer(selected - 1);
-      else goToPrayer(null);
+      const prev = prevPrayerIndex(selected);
+      goToPrayer(prev);
     }
   };
 
@@ -1270,7 +1301,7 @@ const [lang, setLang] = useState<Lang>(() => {
   }, [selected, stopAudio]);
 
   useEffect(() => {
-  localStorage.setItem('shacharis_lang', lang);
+  localStorage.setItem('shacharis_lang', resolveLang(lang));
 }, [lang]);
 
   const formatTime = (s: number) => {
@@ -1439,6 +1470,7 @@ const [lang, setLang] = useState<Lang>(() => {
   };
 
   const currentPrayer = selected !== null ? prayers[selected] : null;
+  const ui = controlsCopy(lang);
 
   return (
       <div className="h-full bg-white text-zinc-900 antialiased selection:bg-teal-100">
@@ -1456,19 +1488,19 @@ const [lang, setLang] = useState<Lang>(() => {
             <button
               type="button"
               onClick={goHome}
-              aria-label="Back to prayer list"
+              aria-label={ui.backToList}
               className="flex items-center gap-3 min-w-0 text-left appearance-none bg-transparent p-0 m-0 border-0 font-[inherit] text-inherit"
             >
               <div className="h-9 w-9 rounded-full bg-[#0D9488] flex items-center justify-center text-white font-semibold text-[15px]">ש</div>
               <div>
                 <h1 className="text-[22px] font-semibold tracking-tight leading-none">Shacharis</h1>
-                <p className="text-[13px] text-zinc-500 mt-1 font-medium">Shaharit • Morning Prayers</p>
+                <p className="text-[13px] text-zinc-500 mt-1 font-medium">{ui.tagline}</p>
               </div>
             </button>
             <button
               type="button"
               onClick={showAbout ? closeAbout : openAbout}
-              aria-label={ABOUT_COPY[resolveSystemLang()].aboutLink}
+              aria-label={ABOUT_COPY[lang].aboutLink}
               aria-pressed={showAbout}
               className="group shrink-0 h-9 w-9 flex items-center justify-center appearance-none bg-transparent p-0 m-0 border-0"
             >
@@ -1488,7 +1520,7 @@ const [lang, setLang] = useState<Lang>(() => {
           }`}
         >
           {showAbout ? (
-            <AboutScreen />
+            <AboutScreen lang={lang} />
           ) : selected !== null && currentPrayer ? (
             <div
               className="flex-1 flex flex-col min-h-0"
@@ -1518,7 +1550,7 @@ const [lang, setLang] = useState<Lang>(() => {
 
                 <div className="mt-8 ui-sans">
                   <div className="flex items-center justify-between">
-                    <span className="text-[13px] font-semibold tracking-wide uppercase text-zinc-700">Transliteration</span>
+                    <span className="text-[13px] font-semibold tracking-wide uppercase text-zinc-700">{ui.transliteration}</span>
                     <button
                       onClick={() => setShowTranslit(!showTranslit)}
                       className={`relative inline-flex h-[26px] w-[44px] items-center rounded-full transition-colors ${showTranslit ? 'bg-[#0D9488]' : 'bg-zinc-200'}`}
@@ -1535,7 +1567,7 @@ const [lang, setLang] = useState<Lang>(() => {
                 </div>
 
                 <div className="mt-8 ui-sans">
-                  <div className="text-[13px] font-semibold tracking-wide uppercase text-zinc-700 mb-3">Translation</div>
+                  <div className="text-[13px] font-semibold tracking-wide uppercase text-zinc-700 mb-3">{ui.translation}</div>
                   <div className="flex gap-2 flex-wrap">
                     {(['RU','NL','EN','FR'] as const).map((code) => {
                       const lower = code.toLowerCase() as Lang;
@@ -1565,22 +1597,34 @@ const [lang, setLang] = useState<Lang>(() => {
 
                 <div className="mt-10 flex gap-3 ui-sans">
                   <button
-                    onClick={() => selected !== null && selected > 0 && goToPrayer(selected - 1)}
-                    disabled={selected === 0}
+                    onClick={() => {
+                      if (selected === null) return;
+                      const prev = prevPrayerIndex(selected);
+                      goToPrayer(prev);
+                    }}
+                    disabled={selected === null || prevPrayerIndex(selected) === null}
                     className={`flex-1 h-11 rounded-full font-medium text-[14px] border transition-all ${
-                      selected === 0 ? 'border-zinc-200 text-zinc-400 bg-zinc-50' : 'bg-white border-[#0D9488] text-[#0D9488] hover:bg-teal-50'
+                      selected === null || prevPrayerIndex(selected) === null
+                        ? 'border-zinc-200 text-zinc-400 bg-zinc-50'
+                        : 'bg-white border-[#0D9488] text-[#0D9488] hover:bg-teal-50'
                     }`}
                   >
-                    Previous
+                    {ui.previous}
                   </button>
                   <button
-                    onClick={() => selected < prayers.length - 1 && goToPrayer(selected + 1)}
-                    disabled={selected === prayers.length - 1}
+                    onClick={() => {
+                      if (selected === null) return;
+                      const next = nextPrayerIndex(selected);
+                      if (next !== null) goToPrayer(next);
+                    }}
+                    disabled={selected === null || nextPrayerIndex(selected) === null}
                     className={`flex-1 h-11 rounded-full font-medium text-[14px] transition-all ${
-                      selected === prayers.length - 1 ? 'bg-zinc-100 text-zinc-400' : 'bg-[#0D9488] text-white hover:bg-teal-700 shadow-sm'
+                      selected === null || nextPrayerIndex(selected) === null
+                        ? 'bg-zinc-100 text-zinc-400'
+                        : 'bg-[#0D9488] text-white hover:bg-teal-700 shadow-sm'
                     }`}
                   >
-                    Next
+                    {ui.next}
                   </button>
                 </div>
               </div>
@@ -1592,7 +1636,7 @@ const [lang, setLang] = useState<Lang>(() => {
                       <button
                         onClick={handlePlayPause}
                         className="h-11 w-11 rounded-full bg-[#0D9488] text-white flex items-center justify-center hover:bg-teal-700 active:scale-95 transition shadow-sm shrink-0"
-                        aria-label={isPlaying ? "Pause" : "Play"}
+                        aria-label={isPlaying ? ui.pause : ui.play}
                       >
                         {isPlaying ? (
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="4" height="14" rx="1"/><rect x="13" y="5" width="4" height="14" rx="1"/></svg>
@@ -1601,7 +1645,7 @@ const [lang, setLang] = useState<Lang>(() => {
                         )}
                       </button>
                       <div className="min-w-0">
-                        <div className="text-[13px] font-semibold leading-none">Listen</div>
+                        <div className="text-[13px] font-semibold leading-none">{ui.listen}</div>
                         <div className="text-[11px] text-zinc-500 mt-1 truncate">{currentPrayer.titleEn} • he-IL 0.50×</div>
                       </div>
                     </div>
@@ -1618,7 +1662,7 @@ const [lang, setLang] = useState<Lang>(() => {
           {selected === null && !showAbout && (
             <div className="px-4 pt-2 pb-10 ui-sans">
               <div className="px-2 mb-4">
-                <p className="text-[13px] text-zinc-500 leading-5">Select a prayer to read, listen and translate. All {TOTAL_PRAYERS} items in traditional order.</p>
+                <p className="text-[13px] text-zinc-500 leading-5">{ui.selectPrayer.replace('{n}', String(TOTAL_PRAYERS))}</p>
               </div>
             <div className="space-y-2.5">
               {prayers.map((p, idx) => (
@@ -1645,10 +1689,15 @@ const [lang, setLang] = useState<Lang>(() => {
               ))}
             </div>
               <div className="mt-8 px-2 text-[11px] text-zinc-400 leading-4">
-                Text displayed with niqqud. Tap a Hebrew word to hear it. Audio uses he-IL voice at 0.50x. Version 2.2, 2026
+                {ui.footer}
               </div>
               {showEnvelope && !showSplash && (
-                <SupportEnvelope onOpen={openAbout} onDismiss={dismissEnvelope} />
+                <SupportEnvelope
+                  onOpen={openAbout}
+                  onDismiss={dismissEnvelope}
+                  dismissLabel={ui.dismiss}
+                  noteLabel={ui.envelope}
+                />
               )}
             </div>
           )}
