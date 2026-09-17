@@ -1573,7 +1573,7 @@ export default function App() {
                   >
                     {([
                       { mode: 'translation' as const, label: ui.translation },
-                      { mode: 'translit' as const, label: ui.translitShort },
+                      { mode: 'translit' as const, label: ui.transliteration },
                     ]).map(({ mode, label }) => {
                       const active = belowHe === mode;
                       return (

@@ -85,7 +85,6 @@ type ControlsCopy = {
   play: string;
   pause: string;
   transliteration: string;
-  translitShort: string;
   translation: string;
   backToList: string;
   selectPrayer: string;
@@ -103,7 +102,6 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     play: 'Play',
     pause: 'Pause',
     transliteration: 'Transliteration',
-    translitShort: 'Translit',
     translation: 'Translation',
     backToList: 'Back to prayer list',
     selectPrayer: 'Select a prayer to read, listen and translate. All {n} items in traditional order.',
@@ -119,7 +117,6 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     play: 'Воспроизвести',
     pause: 'Пауза',
     transliteration: 'Транслитерация',
-    translitShort: 'Транслит',
     translation: 'Перевод',
     backToList: 'К списку молитв',
     selectPrayer: 'Выберите молитву: читать, слушать и переводить. Все {n} в традиционном порядке.',
@@ -135,7 +132,6 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     play: 'Afspelen',
     pause: 'Pauzeren',
     transliteration: 'Transliteratie',
-    translitShort: 'Translit',
     translation: 'Vertaling',
     backToList: 'Terug naar de lijst',
     selectPrayer: 'Kies een gebed om te lezen, te beluisteren en te vertalen. Alle {n} in traditionele volgorde.',
@@ -151,7 +147,6 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     play: 'Lecture',
     pause: 'Pause',
     transliteration: 'Translittération',
-    translitShort: 'Translit',
     translation: 'Traduction',
     backToList: 'Retour à la liste',
     selectPrayer: 'Choisissez une prière pour lire, écouter et traduire. Les {n} dans l’ordre traditionnel.',
