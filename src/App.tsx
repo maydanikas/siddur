@@ -5,6 +5,12 @@ import SupportEnvelope from './components/SupportEnvelope';
 import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
 
+type BelowHe = 'translation' | 'translit';
+
+function resolveBelowHe(value: string | null | undefined): BelowHe {
+  return value === 'translit' ? 'translit' : 'translation';
+}
+
 type Prayer = {
   id: number;
   titleEn: string;
@@ -1077,16 +1083,22 @@ function HebrewDisplay({
 
 export default function App() {
   const [selected, setSelected] = useState<number | null>(null);
-  const [showTranslit, setShowTranslit] = useState(false);
-const [lang, setLang] = useState<Lang>(() => {
-  try {
-    const saved = localStorage.getItem('shacharis_lang');
-    if (saved === null) return resolveSystemLang();
-    return resolveLang(saved);
-  } catch {
-    return resolveSystemLang();
-  }
-});
+  const [belowHe, setBelowHe] = useState<BelowHe>(() => {
+    try {
+      return resolveBelowHe(localStorage.getItem('shacharis_below_he'));
+    } catch {
+      return 'translation';
+    }
+  });
+  const [lang, setLang] = useState<Lang>(() => {
+    try {
+      const saved = localStorage.getItem('shacharis_lang');
+      if (saved === null) return resolveSystemLang();
+      return resolveLang(saved);
+    } catch {
+      return resolveSystemLang();
+    }
+  });
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentSec, setCurrentSec] = useState(0);
@@ -1301,8 +1313,12 @@ const [lang, setLang] = useState<Lang>(() => {
   }, [selected, stopAudio]);
 
   useEffect(() => {
-  localStorage.setItem('shacharis_lang', resolveLang(lang));
-}, [lang]);
+    localStorage.setItem('shacharis_lang', resolveLang(lang));
+  }, [lang]);
+
+  useEffect(() => {
+    localStorage.setItem('shacharis_below_he', belowHe);
+  }, [belowHe]);
 
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
@@ -1550,26 +1566,33 @@ const [lang, setLang] = useState<Lang>(() => {
                 </div>
 
                 <div className="mt-8 ui-sans">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[13px] font-semibold tracking-wide uppercase text-zinc-700">{ui.transliteration}</span>
-                    <button
-                      onClick={() => setShowTranslit(!showTranslit)}
-                      className={`relative inline-flex h-[26px] w-[44px] items-center rounded-full transition-colors ${showTranslit ? 'bg-[#0D9488]' : 'bg-zinc-200'}`}
-                      aria-pressed={showTranslit}
-                    >
-                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform shadow-sm ${showTranslit ? 'translate-x-[20px]' : 'translate-x-1'}`} />
-                    </button>
+                  <div
+                    className="flex p-1 rounded-full bg-zinc-100"
+                    role="tablist"
+                    aria-label={`${ui.translation} / ${ui.transliteration}`}
+                  >
+                    {([
+                      { mode: 'translation' as const, label: ui.translation },
+                      { mode: 'translit' as const, label: ui.translitShort },
+                    ]).map(({ mode, label }) => {
+                      const active = belowHe === mode;
+                      return (
+                        <button
+                          key={mode}
+                          type="button"
+                          role="tab"
+                          aria-selected={active}
+                          onClick={() => setBelowHe(mode)}
+                          className={`flex-1 h-10 rounded-full text-[13px] font-semibold transition-all ${
+                            active ? 'bg-[#0D9488] text-white shadow-sm' : 'text-zinc-600'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
                   </div>
-                  {showTranslit && (
-                    <div className="mt-3 rounded-2xl bg-zinc-50 border border-zinc-200 p-4 text-[14px] leading-6 text-zinc-700 italic">
-                      {currentPrayer.translit}
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-8 ui-sans">
-                  <div className="text-[13px] font-semibold tracking-wide uppercase text-zinc-700 mb-3">{ui.translation}</div>
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-2 flex-wrap mt-3">
                     {(['RU','NL','EN','FR'] as const).map((code) => {
                       const lower = code.toLowerCase() as Lang;
                       const active = lang === lower;
@@ -1586,14 +1609,17 @@ const [lang, setLang] = useState<Lang>(() => {
                       );
                     })}
                   </div>
-                  <div className="mt-4 rounded-2xl bg-white border border-zinc-200 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-                    <p className="text-[15px] leading-7 text-zinc-800 whitespace-pre-wrap">
-                      {lang === 'ru' && currentPrayer.ru}
-                      {lang === 'nl' && currentPrayer.nl}
-                      {lang === 'en' && currentPrayer.en}
-                      {lang === 'fr' && currentPrayer.fr}
-                    </p>
-                  </div>
+                  {belowHe === 'translit' ? (
+                    <div className="mt-4 rounded-2xl bg-zinc-50 border border-zinc-200 p-4 text-[14px] leading-6 text-zinc-700 italic whitespace-pre-wrap">
+                      {currentPrayer.translit}
+                    </div>
+                  ) : (
+                    <div className="mt-4 rounded-2xl bg-white border border-zinc-200 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                      <p className="text-[15px] leading-7 text-zinc-800 whitespace-pre-wrap">
+                        {currentPrayer[lang]}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-10 flex gap-3 ui-sans">
