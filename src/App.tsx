@@ -6,20 +6,21 @@ import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
 
 type BelowHe = 'translation' | 'translit';
-type TypeSize = 's' | 'm' | 'l';
+type TypeSize = 'm' | 'l' | 'xl';
 
 function resolveBelowHe(value: string | null | undefined): BelowHe {
   return value === 'translit' ? 'translit' : 'translation';
 }
 
 function resolveTypeSize(value: string | null | undefined): TypeSize {
-  return value === 's' || value === 'l' ? value : 'm';
+  if (value === 'l' || value === 'xl') return value;
+  return 'm';
 }
 
 const TYPE_SCALE: Record<TypeSize, { he: number; instruction: number; translit: number; translation: number }> = {
-  s: { he: 22, instruction: 14, translit: 13, translation: 14 },
   m: { he: 26, instruction: 15, translit: 14, translation: 15 },
   l: { he: 32, instruction: 17, translit: 17, translation: 18 },
+  xl: { he: 40, instruction: 20, translit: 21, translation: 22 },
 };
 
 type Prayer = {
@@ -1585,9 +1586,9 @@ export default function App() {
                       onTouchStart={(e) => e.stopPropagation()}
                     >
                       {([
-                        { id: 's' as const, px: 12, name: ui.textSizeS },
-                        { id: 'm' as const, px: 15, name: ui.textSizeM },
-                        { id: 'l' as const, px: 18, name: ui.textSizeL },
+                        { id: 'm' as const, px: 12, name: ui.textSizeM },
+                        { id: 'l' as const, px: 15, name: ui.textSizeL },
+                        { id: 'xl' as const, px: 18, name: ui.textSizeXl },
                       ]).map(({ id, px, name }) => {
                         const active = typeSize === id;
                         return (

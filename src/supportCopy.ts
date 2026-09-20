@@ -87,9 +87,9 @@ type ControlsCopy = {
   transliteration: string;
   translation: string;
   textSize: string;
-  textSizeS: string;
   textSizeM: string;
   textSizeL: string;
+  textSizeXl: string;
   backToList: string;
   selectPrayer: string;
   footer: string;
@@ -108,9 +108,9 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     transliteration: 'Transliteration',
     translation: 'Translation',
     textSize: 'Text size',
-    textSizeS: 'Small',
     textSizeM: 'Medium',
     textSizeL: 'Large',
+    textSizeXl: 'Extra large',
     backToList: 'Back to prayer list',
     selectPrayer: 'Select a prayer to read, listen and translate. All {n} items in traditional order.',
     footer: 'Text displayed with niqqud. Tap a Hebrew word to hear it. Audio uses he-IL voice at 0.50x. Version 2.2, 2026',
@@ -127,9 +127,9 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     transliteration: 'Транслитерация',
     translation: 'Перевод',
     textSize: 'Размер текста',
-    textSizeS: 'Мелкий',
     textSizeM: 'Обычный',
     textSizeL: 'Крупный',
+    textSizeXl: 'Очень крупный',
     backToList: 'К списку молитв',
     selectPrayer: 'Выберите молитву: читать, слушать и переводить. Все {n} в традиционном порядке.',
     footer: 'Текст с никудом. Нажмите на ивритское слово, чтобы услышать его. Озвучка: голос he-IL, 0.50×. Version 2.2, 2026',
@@ -146,9 +146,9 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     transliteration: 'Transliteratie',
     translation: 'Vertaling',
     textSize: 'Tekstgrootte',
-    textSizeS: 'Klein',
     textSizeM: 'Normaal',
     textSizeL: 'Groot',
+    textSizeXl: 'Extra groot',
     backToList: 'Terug naar de lijst',
     selectPrayer: 'Kies een gebed om te lezen, te beluisteren en te vertalen. Alle {n} in traditionele volgorde.',
     footer: 'Tekst met nikud. Tik op een Hebreeuws woord om het te horen. Audio: he-IL-stem, 0.50×. Versie 2.2, 2026',
@@ -165,9 +165,9 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     transliteration: 'Translittération',
     translation: 'Traduction',
     textSize: 'Taille du texte',
-    textSizeS: 'Petit',
     textSizeM: 'Moyen',
     textSizeL: 'Grand',
+    textSizeXl: 'Très grand',
     backToList: 'Retour à la liste',
     selectPrayer: 'Choisissez une prière pour lire, écouter et traduire. Les {n} dans l’ordre traditionnel.',
     footer: 'Texte avec niqqud. Touchez un mot hébreu pour l’entendre. Audio : voix he-IL, 0.50×. Version 2.2, 2026',
