@@ -6,10 +6,21 @@ import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
 
 type BelowHe = 'translation' | 'translit';
+type TypeSize = 's' | 'm' | 'l';
 
 function resolveBelowHe(value: string | null | undefined): BelowHe {
   return value === 'translit' ? 'translit' : 'translation';
 }
+
+function resolveTypeSize(value: string | null | undefined): TypeSize {
+  return value === 's' || value === 'l' ? value : 'm';
+}
+
+const TYPE_SCALE: Record<TypeSize, { he: number; instruction: number; translit: number; translation: number }> = {
+  s: { he: 22, instruction: 14, translit: 13, translation: 14 },
+  m: { he: 26, instruction: 15, translit: 14, translation: 15 },
+  l: { he: 32, instruction: 17, translit: 17, translation: 18 },
+};
 
 type Prayer = {
   id: number;
@@ -994,13 +1005,16 @@ function HebrewDisplay({
   localizedTranslation,
   activeTtsIndex,
   onWordClick,
+  typeSize,
 }: {
   heDisplay: string;
   heTts: string;
   localizedTranslation: string;
   activeTtsIndex: number | null;
   onWordClick: (speakText: string) => void;
+  typeSize: TypeSize;
 }) {
+  const scale = TYPE_SCALE[typeSize];
   const localizedInstructions = extractBracketInstructions(localizedTranslation);
   const layout = useMemo(() => buildHebrewWordLayout(heDisplay, heTts), [heDisplay, heTts]);
   const ttsWords = useMemo(() => tokenizeTts(heTts), [heTts]);
@@ -1028,7 +1042,8 @@ function HebrewDisplay({
             <p
               key={index}
               dir="ltr"
-              className="ui-sans text-[15px] leading-6 text-zinc-500 italic text-left"
+              className="ui-sans leading-6 text-zinc-500 italic text-left"
+              style={{ fontSize: scale.instruction }}
             >
               {content}
             </p>
@@ -1040,7 +1055,8 @@ function HebrewDisplay({
             key={index}
             dir="rtl"
             lang="he"
-            className="he-serif text-[26px] sm:text-[28px] leading-[1.75] text-zinc-900 text-right break-words"
+            className="he-serif leading-[1.75] text-zinc-900 text-right break-words"
+            style={{ fontSize: scale.he }}
           >
             {block.lines.map((line, lineIndex) => (
               <span key={lineIndex}>
@@ -1088,6 +1104,13 @@ export default function App() {
       return resolveBelowHe(localStorage.getItem('shacharis_below_he'));
     } catch {
       return 'translation';
+    }
+  });
+  const [typeSize, setTypeSize] = useState<TypeSize>(() => {
+    try {
+      return resolveTypeSize(localStorage.getItem('shacharis_type_size'));
+    } catch {
+      return 'm';
     }
   });
   const [lang, setLang] = useState<Lang>(() => {
@@ -1320,6 +1343,10 @@ export default function App() {
     localStorage.setItem('shacharis_below_he', belowHe);
   }, [belowHe]);
 
+  useEffect(() => {
+    localStorage.setItem('shacharis_type_size', typeSize);
+  }, [typeSize]);
+
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
     const sec = Math.floor(s % 60);
@@ -1545,10 +1572,42 @@ export default function App() {
             >
               <div ref={prayerScrollRef} className="flex-1 overflow-auto px-5 pb-[168px]">
                 <div className="pt-1 pb-4 border-b border-zinc-100">
-                  <div className="flex items-center gap-2 text-[11px] tracking-widest text-[#0D9488] font-semibold uppercase ui-sans">
-                    <span>{String(currentPrayer.id).padStart(2, '0')} / {String(TOTAL_PRAYERS).padStart(2, '0')}</span>
-                    <span className="h-1 w-1 rounded-full bg-[#0D9488]/40"></span>
-                    <span>{currentPrayer.titleEn}</span>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 min-w-0 text-[11px] tracking-widest text-[#0D9488] font-semibold uppercase ui-sans">
+                      <span>{String(currentPrayer.id).padStart(2, '0')} / {String(TOTAL_PRAYERS).padStart(2, '0')}</span>
+                      <span className="h-1 w-1 rounded-full bg-[#0D9488]/40 shrink-0"></span>
+                      <span className="truncate">{currentPrayer.titleEn}</span>
+                    </div>
+                    <div
+                      className="flex items-end gap-0.5 shrink-0 ui-sans"
+                      role="radiogroup"
+                      aria-label={ui.textSize}
+                      onTouchStart={(e) => e.stopPropagation()}
+                    >
+                      {([
+                        { id: 's' as const, px: 12, name: ui.textSizeS },
+                        { id: 'm' as const, px: 15, name: ui.textSizeM },
+                        { id: 'l' as const, px: 18, name: ui.textSizeL },
+                      ]).map(({ id, px, name }) => {
+                        const active = typeSize === id;
+                        return (
+                          <button
+                            key={id}
+                            type="button"
+                            role="radio"
+                            aria-checked={active}
+                            aria-label={name}
+                            onClick={() => setTypeSize(id)}
+                            className={`h-8 w-8 flex items-center justify-center rounded-md font-semibold leading-none transition-all ${
+                              active ? 'bg-[#0D9488] text-white' : 'text-zinc-500 hover:bg-zinc-100'
+                            }`}
+                            style={{ fontSize: px }}
+                          >
+                            A
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                   <h2 className="he-serif mt-1 text-[15px] font-normal leading-snug text-zinc-500" dir="rtl">
                     {currentPrayer.titleHe}
@@ -1562,6 +1621,7 @@ export default function App() {
                     localizedTranslation={currentPrayer[lang]}
                     activeTtsIndex={activeTtsIndex}
                     onWordClick={speakWord}
+                    typeSize={typeSize}
                   />
                 </div>
 
@@ -1610,12 +1670,18 @@ export default function App() {
                     })}
                   </div>
                   {belowHe === 'translit' ? (
-                    <div className="mt-4 rounded-2xl bg-zinc-50 border border-zinc-200 p-4 text-[14px] leading-6 text-zinc-700 italic whitespace-pre-wrap">
+                    <div
+                      className="mt-4 rounded-2xl bg-zinc-50 border border-zinc-200 p-4 text-zinc-700 italic whitespace-pre-wrap"
+                      style={{ fontSize: TYPE_SCALE[typeSize].translit, lineHeight: 1.6 }}
+                    >
                       {currentPrayer.translit}
                     </div>
                   ) : (
                     <div className="mt-4 rounded-2xl bg-white border border-zinc-200 p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-                      <p className="text-[15px] leading-7 text-zinc-800 whitespace-pre-wrap">
+                      <p
+                        className="text-zinc-800 whitespace-pre-wrap"
+                        style={{ fontSize: TYPE_SCALE[typeSize].translation, lineHeight: 1.7 }}
+                      >
                         {currentPrayer[lang]}
                       </p>
                     </div>
