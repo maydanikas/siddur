@@ -2,8 +2,12 @@ export const SUPPORT_SNOOZE_KEY = 'shacharis_support_hint_at';
 export const SUPPORT_FIRST_SEEN_KEY = 'shacharis_first_seen_at';
 export const SUPPORT_CYCLE_MS = 30 * 24 * 60 * 60 * 1000;
 
-/** Public Ko-fi page (PayPal payouts). */
+/** Public Ko-fi page for supporters outside the Netherlands (PayPal payouts). */
 export const SUPPORT_DONATE_URL = 'https://ko-fi.com/shacharis';
+
+/** Rabobank payment request for supporters in the Netherlands. */
+export const SUPPORT_DONATE_NL_URL =
+  'https://betaalverzoek.rabobank.nl/betaalverzoek/?id=VdQP_8iHT2K_x-YXF5Z7Lg';
 
 /** Canonical URL encoded in the About-page QR (install / share the PWA). */
 export const APP_SHARE_URL = 'https://shacharis.app';
