@@ -48,7 +48,7 @@ export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
           fontFamily: 'Inter, system-ui, sans-serif',
         }}
       >
-        SHAHARIS
+        SHACHARIS
       </span>
     </div>
   );
