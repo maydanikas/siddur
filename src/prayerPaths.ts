@@ -1,9 +1,9 @@
 const RESERVED_SLUGS = new Set(['about']);
 
-export const HOME_TITLE = 'Shacharis — Shaharit, утренние молитвы';
+export const HOME_TITLE = 'Shacharis — liberal siddur, либеральный сидур';
 
 export const HOME_DESCRIPTION =
-  'Free Shaharit siddur: Hebrew text, translation, and transliteration. Бесплатные утренние молитвы Шахарит.';
+  'A liberal siddur for Shaharit at home, for liberal, Reform, and Conservative communities. Либеральный сидур для дома: либеральные, реформистские и консервативные общины.';
 
 export function prayerSlug(titleEn: string): string {
   const slug = titleEn
