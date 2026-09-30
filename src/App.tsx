@@ -4,6 +4,7 @@ import AboutScreen from './components/AboutScreen';
 import SupportEnvelope from './components/SupportEnvelope';
 import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
+import { trackAboutPage } from './analytics';
 
 type BelowHe = 'translation' | 'translit';
 type TypeSize = 'm' | 'l' | 'xl';
@@ -1152,6 +1153,7 @@ export default function App() {
 
   const openAbout = () => {
     setShowAbout(true);
+    trackAboutPage();
     snoozeSupportEnvelope();
     setShowEnvelope(false);
     scrollShellToTop();
