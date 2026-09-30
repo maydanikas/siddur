@@ -26,14 +26,18 @@ function readTag(field: string): Promise<string> {
   });
 }
 
-export function trackAboutPage() {
+export function trackPageView(title: string, path: string) {
   const gtag = send();
   if (!gtag) return;
   gtag('event', 'page_view', {
-    page_title: 'About',
-    page_path: '/about',
-    page_location: `${window.location.origin}/about`,
+    page_title: title,
+    page_path: path,
+    page_location: `${window.location.origin}${path}`,
   });
+}
+
+export function trackAboutPage() {
+  trackPageView('About — Shacharis', '/about');
 }
 
 export function trackSupportClick(button: SupportButton) {

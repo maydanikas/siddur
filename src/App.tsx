@@ -4,7 +4,8 @@ import AboutScreen from './components/AboutScreen';
 import SupportEnvelope from './components/SupportEnvelope';
 import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
-import { trackAboutPage } from './analytics';
+import { trackAboutPage, trackPageView } from './analytics';
+import { HOME_DESCRIPTION, HOME_TITLE, prayerSeoDescription, prayerSlug } from './prayerPaths';
 
 type BelowHe = 'translation' | 'translit';
 type TypeSize = 'm' | 'l' | 'xl';
@@ -683,6 +684,27 @@ const prayers: Prayer[] = [
 
 ];
 
+const RESERVED_PRAYER_SLUGS = new Set(['about']);
+const prayerSlugByIndex = prayers.map((prayer) => {
+  const slug = prayerSlug(prayer.titleEn);
+  return RESERVED_PRAYER_SLUGS.has(slug) ? `${slug}-${prayer.id}` : slug;
+});
+const prayerIndexBySlug = new Map(prayerSlugByIndex.map((slug, index) => [slug, index]));
+
+const prayerPathForIndex = (index: number) => `/${prayerSlugByIndex[index]}`;
+
+const prayerIndexFromPath = (pathname: string) => {
+  const slug = decodeURIComponent(pathname).replace(/^\/+|\/+$/g, '');
+  if (!slug) return null;
+  const index = prayerIndexBySlug.get(slug);
+  return index === undefined ? null : index;
+};
+
+const historyScreen = () => {
+  const screen = window.history.state?.screen;
+  return screen === 'list' || screen === 'about' || screen === 'prayer' ? screen : null;
+};
+
 const TOTAL_PRAYERS = prayers[prayers.length - 1].id;
 
 /** Shir Shel Yom: ids 24–30 (Sun–Sat). List keeps all seven; Next/Previous skip to today, then to 31. */
@@ -1100,7 +1122,7 @@ function HebrewDisplay({
 }
 
 export default function App() {
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useState<number | null>(() => prayerIndexFromPath(window.location.pathname));
   const [belowHe, setBelowHe] = useState<BelowHe>(() => {
     try {
       return resolveBelowHe(localStorage.getItem('shacharis_below_he'));
@@ -1149,7 +1171,9 @@ export default function App() {
   const closeAbout = () => {
     setShowAbout(false);
     refreshEnvelope();
-    if (window.location.pathname === '/about') window.history.back();
+    if (window.location.pathname !== '/about') return;
+    if (historyScreen() === 'about') window.history.back();
+    else window.history.replaceState({ screen: 'list' }, '', '/');
   };
 
   const openAbout = () => {
@@ -1185,26 +1209,96 @@ export default function App() {
   const SWIPE_MAX_VERTICAL_PX = 80;
 
   const goToPrayer = (idx: number | null) => {
-    setSelected(idx);
-    if (idx === null) refreshEnvelope();
     scrollShellToTop();
+    if (idx === null) {
+      const screen = historyScreen();
+      if (screen === 'prayer' || screen === 'about') {
+        window.history.back();
+        return;
+      }
+      setSelected(null);
+      setShowAbout(false);
+      refreshEnvelope();
+      if (window.location.pathname !== '/') {
+        window.history.replaceState({ screen: 'list' }, '', '/');
+      }
+      return;
+    }
+
+    setShowAbout(false);
+    setSelected(idx);
+    const path = prayerPathForIndex(idx);
+    if (window.location.pathname === path) return;
+    const fromList = selected === null && !showAbout;
+    const state = { screen: 'prayer' as const };
+    if (fromList) window.history.pushState(state, '', path);
+    else window.history.replaceState(state, '', path);
+    trackPageView(`${prayers[idx].titleEn} — Shacharis`, path);
   };
 
   const goHome = () => {
-    setShowAbout(false);
+    const openedAboutOverPrayer = window.location.pathname === '/about' && selected !== null && historyScreen() === 'about';
+    if (window.location.pathname === '/about' && historyScreen() === 'about') {
+      setShowAbout(false);
+      setSelected(null);
+      refreshEnvelope();
+      scrollShellToTop();
+      window.history.go(openedAboutOverPrayer ? -2 : -1);
+      return;
+    }
     goToPrayer(null);
-    if (window.location.pathname === '/about') window.history.back();
   };
 
   useEffect(() => {
     const onPop = () => {
-      const about = window.location.pathname === '/about';
-      setShowAbout(about);
-      if (!about) setShowEnvelope(shouldShowSupportEnvelope());
+      const path = window.location.pathname;
+      if (path === '/about') {
+        setShowAbout(true);
+        setSelected(null);
+        setShowEnvelope(false);
+        return;
+      }
+      setShowAbout(false);
+      const idx = prayerIndexFromPath(path);
+      setSelected(idx);
+      if (idx === null) setShowEnvelope(shouldShowSupportEnvelope());
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/' || path === '/about' || prayerIndexFromPath(path) !== null) return;
+    window.history.replaceState({ screen: 'list' }, '', '/');
+  }, []);
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    let title = HOME_TITLE;
+    let description = HOME_DESCRIPTION;
+    if (showAbout) {
+      title = 'About — Shacharis';
+      description = 'Shacharis is a free Shaharit siddur. Бесплатный сидур утренних молитв.';
+    } else if (selected !== null) {
+      const prayer = prayers[selected];
+      title = `${prayer.titleEn} — Shacharis`;
+      description = prayerSeoDescription(prayer.titleEn, prayer.ru);
+    }
+    document.title = title;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute('content', description);
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', title);
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) ogDescription.setAttribute('content', description);
+    const canonicalPath = path === '/' ? '/' : path;
+    const canonicalUrl = `https://shacharis.app${canonicalPath === '/' ? '/' : canonicalPath}`;
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.setAttribute('href', canonicalUrl);
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', canonicalUrl);
+  }, [showAbout, selected]);
 
   const clearTimers = () => {
     if (intervalRef.current) window.clearInterval(intervalRef.current);
