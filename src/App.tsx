@@ -1131,7 +1131,7 @@ export default function App() {
   const [activeTtsIndex, setActiveTtsIndex] = useState<number | null>(null);
 
   const [showSplash, setShowSplash] = useState(true);
-  const [showAbout, setShowAbout] = useState(false);
+  const [showAbout, setShowAbout] = useState(() => window.location.pathname === '/about');
   const [showEnvelope, setShowEnvelope] = useState(() => shouldShowSupportEnvelope());
   const mainRef = useRef<HTMLElement>(null);
   const prayerScrollRef = useRef<HTMLDivElement>(null);
@@ -1149,10 +1149,14 @@ export default function App() {
   const closeAbout = () => {
     setShowAbout(false);
     refreshEnvelope();
+    if (window.location.pathname === '/about') window.history.back();
   };
 
   const openAbout = () => {
     setShowAbout(true);
+    if (window.location.pathname !== '/about') {
+      window.history.pushState({ screen: 'about' }, '', '/about');
+    }
     trackAboutPage();
     snoozeSupportEnvelope();
     setShowEnvelope(false);
@@ -1189,7 +1193,18 @@ export default function App() {
   const goHome = () => {
     setShowAbout(false);
     goToPrayer(null);
+    if (window.location.pathname === '/about') window.history.back();
   };
+
+  useEffect(() => {
+    const onPop = () => {
+      const about = window.location.pathname === '/about';
+      setShowAbout(about);
+      if (!about) setShowEnvelope(shouldShowSupportEnvelope());
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   const clearTimers = () => {
     if (intervalRef.current) window.clearInterval(intervalRef.current);
