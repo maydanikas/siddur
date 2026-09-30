@@ -4,7 +4,7 @@ import AboutScreen from './components/AboutScreen';
 import SupportEnvelope from './components/SupportEnvelope';
 import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
-import { trackAboutPage, trackPageView } from './analytics';
+import { trackAboutPage, trackLanguage, trackPageView } from './analytics';
 import { HOME_DESCRIPTION, HOME_TITLE, prayerSeoDescription, prayerSlug } from './prayerPaths';
 
 type BelowHe = 'translation' | 'translit';
@@ -1448,7 +1448,9 @@ export default function App() {
   }, [selected, stopAudio]);
 
   useEffect(() => {
-    localStorage.setItem('shacharis_lang', resolveLang(lang));
+    const active = resolveLang(lang);
+    localStorage.setItem('shacharis_lang', active);
+    trackLanguage(active);
   }, [lang]);
 
   useEffect(() => {
