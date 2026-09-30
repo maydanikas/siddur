@@ -1,5 +1,6 @@
 import { ABOUT_COPY, resolveLang, type Lang } from '../supportCopy';
 import { APP_SHARE_URL, SUPPORT_DONATE_NL_URL, SUPPORT_DONATE_URL } from '../support';
+import { trackSupportClick } from '../analytics';
 
 export default function AboutScreen({ lang }: { lang: Lang }) {
   const copy = ABOUT_COPY[resolveLang(lang)];
@@ -19,6 +20,7 @@ export default function AboutScreen({ lang }: { lang: Lang }) {
             href={SUPPORT_DONATE_NL_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackSupportClick('netherlands')}
             className="flex flex-1 items-center justify-center px-3 hover:bg-teal-700 active:bg-teal-800 transition"
           >
             {copy.donateNl}
@@ -28,6 +30,7 @@ export default function AboutScreen({ lang }: { lang: Lang }) {
             href={SUPPORT_DONATE_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackSupportClick('world')}
             className="flex flex-1 items-center justify-center px-3 hover:bg-teal-700 active:bg-teal-800 transition"
           >
             {copy.donateWorld}
