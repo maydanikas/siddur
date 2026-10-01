@@ -29,7 +29,20 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-S1FTV53ZJG');
+      var installed = false;
+      try {
+        installed = window.matchMedia('(display-mode: standalone), (display-mode: minimal-ui), (display-mode: fullscreen)').matches
+          || window.navigator.standalone === true;
+      } catch (e) {}
+      var linkCampaign = /(?:^|[?&])utm_source=/.test(window.location.search);
+      if (installed && !linkCampaign) {
+        gtag('config', 'G-S1FTV53ZJG', {
+          campaign_source: 'homescreen',
+          campaign_medium: 'pwa',
+        });
+      } else {
+        gtag('config', 'G-S1FTV53ZJG');
+      }
     </script>
     <style>
       html, body { background:#0D9488; margin:0; padding:0; height:100%; overflow:hidden; }

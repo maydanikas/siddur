@@ -78,3 +78,23 @@ export function trackSupportClick(button: SupportButton) {
 export function trackLanguage(lang: Lang) {
   collect(`language_${lang}`, { 'ep.language': lang }, document.title, 5000);
 }
+
+type StandaloneNavigator = Navigator & { standalone?: boolean };
+
+/** Home-screen launch. A browser tab is display-mode: browser. */
+export function isInstalledApp(): boolean {
+  try {
+    const nav = navigator as StandaloneNavigator;
+    return nav.standalone === true
+      || window.matchMedia('(display-mode: standalone), (display-mode: minimal-ui), (display-mode: fullscreen)').matches;
+  } catch {
+    return false;
+  }
+}
+
+/** Browser tab and installed icon each send their own event, once per open. */
+export function trackAppOpen(installed = isInstalledApp()) {
+  collect(installed ? 'open_installed' : 'open_browser', {
+    'ep.display_mode': installed ? 'installed' : 'browser',
+  }, document.title, 5000);
+}
