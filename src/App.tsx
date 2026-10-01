@@ -998,6 +998,54 @@ function estimatePhraseDuration(text: string): number {
   return Math.max(1, text.length * CHAR_SECONDS_AT_RATE);
 }
 
+/** Samsung drops a long utterance instead of reading it. */
+const ANDROID_PHRASE_CHARS = 180;
+
+function limitPhraseLength(phrases: TtsPhrase[], maxChars: number): TtsPhrase[] {
+  const limited: TtsPhrase[] = [];
+
+  for (const phrase of phrases) {
+    if (phrase.text.length <= maxChars) {
+      limited.push(phrase);
+      continue;
+    }
+
+    const words = phrase.text.split(/\s+/).filter(Boolean);
+    let chunk: string[] = [];
+    let wordStart = phrase.wordStart;
+    const flush = () => {
+      if (chunk.length === 0) return;
+      limited.push({ text: chunk.join(' '), wordStart, wordCount: chunk.length });
+      wordStart += chunk.length;
+      chunk = [];
+    };
+
+    for (const word of words) {
+      const next = chunk.length === 0 ? word : `${chunk.join(' ')} ${word}`;
+      if (chunk.length > 0 && next.length > maxChars) flush();
+      chunk.push(word);
+    }
+    flush();
+  }
+
+  return limited;
+}
+
+function speechErrorCode(event: Event): string {
+  if ('error' in event && typeof (event as SpeechSynthesisErrorEvent).error === 'string') {
+    return (event as SpeechSynthesisErrorEvent).error;
+  }
+  return '';
+}
+
+function isIgnorableSpeechError(code: string): boolean {
+  return code === 'interrupted' || code === 'canceled' || code === 'cancelled';
+}
+
+function isMissingHebrewVoice(code: string): boolean {
+  return code === 'language-unavailable' || code === 'voice-unavailable' || code === 'synthesis-unavailable';
+}
+
 type AndroidPlayState = {
   phrases: TtsPhrase[];
   phraseIndex: number;
@@ -1195,6 +1243,9 @@ export default function App() {
   const intervalRef = useRef<number | null>(null);
   const wordHighlightRef = useRef<number | null>(null);
   const androidPlayRef = useRef<AndroidPlayState | null>(null);
+  const speechKeepAliveRef = useRef<number | null>(null);
+  const userPausedRef = useRef(false);
+  const [ttsNotice, setTtsNotice] = useState<string | null>(null);
   const startRef = useRef<number>(0);
   const pausedAccumRef = useRef<number>(0);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
@@ -1303,8 +1354,26 @@ export default function App() {
   const clearTimers = () => {
     if (intervalRef.current) window.clearInterval(intervalRef.current);
     if (wordHighlightRef.current) window.clearInterval(wordHighlightRef.current);
+    if (speechKeepAliveRef.current) window.clearInterval(speechKeepAliveRef.current);
     intervalRef.current = null;
     wordHighlightRef.current = null;
+    speechKeepAliveRef.current = null;
+  };
+
+  const resumeSpeechIfStuck = (force = false) => {
+    const synth = window.speechSynthesis;
+    if (!synth || userPausedRef.current || !synth.paused) return;
+    if (!force && !synth.speaking && !synth.pending) return;
+    try {
+      synth.resume();
+    } catch {
+      /* Samsung throws if resume races with cancel */
+    }
+  };
+
+  const armSpeechKeepAlive = () => {
+    if (speechKeepAliveRef.current) return;
+    speechKeepAliveRef.current = window.setInterval(resumeSpeechIfStuck, 3000);
   };
 
   const configureHebrewUtterance = useCallback((utter: SpeechSynthesisUtterance) => {
@@ -1312,25 +1381,45 @@ export default function App() {
     utter.pitch = 1;
     utter.lang = 'he-IL';
 
-    const voices = window.speechSynthesis.getVoices();
-    const heVoice = voices.find((v) => v.lang.toLowerCase().includes('he'));
+    const voices = window.speechSynthesis?.getVoices() ?? [];
+    const hebrew = voices.filter((voice) => voice.lang.toLowerCase().startsWith('he'));
+    const heVoice = hebrew.find((voice) => /google/i.test(voice.name)) ?? hebrew[0];
     if (heVoice) utter.voice = heVoice;
   }, []);
 
   const stopAudio = useCallback(() => {
     if (androidPlayRef.current) androidPlayRef.current.cancelled = true;
     androidPlayRef.current = null;
-    window.speechSynthesis?.cancel();
+    const synth = window.speechSynthesis;
+    let cancelled = false;
+    if (synth && (synth.speaking || synth.pending)) {
+      synth.cancel();
+      cancelled = true;
+    }
     clearTimers();
     setIsPlaying(false);
     setActiveTtsIndex(null);
+    setTtsNotice(null);
     utteranceRef.current = null;
+    userPausedRef.current = false;
+    return cancelled;
   }, []);
+
+  const speakWhenReady = (utter: SpeechSynthesisUtterance, cancelledJustNow: boolean) => {
+    const synth = window.speechSynthesis;
+    const run = () => {
+      synth.speak(utter);
+      if (!isAndroidDevice()) return;
+      resumeSpeechIfStuck(true);
+      window.setTimeout(() => resumeSpeechIfStuck(true), 120);
+    };
+    if (cancelledJustNow) window.setTimeout(run, 50);
+    else run();
+  };
 
   const speakWord = useCallback(
     (text: string) => {
-      const synth = window.speechSynthesis;
-      stopAudio();
+      const cancelled = stopAudio();
       setProgress(0);
       setCurrentSec(0);
       setDurationSec(0);
@@ -1338,7 +1427,7 @@ export default function App() {
 
       const utter = new SpeechSynthesisUtterance(prepareTtsText(text));
       configureHebrewUtterance(utter);
-      synth.speak(utter);
+      speakWhenReady(utter, cancelled);
     },
     [configureHebrewUtterance, stopAudio],
   );
@@ -1458,6 +1547,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const synth = window.speechSynthesis;
+    if (!synth) return;
+    const warmVoices = () => {
+      synth.getVoices();
+    };
+    warmVoices();
+    synth.addEventListener('voiceschanged', warmVoices);
+    return () => synth.removeEventListener('voiceschanged', warmVoices);
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem('shacharis_below_he', belowHe);
   }, [belowHe]);
 
@@ -1476,6 +1576,7 @@ export default function App() {
     const synth = window.speechSynthesis;
 
     if (isPlaying) {
+      userPausedRef.current = true;
       synth.pause();
       setIsPlaying(false);
       pausedAccumRef.current = (Date.now() - startRef.current) / 1000;
@@ -1484,6 +1585,7 @@ export default function App() {
     }
 
     if (synth.paused && (utteranceRef.current || androidPlayRef.current)) {
+      userPausedRef.current = false;
       synth.resume();
       setIsPlaying(true);
       startRef.current = Date.now() - pausedAccumRef.current * 1000;
@@ -1509,8 +1611,7 @@ export default function App() {
     const ttsText = prepareTtsText(prayer.he_tts);
     const estDuration = estimateSpeechDuration(ttsText, SPEECH_RATE);
 
-    synth.cancel();
-    clearTimers();
+    const cancelled = stopAudio();
     setDurationSec(estDuration);
     setCurrentSec(0);
     setProgress(0);
@@ -1520,7 +1621,7 @@ export default function App() {
 
     if (isAndroidDevice()) {
       const words = tokenizeTts(prayer.he_tts);
-      const phrases = splitTtsIntoSentences(prayer.he_tts);
+      const phrases = limitPhraseLength(splitTtsIntoSentences(prayer.he_tts), ANDROID_PHRASE_CHARS);
       androidPlayRef.current = {
         phrases,
         phraseIndex: 0,
@@ -1590,11 +1691,18 @@ export default function App() {
           speakAndroidPhrase(phraseIndex + 1);
         };
 
-        utter.onerror = () => finishPlayback(estDuration);
-        synth.speak(utter);
+        utter.onerror = (event) => {
+          if (state.cancelled) return;
+          const code = speechErrorCode(event);
+          if (isIgnorableSpeechError(code)) return;
+          if (isMissingHebrewVoice(code)) setTtsNotice(controlsCopy(lang).ttsNoHebrew);
+          finishPlayback(estDuration);
+        };
+        speakWhenReady(utter, phraseIndex === 0 && cancelled);
       };
 
       speakAndroidPhrase(0);
+      armSpeechKeepAlive();
       setIsPlaying(true);
       return;
     }
@@ -1619,14 +1727,17 @@ export default function App() {
     };
 
     utter.onend = () => finishPlayback(estDuration);
-    utter.onerror = () => {
+    utter.onerror = (event) => {
+      const code = speechErrorCode(event);
+      if (isIgnorableSpeechError(code)) return;
+      if (isMissingHebrewVoice(code)) setTtsNotice(controlsCopy(lang).ttsNoHebrew);
       setIsPlaying(false);
       setActiveTtsIndex(null);
       clearTimers();
     };
 
     utteranceRef.current = utter;
-    synth.speak(utter);
+    speakWhenReady(utter, cancelled);
     setIsPlaying(true);
   };
 
@@ -1865,6 +1976,9 @@ export default function App() {
                   <div className="mt-3 h-[6px] w-full bg-zinc-100 rounded-full overflow-hidden">
                     <div className="h-full bg-[#0D9488] rounded-full transition-all duration-150" style={{ width: `${Math.min(100, progress)}%` }} />
                   </div>
+                  {ttsNotice ? (
+                    <p className="mt-2 text-[11px] leading-4 text-zinc-500">{ttsNotice}</p>
+                  ) : null}
                 </div>
               </div>
             </div>

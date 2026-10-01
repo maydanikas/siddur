@@ -105,6 +105,7 @@ type ControlsCopy = {
   footer: string;
   dismiss: string;
   envelope: string;
+  ttsNoHebrew: string;
 };
 
 export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
@@ -126,6 +127,7 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     footer: 'Text displayed with niqqud. Tap a Hebrew word to hear it. Audio uses he-IL voice at 0.50x. Version 2.2, 2026',
     dismiss: 'Dismiss',
     envelope: 'A note from the project',
+    ttsNoHebrew: 'This phone has no Hebrew voice. In the phone settings, choose Google Text-to-speech and download Hebrew.',
   },
   ru: {
     tagline: 'Шахарит • Утренние молитвы',
@@ -145,6 +147,7 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     footer: 'Текст с никудом. Нажмите на ивритское слово, чтобы услышать его. Озвучка: голос he-IL, 0.50×. Version 2.2, 2026',
     dismiss: 'Закрыть',
     envelope: 'Записка от проекта',
+    ttsNoHebrew: 'На этом телефоне нет ивритского голоса. В настройках выберите Google «Речь» и скачайте иврит.',
   },
   nl: {
     tagline: 'Sjachariet • Ochtendgebeden',
@@ -164,6 +167,7 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     footer: 'Tekst met nikud. Tik op een Hebreeuws woord om het te horen. Audio: he-IL-stem, 0.50×. Versie 2.2, 2026',
     dismiss: 'Sluiten',
     envelope: 'Een briefje van het project',
+    ttsNoHebrew: 'Deze telefoon heeft geen Hebreeuwse stem. Kies in de instellingen Google Tekst-naar-spraak en download Hebreeuws.',
   },
   fr: {
     tagline: 'Chaharit • Prières du matin',
@@ -183,6 +187,7 @@ export const CONTROLS_COPY: Record<Lang, ControlsCopy> = {
     footer: 'Texte avec niqqud. Touchez un mot hébreu pour l’entendre. Audio : voix he-IL, 0.50×. Version 2.2, 2026',
     dismiss: 'Fermer',
     envelope: 'Un mot du projet',
+    ttsNoHebrew: 'Ce téléphone n’a pas de voix hébraïque. Dans les réglages, choisissez « Google Synthèse vocale » et téléchargez l’hébreu.',
   },
 };
 
