@@ -29,6 +29,7 @@ export default defineConfig({
         ]
       },
       workbox: {
+  importScripts: ['reminder-sw.js'],
   globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
   cleanupOutdatedCaches: true,
   clientsClaim: true,

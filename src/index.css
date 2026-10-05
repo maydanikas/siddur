@@ -16,3 +16,19 @@ html, body, #root {
 .support-envelope {
   animation: support-envelope-in 0.7s ease-out 1;
 }
+
+@keyframes shacharis-reminder-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.45); }
+  70% { box-shadow: 0 0 0 8px rgba(13, 148, 136, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0); }
+}
+
+.reminder-intro {
+  border-color: #0D9488 !important;
+  color: #0D9488 !important;
+  animation: shacharis-reminder-pulse 1.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reminder-intro { animation: none; }
+}

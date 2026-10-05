@@ -5,6 +5,7 @@ import SupportEnvelope from './components/SupportEnvelope';
 import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
 import { trackAboutPage, trackAppOpen, trackLanguage, trackPageView } from './analytics';
+import { REMINDER_INTRO_SEEN_KEY, maintainReminder, reminderNotice } from './reminder';
 import { HOME_DESCRIPTION, HOME_TITLE, prayerSeoDescription, prayerSlug } from './prayerPaths';
 
 type BelowHe = 'translation' | 'translit';
@@ -1202,9 +1203,25 @@ export default function App() {
 
   const [showSplash, setShowSplash] = useState(true);
   const [showAbout, setShowAbout] = useState(() => window.location.pathname === '/about');
+  const [reminderIntroSeen, setReminderIntroSeen] = useState(() => {
+    try {
+      return localStorage.getItem(REMINDER_INTRO_SEEN_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
   const [showEnvelope, setShowEnvelope] = useState(() => shouldShowSupportEnvelope());
   const mainRef = useRef<HTMLElement>(null);
   const prayerScrollRef = useRef<HTMLDivElement>(null);
+
+  const markReminderIntroSeen = useCallback(() => {
+    setReminderIntroSeen(true);
+    try {
+      localStorage.setItem(REMINDER_INTRO_SEEN_KEY, '1');
+    } catch {
+      /* private mode */
+    }
+  }, []);
 
   const scrollShellToTop = () => {
     window.scrollTo({ top: 0 });
@@ -1547,6 +1564,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    void maintainReminder(reminderNotice(lang));
+  }, [lang]);
+
+  useEffect(() => {
     const synth = window.speechSynthesis;
     if (!synth) return;
     const warmVoices = () => {
@@ -1778,7 +1799,7 @@ export default function App() {
             >
               <span className={`h-7 w-7 rounded-full border flex items-center justify-center text-[13px] italic font-serif leading-none group-active:bg-zinc-50 ${
                 showAbout ? 'border-zinc-400 text-zinc-600' : 'border-zinc-300 text-zinc-400'
-              }`}>
+              } ${!reminderIntroSeen && !showAbout ? 'reminder-intro' : ''}`}>
                 i
               </span>
             </button>
@@ -1792,7 +1813,7 @@ export default function App() {
           }`}
         >
           {showAbout ? (
-            <AboutScreen lang={lang} />
+            <AboutScreen lang={lang} onReminderSeen={markReminderIntroSeen} />
           ) : selected !== null && currentPrayer ? (
             <div
               className="flex-1 flex flex-col min-h-0"

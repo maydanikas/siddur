@@ -36,6 +36,20 @@ type AboutCopy = {
   shareTitle: string;
 };
 
+export type ReminderCopy = {
+  label: string;
+  body: string;
+  timeHint: string;
+  enable: string;
+  disable: string;
+  sound: string;
+  denied: string;
+  unsupported: string;
+  whileOpen: string;
+  notifTitle: string;
+  notifBody: string;
+};
+
 export const ABOUT_COPY: Record<Lang, AboutCopy> = {
   en: {
     title: 'About',
@@ -84,6 +98,61 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     donateWorld: 'Monde',
     aboutLink: 'À propos',
     shareTitle: 'Partagez l’application Shacharis',
+  },
+};
+
+export const REMINDER_COPY: Record<Lang, ReminderCopy> = {
+  en: {
+    label: 'Reminder',
+    body: 'Choose your time. The phone will remind you once a day, only if you turn it on.',
+    timeHint: 'you can change it',
+    enable: 'Turn on the reminder',
+    disable: 'Turn off',
+    sound: 'The sound is your phone’s usual notification sound. Turn it off here.',
+    denied: 'Notifications are blocked in the phone settings.',
+    unsupported: 'This browser cannot show reminders.',
+    whileOpen: 'On this phone the reminder arrives while Shacharis is open.',
+    notifTitle: 'Time for morning prayer',
+    notifBody: 'Shacharis',
+  },
+  ru: {
+    label: 'Напоминание',
+    body: 'Выберите своё время. Телефон напомнит один раз в день. Только если вы сами включите.',
+    timeHint: 'можно изменить',
+    enable: 'Включить напоминание',
+    disable: 'Выключить',
+    sound: 'Звук — обычный звук уведомлений телефона. Выключается здесь же.',
+    denied: 'Уведомления запрещены в настройках телефона.',
+    unsupported: 'Этот браузер не показывает напоминания.',
+    whileOpen: 'На этом телефоне напоминание приходит, пока Shacharis открыт.',
+    notifTitle: 'Время утренней молитвы',
+    notifBody: 'Shacharis',
+  },
+  nl: {
+    label: 'Herinnering',
+    body: 'Kies uw tijd. De telefoon herinnert u één keer per dag, alleen als u het zelf aanzet.',
+    timeHint: 'u kunt dit wijzigen',
+    enable: 'Herinnering aanzetten',
+    disable: 'Uitzetten',
+    sound: 'Het geluid is het gewone meldingsgeluid van uw telefoon. Uitzetten doet u hier.',
+    denied: 'Meldingen zijn geblokkeerd in de telefooninstellingen.',
+    unsupported: 'Deze browser kan geen herinneringen tonen.',
+    whileOpen: 'Op deze telefoon komt de herinnering zolang Shacharis open is.',
+    notifTitle: 'Tijd voor het ochtendgebed',
+    notifBody: 'Shacharis',
+  },
+  fr: {
+    label: 'Rappel',
+    body: 'Choisissez votre heure. Le téléphone vous le rappelle une fois par jour, seulement si vous l’activez.',
+    timeHint: 'vous pouvez la modifier',
+    enable: 'Activer le rappel',
+    disable: 'Désactiver',
+    sound: 'Le son est celui des notifications du téléphone. Vous pouvez l’arrêter ici.',
+    denied: 'Les notifications sont bloquées dans les réglages du téléphone.',
+    unsupported: 'Ce navigateur ne peut pas afficher de rappels.',
+    whileOpen: 'Sur ce téléphone, le rappel arrive tant que Shacharis est ouvert.',
+    notifTitle: 'L’heure de la prière du matin',
+    notifBody: 'Shacharis',
   },
 };
 

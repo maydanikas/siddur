@@ -1,8 +1,9 @@
 import { ABOUT_COPY, resolveLang, type Lang } from '../supportCopy';
 import { APP_SHARE_URL, SUPPORT_DONATE_NL_URL, SUPPORT_DONATE_URL } from '../support';
 import { trackSupportClick } from '../analytics';
+import ReminderCard from './ReminderCard';
 
-export default function AboutScreen({ lang }: { lang: Lang }) {
+export default function AboutScreen({ lang, onReminderSeen }: { lang: Lang; onReminderSeen: () => void }) {
   const copy = ABOUT_COPY[resolveLang(lang)];
 
   return (
@@ -12,6 +13,8 @@ export default function AboutScreen({ lang }: { lang: Lang }) {
       <p className="mt-3 text-[15px] leading-7 text-zinc-800 font-medium">{copy.principle}</p>
       <p className="mt-3 text-[15px] leading-7 text-zinc-800">{copy.free}</p>
       <p className="mt-3 text-[15px] leading-7 text-zinc-800">{copy.support}</p>
+
+      <ReminderCard lang={lang} onSeen={onReminderSeen} />
 
       <div className="mt-8">
         <p className="mb-2 text-center text-[13px] font-medium text-zinc-600">{copy.button}</p>
