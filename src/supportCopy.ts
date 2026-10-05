@@ -48,6 +48,7 @@ export type ReminderCopy = {
   denied: string;
   unsupported: string;
   whileOpen: string;
+  whenClosed: string;
   notifTitle: string;
   notifBody: string;
 };
@@ -116,6 +117,7 @@ export const REMINDER_COPY: Record<Lang, ReminderCopy> = {
     denied: 'Notifications are blocked in the phone settings.',
     unsupported: 'This browser cannot show reminders.',
     whileOpen: 'On this phone the reminder arrives while Shacharis is open.',
+    whenClosed: 'The reminder will arrive even if Shacharis is closed.',
     notifTitle: 'Time for morning prayer',
     notifBody: 'Shacharis',
   },
@@ -131,6 +133,7 @@ export const REMINDER_COPY: Record<Lang, ReminderCopy> = {
     denied: 'Уведомления запрещены в настройках телефона.',
     unsupported: 'Этот браузер не показывает напоминания.',
     whileOpen: 'На этом телефоне напоминание приходит, пока Shacharis открыт.',
+    whenClosed: 'Напоминание придёт, даже если Shacharis закрыт.',
     notifTitle: 'Время утренней молитвы',
     notifBody: 'Shacharis',
   },
@@ -146,6 +149,7 @@ export const REMINDER_COPY: Record<Lang, ReminderCopy> = {
     denied: 'Meldingen zijn geblokkeerd in de telefooninstellingen.',
     unsupported: 'Deze browser kan geen herinneringen tonen.',
     whileOpen: 'Op deze telefoon komt de herinnering zolang Shacharis open is.',
+    whenClosed: 'De herinnering komt ook als Shacharis gesloten is.',
     notifTitle: 'Tijd voor het ochtendgebed',
     notifBody: 'Shacharis',
   },
@@ -161,6 +165,7 @@ export const REMINDER_COPY: Record<Lang, ReminderCopy> = {
     denied: 'Les notifications sont bloquées dans les réglages du téléphone.',
     unsupported: 'Ce navigateur ne peut pas afficher de rappels.',
     whileOpen: 'Sur ce téléphone, le rappel arrive tant que Shacharis est ouvert.',
+    whenClosed: 'Le rappel arrive même si Shacharis est fermé.',
     notifTitle: 'L’heure de la prière du matin',
     notifBody: 'Shacharis',
   },

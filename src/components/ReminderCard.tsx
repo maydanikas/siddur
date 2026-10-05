@@ -7,6 +7,7 @@ import {
   enableReminder,
   readReminder,
   reminderNotice,
+  subscribeReminder,
   updateReminderClocks,
 } from '../reminder';
 
@@ -19,6 +20,7 @@ export default function ReminderCard({ lang, onSeen }: { lang: Lang; onSeen: () 
   const [time, setTime] = useState(saved.time);
   const [weekendTime, setWeekendTime] = useState(saved.weekendTime);
   const [enabled, setEnabled] = useState(saved.enabled);
+  const [closedApp, setClosedApp] = useState(saved.serverPush);
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<'denied' | 'unsupported' | null>(null);
   const supported = typeof Notification !== 'undefined';
@@ -46,15 +48,23 @@ export default function ReminderCard({ lang, onSeen }: { lang: Lang; onSeen: () 
     }
   }, []);
 
+  useEffect(() => subscribeReminder(() => {
+    const current = readReminder();
+    setEnabled(current.enabled);
+    setClosedApp(current.serverPush);
+  }), []);
+
   const notice = reminderNotice(lang);
   const extra =
     problem === 'denied'
       ? copy.denied
       : !supported || problem === 'unsupported'
         ? copy.unsupported
-        : enabled && !canScheduleInBackground()
-          ? copy.whileOpen
-          : null;
+        : enabled && closedApp
+          ? copy.whenClosed
+          : enabled && !canScheduleInBackground()
+            ? copy.whileOpen
+            : null;
 
   const onClocks = (nextTime: string, nextWeekend: string) => {
     if (!nextTime || !nextWeekend) return;
@@ -71,11 +81,13 @@ export default function ReminderCard({ lang, onSeen }: { lang: Lang; onSeen: () 
       if (enabled) {
         await disableReminder();
         setEnabled(false);
+        setClosedApp(false);
         return;
       }
       const result = await enableReminder(time, weekendTime, notice);
       if (result === 'on') {
         setEnabled(true);
+        setClosedApp(readReminder().serverPush);
         trackReminderOn(time, weekendTime);
         return;
       }
