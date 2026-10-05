@@ -75,8 +75,11 @@ export function trackSupportClick(button: SupportButton) {
 }
 
 /** Sent only when the reader turns a reminder on, not when the app opens again. */
-export function trackReminderOn(time: string) {
-  collect('reminder_on', { 'ep.reminder_time': time }, 'About', 5000);
+export function trackReminderOn(time: string, weekendTime: string) {
+  collect('reminder_on', {
+    'ep.reminder_time': time,
+    'ep.reminder_weekend': weekendTime,
+  }, 'About', 5000);
 }
 
 /** One event per open, and another when the reader switches language. */

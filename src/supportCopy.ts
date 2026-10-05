@@ -39,6 +39,8 @@ type AboutCopy = {
 export type ReminderCopy = {
   label: string;
   body: string;
+  weekday: string;
+  weekend: string;
   timeHint: string;
   enable: string;
   disable: string;
@@ -105,6 +107,8 @@ export const REMINDER_COPY: Record<Lang, ReminderCopy> = {
   en: {
     label: 'Reminder',
     body: 'Choose your time. The phone will remind you once a day, only if you turn it on.',
+    weekday: 'Weekdays',
+    weekend: 'Weekend',
     timeHint: 'you can change it',
     enable: 'Turn on the reminder',
     disable: 'Turn off',
@@ -118,6 +122,8 @@ export const REMINDER_COPY: Record<Lang, ReminderCopy> = {
   ru: {
     label: 'Напоминание',
     body: 'Выберите своё время. Телефон напомнит один раз в день. Только если вы сами включите.',
+    weekday: 'Будни',
+    weekend: 'Выходные',
     timeHint: 'можно изменить',
     enable: 'Включить напоминание',
     disable: 'Выключить',
@@ -131,6 +137,8 @@ export const REMINDER_COPY: Record<Lang, ReminderCopy> = {
   nl: {
     label: 'Herinnering',
     body: 'Kies uw tijd. De telefoon herinnert u één keer per dag, alleen als u het zelf aanzet.',
+    weekday: 'Doordeweeks',
+    weekend: 'Weekend',
     timeHint: 'u kunt dit wijzigen',
     enable: 'Herinnering aanzetten',
     disable: 'Uitzetten',
@@ -144,6 +152,8 @@ export const REMINDER_COPY: Record<Lang, ReminderCopy> = {
   fr: {
     label: 'Rappel',
     body: 'Choisissez votre heure. Le téléphone vous le rappelle une fois par jour, seulement si vous l’activez.',
+    weekday: 'Semaine',
+    weekend: 'Week-end',
     timeHint: 'vous pouvez la modifier',
     enable: 'Activer le rappel',
     disable: 'Désactiver',

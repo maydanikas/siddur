@@ -4,6 +4,7 @@ import {
   nextReminderTime,
   parseReminderTime,
   upcomingReminderTimes,
+  type ReminderClocks,
 } from './reminderSchedule';
 
 export const REMINDER_STORAGE_KEY = 'shacharis_reminder';
@@ -12,7 +13,14 @@ export const REMINDER_INTRO_SEEN_KEY = 'shacharis_reminder_intro_seen';
 const REMINDER_TAG = 'shacharis-reminder';
 const SCHEDULED_DAYS = 7;
 
-export type SavedReminder = { enabled: boolean; time: string };
+export type SavedReminder = { enabled: boolean; time: string; weekendTime: string };
+
+const DEFAULT_WEEKDAY = '07:00';
+const DEFAULT_WEEKEND = '09:00';
+
+function clocksOf(saved: SavedReminder): ReminderClocks {
+  return { weekday: saved.time, weekend: saved.weekendTime };
+}
 
 export type ReminderNotice = { title: string; body: string; lang: string };
 
@@ -27,14 +35,18 @@ export function reminderNotice(lang: Lang | string): ReminderNotice {
 }
 
 export function readReminder(): SavedReminder {
+  const blank = { enabled: false, time: DEFAULT_WEEKDAY, weekendTime: DEFAULT_WEEKEND };
   try {
     const raw = localStorage.getItem(REMINDER_STORAGE_KEY);
-    if (!raw) return { enabled: false, time: '07:00' };
+    if (!raw) return blank;
     const parsed = JSON.parse(raw) as Partial<SavedReminder>;
-    const time = typeof parsed.time === 'string' && parseReminderTime(parsed.time) ? parsed.time : '07:00';
-    return { enabled: parsed.enabled === true, time };
+    const time = typeof parsed.time === 'string' && parseReminderTime(parsed.time) ? parsed.time : DEFAULT_WEEKDAY;
+    const weekendTime = typeof parsed.weekendTime === 'string' && parseReminderTime(parsed.weekendTime)
+      ? parsed.weekendTime
+      : time;
+    return { enabled: parsed.enabled === true, time, weekendTime };
   } catch {
-    return { enabled: false, time: '07:00' };
+    return blank;
   }
 }
 
@@ -96,13 +108,13 @@ async function showNow(notice: ReminderNotice): Promise<void> {
   new Notification(notice.title, options);
 }
 
-async function armBackground(time: string, notice: ReminderNotice): Promise<boolean> {
+async function armBackground(clocks: ReminderClocks, notice: ReminderNotice): Promise<boolean> {
   if (!canScheduleInBackground()) return false;
   const reg = await registration();
   const Trigger = (globalThis as { TimestampTrigger?: new (timestamp: number) => unknown }).TimestampTrigger;
   if (!reg || !Trigger) return false;
   await clearScheduled();
-  const times = upcomingReminderTimes(time, SCHEDULED_DAYS);
+  const times = upcomingReminderTimes(clocks, SCHEDULED_DAYS);
   for (let i = 0; i < times.length; i++) {
     await reg.showNotification(notice.title, {
       body: notice.body,
@@ -118,20 +130,24 @@ async function armBackground(time: string, notice: ReminderNotice): Promise<bool
   return true;
 }
 
-function armTimer(time: string, notice: ReminderNotice): void {
+function sameClocks(saved: SavedReminder, clocks: ReminderClocks): boolean {
+  return saved.time === clocks.weekday && saved.weekendTime === clocks.weekend;
+}
+
+function armTimer(clocks: ReminderClocks, notice: ReminderNotice): void {
   clearTimer();
-  const target = nextReminderTime(time);
+  const target = nextReminderTime(clocks);
   if (target == null) return;
   const delay = Math.max(0, target - Date.now());
   timer = setTimeout(() => {
     timer = null;
-    void onTimer(time, target, notice);
+    void onTimer(clocks, target, notice);
   }, delay);
 }
 
-async function onTimer(time: string, target: number, notice: ReminderNotice): Promise<void> {
+async function onTimer(clocks: ReminderClocks, target: number, notice: ReminderNotice): Promise<void> {
   const saved = readReminder();
-  if (!saved.enabled || saved.time !== time) return;
+  if (!saved.enabled || !sameClocks(saved, clocks)) return;
   if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && isReminderDue(target, Date.now())) {
     try {
       await showNow(notice);
@@ -140,18 +156,18 @@ async function onTimer(time: string, target: number, notice: ReminderNotice): Pr
     }
   }
   const latest = readReminder();
-  if (latest.enabled) armTimer(latest.time, notice);
+  if (latest.enabled) armTimer(clocksOf(latest), notice);
 }
 
-async function arm(time: string, notice: ReminderNotice): Promise<void> {
+async function arm(clocks: ReminderClocks, notice: ReminderNotice): Promise<void> {
   clearTimer();
   try {
-    if (await armBackground(time, notice)) return;
+    if (await armBackground(clocks, notice)) return;
   } catch {
     /* this browser ignored a future trigger */
   }
   await clearScheduled();
-  armTimer(time, notice);
+  armTimer(clocks, notice);
 }
 
 export async function maintainReminder(notice: ReminderNotice): Promise<void> {
@@ -161,40 +177,42 @@ export async function maintainReminder(notice: ReminderNotice): Promise<void> {
     return;
   }
   if (typeof Notification === 'undefined' || Notification.permission !== 'granted') {
-    writeReminder({ enabled: false, time: saved.time });
+    writeReminder({ enabled: false, time: saved.time, weekendTime: saved.weekendTime });
     clearTimer();
     await clearScheduled();
     return;
   }
-  await arm(saved.time, notice);
+  await arm(clocksOf(saved), notice);
 }
 
 export async function enableReminder(
   time: string,
+  weekendTime: string,
   notice: ReminderNotice,
 ): Promise<'on' | 'denied' | 'unsupported' | 'invalid'> {
-  if (!parseReminderTime(time)) return 'invalid';
+  if (!parseReminderTime(time) || !parseReminderTime(weekendTime)) return 'invalid';
   if (typeof Notification === 'undefined' || typeof Notification.requestPermission !== 'function') {
     return 'unsupported';
   }
   let permission = Notification.permission;
   if (permission !== 'granted') permission = await Notification.requestPermission();
   if (permission !== 'granted') return 'denied';
-  writeReminder({ enabled: true, time });
-  await arm(time, notice);
+  const clocks = { weekday: time, weekend: weekendTime };
+  writeReminder({ enabled: true, time, weekendTime });
+  await arm(clocks, notice);
   return 'on';
 }
 
-export async function updateReminderTime(time: string, notice: ReminderNotice): Promise<void> {
+export async function updateReminderClocks(time: string, weekendTime: string, notice: ReminderNotice): Promise<void> {
   const saved = readReminder();
-  if (!parseReminderTime(time)) return;
-  writeReminder({ enabled: saved.enabled, time });
-  if (saved.enabled) await arm(time, notice);
+  if (!parseReminderTime(time) || !parseReminderTime(weekendTime)) return;
+  writeReminder({ enabled: saved.enabled, time, weekendTime });
+  if (saved.enabled) await arm({ weekday: time, weekend: weekendTime }, notice);
 }
 
 export async function disableReminder(): Promise<void> {
   const saved = readReminder();
-  writeReminder({ enabled: false, time: saved.time });
+  writeReminder({ enabled: false, time: saved.time, weekendTime: saved.weekendTime });
   clearTimer();
   await clearScheduled();
 }
