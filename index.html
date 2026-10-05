@@ -10,10 +10,43 @@
     <link rel="icon" type="image/png" href="/icon-192.png" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <link rel="apple-touch-startup-image" href="/icon-512.png" />
-    <title>Shacharis</title>
+    <title>Shacharis — liberal siddur</title>
+    <meta
+      name="description"
+      content="A liberal siddur for Shaharit at home, for liberal, Reform, and Conservative communities."
+    />
+    <link rel="canonical" href="https://shacharis.app/" />
+    <meta property="og:title" content="Shacharis — liberal siddur" />
+    <meta
+      property="og:description"
+      content="A liberal siddur for Shaharit at home, for liberal, Reform, and Conservative communities."
+    />
+    <meta property="og:url" content="https://shacharis.app/" />
+    <meta property="og:image" content="https://shacharis.app/icon-512.png" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S1FTV53ZJG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      var installed = false;
+      try {
+        installed = window.matchMedia('(display-mode: standalone), (display-mode: minimal-ui), (display-mode: fullscreen)').matches
+          || window.navigator.standalone === true;
+      } catch (e) {}
+      var linkCampaign = /(?:^|[?&])utm_source=/.test(window.location.search);
+      if (installed && !linkCampaign) {
+        gtag('config', 'G-S1FTV53ZJG', {
+          campaign_source: 'homescreen',
+          campaign_medium: 'pwa',
+        });
+      } else {
+        gtag('config', 'G-S1FTV53ZJG');
+      }
+    </script>
     <style>
-      html, body { background:#0D9488; margin:0; padding:0; }
-      #root { min-height:100dvh; }
+      html, body { background:#0D9488; margin:0; padding:0; height:100%; overflow:hidden; }
+      #root { height:100dvh; overflow:hidden; }
       /* Bridge splash for browser tabs only — in installed PWA the OS already shows one */
       #static-splash {
         position:fixed; inset:0;
@@ -45,7 +78,7 @@
   <body style="background-color:#0D9488;margin:0">
     <div id="static-splash" aria-hidden="true">
       <span class="shin">ש</span>
-      <span class="label">SHAHARIS</span>
+      <span class="label">SHACHARIS</span>
     </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

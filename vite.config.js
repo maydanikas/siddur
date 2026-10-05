@@ -11,7 +11,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon-192.png', 'icon-512.png'],
+      includeAssets: ['icon-192.png', 'icon-512.png', 'share-qr.svg'],
       manifest: {
         name: 'Siddur - Еврейский молитвенник',
         short_name: 'Siddur',
@@ -29,6 +29,7 @@ export default defineConfig({
         ]
       },
       workbox: {
+  importScripts: ['reminder-sw.js'],
   globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
   cleanupOutdatedCaches: true,
   clientsClaim: true,
