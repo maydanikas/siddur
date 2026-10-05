@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { trackReminderOn } from '../analytics';
 import { REMINDER_COPY, resolveLang, type Lang } from '../supportCopy';
 import {
   canScheduleInBackground,
@@ -73,6 +74,7 @@ export default function ReminderCard({ lang, onSeen }: { lang: Lang; onSeen: () 
       const result = await enableReminder(time, notice);
       if (result === 'on') {
         setEnabled(true);
+        trackReminderOn(time);
         return;
       }
       if (result === 'denied' || result === 'unsupported') setProblem(result);

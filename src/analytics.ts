@@ -74,6 +74,11 @@ export function trackSupportClick(button: SupportButton) {
   collect(eventName, { 'ep.support_button': button }, 'About');
 }
 
+/** Sent only when the reader turns a reminder on, not when the app opens again. */
+export function trackReminderOn(time: string) {
+  collect('reminder_on', { 'ep.reminder_time': time }, 'About', 5000);
+}
+
 /** One event per open, and another when the reader switches language. */
 export function trackLanguage(lang: Lang) {
   collect(`language_${lang}`, { 'ep.language': lang }, document.title, 5000);
