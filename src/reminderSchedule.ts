@@ -10,30 +10,45 @@ export function parseReminderTime(value: string): { hours: number; minutes: numb
   return { hours, minutes };
 }
 
-/** Next local occurrence of HH:MM strictly after `from`. */
-export function nextReminderTime(time: string, from = new Date()): number | null {
-  const parsed = parseReminderTime(time);
-  if (!parsed) return null;
-  const next = new Date(from);
-  next.setHours(parsed.hours, parsed.minutes, 0, 0);
-  if (next.getTime() <= from.getTime()) next.setDate(next.getDate() + 1);
-  return next.getTime();
+export type ReminderClocks = { weekday: string; weekend: string };
+
+/** Saturday and Sunday use the weekend clock. */
+export function isWeekend(date: Date): boolean {
+  const day = date.getDay();
+  return day === 0 || day === 6;
 }
 
-/** The next `count` local occurrences, starting with the soonest one still ahead. */
-export function upcomingReminderTimes(time: string, count: number, from = new Date()): number[] {
-  const parsed = parseReminderTime(time);
-  if (!parsed || count < 1) return [];
-  const start = new Date(from);
-  const todayAt = new Date(from);
-  todayAt.setHours(parsed.hours, parsed.minutes, 0, 0);
-  if (todayAt.getTime() <= from.getTime()) start.setDate(start.getDate() + 1);
+function occurrenceOn(day: Date, clocks: ReminderClocks): number | null {
+  const parsed = parseReminderTime(isWeekend(day) ? clocks.weekend : clocks.weekday);
+  if (!parsed) return null;
+  const at = new Date(day);
+  at.setHours(parsed.hours, parsed.minutes, 0, 0);
+  return at.getTime();
+}
+
+/** Next local occurrence strictly after `from`, using the weekend clock on Saturday and Sunday. */
+export function nextReminderTime(clocks: ReminderClocks, from = new Date()): number | null {
+  if (!parseReminderTime(clocks.weekday) || !parseReminderTime(clocks.weekend)) return null;
+  for (let i = 0; i < 8; i++) {
+    const day = new Date(from);
+    day.setDate(from.getDate() + i);
+    const at = occurrenceOn(day, clocks);
+    if (at != null && at > from.getTime()) return at;
+  }
+  return null;
+}
+
+/** The next `count` local occurrences, each on that day's clock. */
+export function upcomingReminderTimes(clocks: ReminderClocks, count: number, from = new Date()): number[] {
+  const first = nextReminderTime(clocks, from);
+  if (first == null || count < 1) return [];
+  const start = new Date(first);
   const out: number[] = [];
   for (let i = 0; i < count; i++) {
     const day = new Date(start);
     day.setDate(start.getDate() + i);
-    day.setHours(parsed.hours, parsed.minutes, 0, 0);
-    out.push(day.getTime());
+    const at = occurrenceOn(day, clocks);
+    if (at != null) out.push(at);
   }
   return out;
 }
