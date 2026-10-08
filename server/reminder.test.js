@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
+import { inflateSync } from 'node:zlib';
 import { runDispatch, upsertReminder } from './reminderDispatch.js';
 import { isReminderDueNow, isValidTimeZone, localParts, previousMinute } from './reminderDue.js';
 import { secretMatches } from './reminderHttp.js';
@@ -9,6 +10,69 @@ import { redisConfig } from './redisRest.js';
 import { VAPID_PUBLIC_KEY } from './vapidPublic.js';
 
 const zone = 'Europe/Amsterdam';
+
+function pngHasTransparentPixel(buf) {
+  let offset = 8;
+  let width = 0;
+  let height = 0;
+  let colorType = 0;
+  const idats = [];
+  while (offset + 8 <= buf.length) {
+    const len = buf.readUInt32BE(offset);
+    const type = buf.toString('ascii', offset + 4, offset + 8);
+    const data = buf.subarray(offset + 8, offset + 8 + len);
+    if (type === 'IHDR') {
+      width = data.readUInt32BE(0);
+      height = data.readUInt32BE(4);
+      colorType = data[9];
+    } else if (type === 'IDAT') {
+      idats.push(data);
+    } else if (type === 'IEND') break;
+    offset += 12 + len;
+  }
+  assert.equal(colorType, 6);
+  const raw = inflateSync(Buffer.concat(idats));
+  const stride = width * 4;
+  let i = 0;
+  let prev = Buffer.alloc(stride);
+  const paeth = (a, b, c) => {
+    const p = a + b - c;
+    const pa = Math.abs(p - a);
+    const pb = Math.abs(p - b);
+    const pc = Math.abs(p - c);
+    if (pa <= pb && pa <= pc) return a;
+    if (pb <= pc) return b;
+    return c;
+  };
+  for (let y = 0; y < height; y++) {
+    const filter = raw[i++];
+    const row = Buffer.from(raw.subarray(i, i + stride));
+    i += stride;
+    for (let x = 0; x < stride; x++) {
+      const left = x >= 4 ? row[x - 4] : 0;
+      const up = prev[x];
+      const ul = x >= 4 ? prev[x - 4] : 0;
+      if (filter === 1) row[x] = (row[x] + left) & 255;
+      else if (filter === 2) row[x] = (row[x] + up) & 255;
+      else if (filter === 3) row[x] = (row[x] + ((left + up) >> 1)) & 255;
+      else if (filter === 4) row[x] = (row[x] + paeth(left, up, ul)) & 255;
+    }
+    for (let x = 3; x < stride; x += 4) if (row[x] === 0) return true;
+    prev = row;
+  }
+  return false;
+}
+
+test('the notification badge is a transparent shin, and the phone shows the name Shacharis', () => {
+  const sw = readFileSync(new URL('../public/reminder-sw.js', import.meta.url), 'utf8');
+  const client = readFileSync(new URL('../src/reminder.ts', import.meta.url), 'utf8');
+  const manifest = readFileSync(new URL('../vite.config.js', import.meta.url), 'utf8');
+  assert.match(sw, /badge: '\/icon-badge\.png'/);
+  assert.match(client, /badge: '\/icon-badge\.png'/);
+  assert.match(manifest, /short_name: 'Shacharis'/);
+  const png = readFileSync(new URL('../public/icon-badge.png', import.meta.url));
+  assert.equal(pngHasTransparentPixel(png), true);
+});
 
 test('the public key committed for the phone matches the server', () => {
   const source = readFileSync(new URL('../src/vapidPublic.ts', import.meta.url), 'utf8');

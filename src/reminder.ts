@@ -134,7 +134,7 @@ function notificationOptions(notice: ReminderNotice, tag: string): NotificationO
   return {
     body: notice.body,
     icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    badge: '/icon-badge.png',
     tag,
     lang: notice.lang,
     data: { url: '/' },

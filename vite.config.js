@@ -11,10 +11,10 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon-192.png', 'icon-512.png', 'share-qr.svg'],
+      includeAssets: ['icon-192.png', 'icon-512.png', 'icon-badge.png', 'share-qr.svg'],
       manifest: {
-        name: 'Siddur - Еврейский молитвенник',
-        short_name: 'Siddur',
+        name: 'Shacharis',
+        short_name: 'Shacharis',
         description: 'Шахарит - утренние молитвы. Работает офлайн',
           background_color: "#0D9488",
         theme_color: "#0D9488",
@@ -25,7 +25,8 @@ export default defineConfig({
         scope: '/',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          { src: 'icon-badge.png', sizes: '192x192', type: 'image/png', purpose: 'monochrome' }
         ]
       },
       workbox: {

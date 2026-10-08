@@ -11,7 +11,7 @@ self.addEventListener('push', function (event) {
   event.waitUntil(self.registration.showNotification(title, {
     body: payload.body || 'Shacharis',
     icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    badge: '/icon-badge.png',
     tag: 'shacharis-reminder',
     renotify: true,
     lang: payload.lang || 'en',
