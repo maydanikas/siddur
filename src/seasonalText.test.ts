@@ -94,6 +94,9 @@ test('an ordinary summer day keeps the weekday Amidah and drops every insertion'
   assert.equal(shalom.he_display.includes('בְּסֵפֶר חַיִּים'), false);
   assert.equal(shalom.he_display.includes('הַמְבָרֵךְ'), true);
   assert.equal(shalom.he_display.includes('עוֹשֵׂה הַשָּׁלוֹם'), false);
+  assert.equal(avot.ru.includes('читается'), false);
+  assert.equal(gevurot.en.includes('Read from'), false);
+  assert.equal(retze.en.includes('Read on'), false);
 });
 
 test('Rosh Hashana shows the ten-day lines and the holy King', () => {
@@ -109,6 +112,10 @@ test('Rosh Hashana shows the ten-day lines and the holy King', () => {
   assert.equal(avot.he_display.includes('['), true);
   assert.equal(avot.en.includes('Remember us for life'), true);
   assert.equal(avot.en.includes('Seasonal insertion'), false);
+  assert.equal(avot.ru.includes('[читается с Рош ха-Шана по Йом Кипур]'), true);
+  assert.equal(avot.he_display.includes('[.]'), true);
+  assert.equal(kedusha.en.includes('[Read from Rosh HaShana through Yom Kippur]'), true);
+  assert.equal(shalom.fr.includes('[Lu de Roch Hachana jusqu\'à Kippour inclus]'), true);
 
   assert.equal(gevurot.he_display.includes('מַשִּׁיב'), false);
   assert.equal(gevurot.he_display.includes('אַב הָרַחֲמִים'), true);
@@ -143,6 +150,9 @@ test('Rosh Chodesh Cheshvan keeps the winter line and one Yaaleh phrase', () => 
   assert.equal(gevurot.he_display.includes('['), true);
   assert.equal(gevurot.en.includes('wind to blow'), true);
   assert.equal(gevurot.en.includes('Winter insertion'), false);
+  assert.equal(gevurot.ru.includes('[читается с Симхат Тора по канун Песаха]'), true);
+  assert.equal(gevurot.nl.includes('[Gelezen van Simchat Tora tot en met de vooravond van Pesach]'), true);
+  assert.equal(retze.ru.includes('[читается в Рош ходеш]'), true);
   assert.equal(gevurot.he_tts.includes('מַשִּׁיב'), true);
 
   assert.equal(retze.he_display.includes('רֹאשׁ הַחֹדֶשׁ'), true);
@@ -162,10 +172,11 @@ test('the intermediate days keep only their own festival phrase', () => {
   assert.equal(pesach.he_display.includes('חַג הַמַּצּוֹת'), true);
   assert.equal(pesach.he_display.includes('רֹאשׁ הַחֹדֶשׁ'), false);
   assert.equal(pesach.en.includes('Chag HaMatzot'), true);
+  assert.equal(pesach.en.includes('[Read on Chol HaMoed Pesach]'), true);
   assert.equal(pesach.en.includes('Rosh Chodesh'), false);
   assert.equal(sukkot.he_display.includes('חַג הַסֻּכּוֹת'), true);
   assert.equal(sukkot.he_display.includes('חַג הַמַּצּוֹת'), false);
-  assert.equal(sukkot.ru.includes('Суккот'), true);
+  assert.equal(sukkot.ru.includes('[читается в хол ха-моэд Суккот]'), true);
   assert.equal(sukkot.ru.includes('Мацот'), false);
 });
 

@@ -28,6 +28,50 @@ const HE_YAALEH_ONE = [
 const LAT_YAALEH = 'beyom Rosh HaChodesh haze. Chag HaMatzot haze. Chag HaSukkot haze.';
 const LAT_YAALEH_ONE = ['beyom Rosh HaChodesh haze.', 'Chag HaMatzot haze.', 'Chag HaSukkot haze.'];
 
+const NOTE = '[.]';
+
+type NoteLang = 'ru' | 'nl' | 'en' | 'fr';
+
+const PERIOD_NOTE: Record<string, Record<NoteLang, string>> = {
+  winter: {
+    ru: '[читается с Симхат Тора по канун Песаха]',
+    en: '[Read from Simchat Torah through the eve of Pesach]',
+    nl: '[Gelezen van Simchat Tora tot en met de vooravond van Pesach]',
+    fr: '[Lu de Simhat Torah à la veille de Pessa\'h]',
+  },
+  noraim: {
+    ru: '[читается с Рош ха-Шана по Йом Кипур]',
+    en: '[Read from Rosh HaShana through Yom Kippur]',
+    nl: '[Gelezen van Rosj Hasjana tot en met Jom Kipoer]',
+    fr: '[Lu de Roch Hachana jusqu\'à Kippour inclus]',
+  },
+  roshChodesh: {
+    ru: '[читается в Рош ходеш]',
+    en: '[Read on Rosh Chodesh]',
+    nl: '[Gelezen op Rosj Chodesj]',
+    fr: '[Lu à Roch Hodech]',
+  },
+  pesach: {
+    ru: '[читается в хол ха-моэд Песаха]',
+    en: '[Read on Chol HaMoed Pesach]',
+    nl: '[Gelezen op Chol HaMoëed Pesach]',
+    fr: '[Lu à Hol HaMoed de Pessa\'h]',
+  },
+  sukkot: {
+    ru: '[читается в хол ха-моэд Суккот]',
+    en: '[Read on Chol HaMoed Sukkot]',
+    nl: '[Gelezen op Chol HaMoëed Soekot]',
+    fr: '[Lu à Hol HaMoed de Soukkot]',
+  },
+};
+
+function periodNote(kind: BracketKind, day: JewishDay, lang: NoteLang): string {
+  if (kind === 'winter') return PERIOD_NOTE.winter[lang];
+  if (kind === 'noraim' || kind === 'replace') return PERIOD_NOTE.noraim[lang];
+  if (kind === 'yaaleh' && day.yaalehVeyavo) return PERIOD_NOTE[day.yaalehVeyavo][lang];
+  return '';
+}
+
 const EL_HAKADOSH = 'בָּרוּךְ אַתָּה יְיָ, הָאֵל הַקָּדוֹשׁ.';
 const MELECH_HAKADOSH = 'בָּרוּךְ אַתָּה יְיָ, הַמֶּלֶךְ הַקָּדוֹשׁ.';
 const HAMVARECH = 'בָּרוּךְ אַתָּה יְיָ, הַמְבָרֵךְ אֶת-עַמּוֹ יִשְׂרָאֵל בַּשָּׁלוֹם.';
@@ -117,6 +161,7 @@ function displayFor(id: number, text: string, day: JewishDay): string {
   const out: string[] = [];
   let skip = 0;
   let trimUchtov = false;
+  let noteNext = false;
   for (const raw of text.split('\n')) {
     const line = raw.trim();
     if (!line) continue;
@@ -138,7 +183,11 @@ function displayFor(id: number, text: string, day: JewishDay): string {
         trimUchtov = true;
         continue;
       }
-      if (!shows(kind, day)) skip = kind === 'yaaleh' ? 2 : 1;
+      if (!shows(kind, day)) {
+        skip = kind === 'yaaleh' ? 2 : 1;
+        continue;
+      }
+      noteNext = true;
       continue;
     }
     let next = line;
@@ -147,9 +196,22 @@ function displayFor(id: number, text: string, day: JewishDay): string {
       const at = next.indexOf('וְכֹל הַחַיִּים');
       if (at >= 0) next = next.slice(at);
     }
-    if (id === 46 && day.yamimNoraim) next = next.replace('הָאֵל הַקָּדוֹשׁ', 'הַמֶּלֶךְ הַקָּדוֹשׁ');
+    if (id === 46 && day.yamimNoraim) {
+      next = next.replace('הָאֵל הַקָּדוֹשׁ', 'הַמֶּלֶךְ הַקָּדוֹשׁ');
+      const blessingAt = next.lastIndexOf('בָּרוּךְ אַתָּה');
+      if (blessingAt > 0) {
+        out.push(next.slice(0, blessingAt).trim());
+        out.push(NOTE);
+        out.push(next.slice(blessingAt).trim());
+        continue;
+      }
+    }
     if (id === 48 && day.yaalehVeyavo) next = pickYaalehClause(next, YAALEH_INDEX[day.yaalehVeyavo]);
     if (id === 50 && day.yamimNoraim && next.includes('הַמְבָרֵךְ')) next = OSEH_SHALOM;
+    if (noteNext) {
+      out.push(NOTE);
+      noteNext = false;
+    }
     out.push(next);
   }
   return out.join('\n');
@@ -207,20 +269,21 @@ function applyReplacementMarkers(text: string): string {
   return text.replace(/[^.!?\n]*[.!?]\s*\u0000([\s\S]*?)\u0001/g, '$1');
 }
 
-function translationFor(text: string, day: JewishDay): string {
+function translationFor(text: string, day: JewishDay, lang: NoteLang, id: number): string {
   const replaced = text.replace(/\[[^\]]+\]/g, (bracket) => {
     const kind = bracketKind(bracket.slice(1, -1));
     if (kind === 'keep') return bracket;
+    const note = periodNote(kind, day, lang);
     if (kind === 'replace') {
-      return day.yamimNoraim ? `\u0000${innerAfterColon(bracket)}\u0001` : '';
+      if (!day.yamimNoraim) return '';
+      const closing = innerAfterColon(bracket);
+      return id === 50 ? `\u0000${closing}\u0001` : `\u0000${note} ${closing}\u0001`;
     }
-    if (kind === 'yaaleh') {
-      if (!day.yaalehVeyavo) return '';
-      return pickYaalehClause(innerAfterColon(bracket), YAALEH_INDEX[day.yaalehVeyavo]);
-    }
-    if (kind === 'winter') return day.mashivHaruach ? innerAfterColon(bracket) : '';
-    if (kind === 'noraim') return day.yamimNoraim ? innerAfterColon(bracket) : '';
-    return bracket;
+    if (!shows(kind, day)) return '';
+    const inner = kind === 'yaaleh' && day.yaalehVeyavo
+      ? pickYaalehClause(innerAfterColon(bracket), YAALEH_INDEX[day.yaalehVeyavo])
+      : innerAfterColon(bracket);
+    return `${note} ${inner}`;
   });
   return tidy(applyReplacementMarkers(replaced));
 }
@@ -232,9 +295,9 @@ export function applySeason<T extends SeasonedPrayer>(prayer: T, day: JewishDay)
     he_display: displayFor(prayer.id, prayer.he_display, day),
     he_tts: spokenHebrew(prayer.id, prayer.he_tts, day),
     translit: spokenTranslit(prayer.translit, day),
-    ru: translationFor(prayer.ru, day),
-    nl: translationFor(prayer.nl, day),
-    en: translationFor(prayer.en, day),
-    fr: translationFor(prayer.fr, day),
+    ru: translationFor(prayer.ru, day, 'ru', prayer.id),
+    nl: translationFor(prayer.nl, day, 'nl', prayer.id),
+    en: translationFor(prayer.en, day, 'en', prayer.id),
+    fr: translationFor(prayer.fr, day, 'fr', prayer.id),
   };
 }
