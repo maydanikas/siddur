@@ -1,7 +1,14 @@
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { readJewishDay } from './jewishCalendar.ts'
 import { registerSW } from 'virtual:pwa-register'
+
+try {
+  readJewishDay()
+} catch {
+  /* the date stays unread until the next opening */
+}
 
 const updateSW = registerSW({
   onNeedRefresh() {
