@@ -27,13 +27,15 @@ export default function HomeDate({ lang }: { lang: Lang }) {
   }
   if (!gregorian || !hebrew) return null;
   return (
-    <div className="px-2 mb-4">
-      <p className="text-[13px] text-zinc-500 leading-5">
+    <div className="mb-4 rounded-2xl border border-[#0D9488] bg-[#f3faf9] px-4 py-3">
+      <p className="text-[13px] leading-5 text-zinc-500">
         <span>{gregorian}</span>
-        <span className="mx-1.5 text-zinc-300" aria-hidden="true">·</span>
-        <span>{hebrew}</span>
+        <span className="mx-1.5 text-[#0D9488]/45" aria-hidden="true">·</span>
+        <span className="text-zinc-700">{hebrew}</span>
       </p>
-      {holiday ? <p className="mt-1 text-[15px] font-semibold leading-5 text-[#0D9488]">{holiday}</p> : null}
+      {holiday ? (
+        <p className="mt-1 text-[15px] font-semibold leading-5 tracking-tight text-[#0D9488]">{holiday}</p>
+      ) : null}
     </div>
   );
 }
