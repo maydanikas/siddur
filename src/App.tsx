@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import HomeDate from './components/HomeDate';
 import SplashScreen from './components/SplashScreen';
 import AboutScreen from './components/AboutScreen';
 import SupportEnvelope from './components/SupportEnvelope';
@@ -2007,6 +2008,7 @@ export default function App() {
 
           {selected === null && !showAbout && (
             <div className="px-4 pt-2 pb-10 ui-sans">
+              <HomeDate lang={lang} />
               <div className="px-2 mb-4">
                 <p className="text-[13px] text-zinc-500 leading-5">{ui.selectPrayer.replace('{n}', String(TOTAL_PRAYERS))}</p>
               </div>

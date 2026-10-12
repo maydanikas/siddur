@@ -12,7 +12,7 @@ const HOLIDAY =
 
 export type YaalehVeyavo = 'roshChodesh' | 'pesach' | 'sukkot' | null;
 
-/** Dates for the insertions already written in the Amidah. Nothing reads this on screen yet. */
+/** Dates for the insertions already written in the Amidah, and the home-screen line. */
 export type JewishDay = {
   hebrewDate: string;
   gregorian: string;

@@ -44,6 +44,14 @@ test('Yaaleh VeYavo follows Rosh Chodesh and the two intermediate festivals', ()
   assert.equal(jewishDay(noon('2026-10-02')).yaalehVeyavo, 'sukkot');
 });
 
+test('the home screen can show both dates and the name of the day', () => {
+  const day = jewishDay(noon('2026-10-12'));
+  assert.equal(day.gregorian, '2026-10-12');
+  assert.equal(day.hebrewDate, '1 Cheshvan 5787');
+  assert.equal(day.titles.includes('Rosh Chodesh Cheshvan'), true);
+  assert.equal(jewishDay(noon('2026-01-15')).titles.length, 0);
+});
+
 test('reading a day keeps it for later without showing it', () => {
   const day = readJewishDay(noon('2026-09-12'));
   assert.equal(currentJewishDay(), day);
