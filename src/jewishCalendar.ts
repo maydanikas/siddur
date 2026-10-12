@@ -1,4 +1,5 @@
 import { HebrewCalendar, HDate, flags, months } from '@hebcal/core';
+import type { Lang } from './supportCopy';
 
 const HOLIDAY =
   flags.CHAG |
@@ -84,4 +85,68 @@ export function readJewishDay(date = new Date(), inIsrael = false): JewishDay {
 
 export function currentJewishDay(): JewishDay | null {
   return observed;
+}
+
+/**
+ * Month names follow the spelling of the seasonal notes.
+ * Russian is genitive, the same way the civil date says «1 октября».
+ */
+const HEBREW_MONTH: Record<Exclude<Lang, 'en'>, Record<string, string>> = {
+  ru: {
+    Nisan: 'Нисана',
+    Iyyar: 'Ияра',
+    Sivan: 'Сивана',
+    Tamuz: 'Таммуза',
+    Av: 'Ава',
+    Elul: 'Элула',
+    Tishrei: 'Тишрея',
+    Cheshvan: 'Хешвана',
+    Kislev: 'Кислева',
+    Tevet: 'Тевета',
+    "Sh'vat": 'Швата',
+    Adar: 'Адара',
+    'Adar I': 'Адара I',
+    'Adar II': 'Адара II',
+  },
+  nl: {
+    Nisan: 'Nisan',
+    Iyyar: 'Ijar',
+    Sivan: 'Sivan',
+    Tamuz: 'Tamoez',
+    Av: 'Av',
+    Elul: 'Eloel',
+    Tishrei: 'Tisjri',
+    Cheshvan: 'Chesjwan',
+    Kislev: 'Kislev',
+    Tevet: 'Tevet',
+    "Sh'vat": 'Sjevat',
+    Adar: 'Adar',
+    'Adar I': 'Adar I',
+    'Adar II': 'Adar II',
+  },
+  fr: {
+    Nisan: 'Nissan',
+    Iyyar: 'Iyar',
+    Sivan: 'Sivan',
+    Tamuz: 'Tamouz',
+    Av: 'Av',
+    Elul: 'Eloul',
+    Tishrei: 'Tichri',
+    Cheshvan: 'Hechvan',
+    Kislev: 'Kislev',
+    Tevet: 'Tévet',
+    "Sh'vat": 'Chevat',
+    Adar: 'Adar',
+    'Adar I': 'Adar I',
+    'Adar II': 'Adar II',
+  },
+};
+
+/** The home-screen Hebrew date, in the reader's language. English stays “1 Cheshvan 5787”. */
+export function hebrewDateIn(date: Date, lang: Lang): string {
+  const hd = new HDate(date);
+  if (lang === 'en') return hd.toString();
+  const month = HEBREW_MONTH[lang][hd.getMonthName()];
+  if (!month) return hd.toString();
+  return `${hd.getDate()} ${month} ${hd.getFullYear()}`;
 }

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { currentJewishDay, jewishDay, readJewishDay } from './jewishCalendar.ts';
+import { currentJewishDay, hebrewDateIn, jewishDay, readJewishDay } from './jewishCalendar.ts';
 
 const noon = (iso: string) => new Date(`${iso}T12:00:00`);
 
@@ -50,6 +50,20 @@ test('the home screen can show both dates and the name of the day', () => {
   assert.equal(day.hebrewDate, '1 Cheshvan 5787');
   assert.equal(day.titles.includes('Rosh Chodesh Cheshvan'), true);
   assert.equal(jewishDay(noon('2026-01-15')).titles.length, 0);
+});
+
+test('the Hebrew date is written in the reader’s language', () => {
+  const cheshvan = noon('2026-10-12');
+  assert.equal(hebrewDateIn(cheshvan, 'en'), '1 Cheshvan 5787');
+  assert.equal(hebrewDateIn(cheshvan, 'ru'), '1 Хешвана 5787');
+  assert.equal(hebrewDateIn(cheshvan, 'nl'), '1 Chesjwan 5787');
+  assert.equal(hebrewDateIn(cheshvan, 'fr'), '1 Hechvan 5787');
+  assert.equal(hebrewDateIn(noon('2026-09-12'), 'ru'), '1 Тишрея 5787');
+  assert.equal(hebrewDateIn(noon('2026-04-02'), 'fr'), '15 Nissan 5786');
+  assert.equal(hebrewDateIn(noon('2026-01-15'), 'nl'), '26 Tevet 5786');
+  assert.equal(hebrewDateIn(noon('2027-01-09'), 'ru'), '1 Швата 5787');
+  assert.equal(hebrewDateIn(noon('2024-02-10'), 'fr'), '1 Adar I 5784');
+  assert.equal(hebrewDateIn(noon('2024-03-11'), 'nl'), '1 Adar II 5784');
 });
 
 test('reading a day keeps it for later without showing it', () => {

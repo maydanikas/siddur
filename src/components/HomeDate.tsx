@@ -1,4 +1,4 @@
-import { jewishDay } from '../jewishCalendar';
+import { hebrewDateIn, jewishDay } from '../jewishCalendar';
 import type { Lang } from '../supportCopy';
 
 const DATE_LOCALE: Record<Lang, string> = {
@@ -20,7 +20,7 @@ export default function HomeDate({ lang }: { lang: Lang }) {
       month: 'long',
       year: 'numeric',
     }).format(today);
-    hebrew = day.hebrewDate;
+    hebrew = hebrewDateIn(today, lang);
     holiday = day.titles.join(' · ');
   } catch {
     return null;
