@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { HebrewCalendar, flags } from '@hebcal/core';
+import { holidayName, holidayNameKnown } from './holidayName.ts';
 import { currentJewishDay, hebrewDateIn, jewishDay, readJewishDay } from './jewishCalendar.ts';
 
 const noon = (iso: string) => new Date(`${iso}T12:00:00`);
@@ -64,6 +66,49 @@ test('the Hebrew date is written in the reader’s language', () => {
   assert.equal(hebrewDateIn(noon('2027-01-09'), 'ru'), '1 Швата 5787');
   assert.equal(hebrewDateIn(noon('2024-02-10'), 'fr'), '1 Adar I 5784');
   assert.equal(hebrewDateIn(noon('2024-03-11'), 'nl'), '1 Adar II 5784');
+});
+
+test('the holiday name is written in the reader’s language', () => {
+  assert.equal(holidayName('Rosh Chodesh Cheshvan', 'en'), 'Rosh Chodesh Cheshvan');
+  assert.equal(holidayName('Rosh Chodesh Cheshvan', 'ru'), 'Рош ходеш Хешван');
+  assert.equal(holidayName('Rosh Chodesh Cheshvan', 'nl'), 'Rosj Chodesj Chesjwan');
+  assert.equal(holidayName('Rosh Chodesh Cheshvan', 'fr'), 'Roch Hodech Hechvan');
+  assert.equal(holidayName('Rosh Hashana 5787', 'ru'), 'Рош ха-Шана 5787');
+  assert.equal(holidayName('Yom Kippur', 'nl'), 'Jom Kipoer');
+  assert.equal(holidayName('Yom Kippur', 'fr'), 'Kippour');
+  assert.equal(holidayName('Simchat Torah', 'ru'), 'Симхат Тора');
+  assert.equal(holidayName("Pesach III (CH''M)", 'ru'), 'Песах III (хол ха-моэд)');
+  assert.equal(holidayName("Pesach III (CH''M)", 'nl'), 'Pesach III (Chol HaMoëed)');
+  assert.equal(holidayName("Pesach III (CH''M)", 'fr'), "Pessa'h III (Hol HaMoed)");
+  assert.equal(holidayName('Sukkot VII (Hoshana Raba)', 'ru'), 'Суккот VII (Хошана раба)');
+  assert.equal(holidayName('Erev Pesach', 'ru'), 'Канун Песаха');
+  assert.equal(holidayName('Chanukah: 1 Candle', 'ru'), 'Ханука: 1 свеча');
+  assert.equal(holidayName('Chanukah: 5 Candles', 'fr'), 'Hanouka: 5 bougies');
+  assert.equal(holidayName("Tish'a B'Av (observed)", 'nl'), 'Tisja be-Av (verschoven)');
+  assert.equal(holidayName('Rosh Chodesh Adar I', 'ru'), 'Рош ходеш Адар I');
+  assert.equal(holidayName("Rosh Chodesh Sh'vat", 'fr'), 'Roch Hodech Chevat');
+});
+
+test('every holiday the calendar can show has a name in each language', () => {
+  const mask =
+    flags.CHAG | flags.ROSH_CHODESH | flags.CHOL_HAMOED | flags.MAJOR_FAST |
+    flags.MINOR_FAST | flags.MINOR_HOLIDAY | flags.MODERN_HOLIDAY | flags.EREV;
+  const titles = new Set<string>();
+  for (const event of HebrewCalendar.calendar({
+    start: new Date('2024-01-01T12:00:00'),
+    end: new Date('2028-12-31T12:00:00'),
+    il: false,
+    sedrot: false,
+  })) {
+    if ((event.getFlags() & mask) !== 0) titles.add(event.getDesc());
+  }
+  assert.ok(titles.size > 70);
+  for (const title of titles) {
+    for (const lang of ['ru', 'nl', 'fr'] as const) {
+      assert.equal(holidayNameKnown(title, lang), true, `${lang} ${title}`);
+      if (lang === 'ru') assert.match(holidayName(title, lang), /[А-Яа-яЁё]/, title);
+    }
+  }
 });
 
 test('reading a day keeps it for later without showing it', () => {

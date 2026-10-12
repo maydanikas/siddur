@@ -87,66 +87,75 @@ export function currentJewishDay(): JewishDay | null {
   return observed;
 }
 
+type MonthForms = { nom: string; gen: string };
+
 /**
  * Month names follow the spelling of the seasonal notes.
- * Russian is genitive, the same way the civil date says «1 октября».
+ * The date uses the genitive in Russian, the same way the civil date says «1 октября».
+ * A holiday name uses the nominative: «Рош ходеш Хешван».
  */
-const HEBREW_MONTH: Record<Exclude<Lang, 'en'>, Record<string, string>> = {
+const HEBREW_MONTH: Record<Exclude<Lang, 'en'>, Record<string, MonthForms>> = {
   ru: {
-    Nisan: 'Нисана',
-    Iyyar: 'Ияра',
-    Sivan: 'Сивана',
-    Tamuz: 'Таммуза',
-    Av: 'Ава',
-    Elul: 'Элула',
-    Tishrei: 'Тишрея',
-    Cheshvan: 'Хешвана',
-    Kislev: 'Кислева',
-    Tevet: 'Тевета',
-    "Sh'vat": 'Швата',
-    Adar: 'Адара',
-    'Adar I': 'Адара I',
-    'Adar II': 'Адара II',
+    Nisan: { nom: 'Нисан', gen: 'Нисана' },
+    Iyyar: { nom: 'Ияр', gen: 'Ияра' },
+    Sivan: { nom: 'Сиван', gen: 'Сивана' },
+    Tamuz: { nom: 'Таммуз', gen: 'Таммуза' },
+    Av: { nom: 'Ав', gen: 'Ава' },
+    Elul: { nom: 'Элул', gen: 'Элула' },
+    Tishrei: { nom: 'Тишрей', gen: 'Тишрея' },
+    Cheshvan: { nom: 'Хешван', gen: 'Хешвана' },
+    Kislev: { nom: 'Кислев', gen: 'Кислева' },
+    Tevet: { nom: 'Тевет', gen: 'Тевета' },
+    "Sh'vat": { nom: 'Шват', gen: 'Швата' },
+    Adar: { nom: 'Адар', gen: 'Адара' },
+    'Adar I': { nom: 'Адар I', gen: 'Адара I' },
+    'Adar II': { nom: 'Адар II', gen: 'Адара II' },
   },
   nl: {
-    Nisan: 'Nisan',
-    Iyyar: 'Ijar',
-    Sivan: 'Sivan',
-    Tamuz: 'Tamoez',
-    Av: 'Av',
-    Elul: 'Eloel',
-    Tishrei: 'Tisjri',
-    Cheshvan: 'Chesjwan',
-    Kislev: 'Kislev',
-    Tevet: 'Tevet',
-    "Sh'vat": 'Sjevat',
-    Adar: 'Adar',
-    'Adar I': 'Adar I',
-    'Adar II': 'Adar II',
+    Nisan: { nom: 'Nisan', gen: 'Nisan' },
+    Iyyar: { nom: 'Ijar', gen: 'Ijar' },
+    Sivan: { nom: 'Sivan', gen: 'Sivan' },
+    Tamuz: { nom: 'Tamoez', gen: 'Tamoez' },
+    Av: { nom: 'Av', gen: 'Av' },
+    Elul: { nom: 'Eloel', gen: 'Eloel' },
+    Tishrei: { nom: 'Tisjri', gen: 'Tisjri' },
+    Cheshvan: { nom: 'Chesjwan', gen: 'Chesjwan' },
+    Kislev: { nom: 'Kislev', gen: 'Kislev' },
+    Tevet: { nom: 'Tevet', gen: 'Tevet' },
+    "Sh'vat": { nom: 'Sjevat', gen: 'Sjevat' },
+    Adar: { nom: 'Adar', gen: 'Adar' },
+    'Adar I': { nom: 'Adar I', gen: 'Adar I' },
+    'Adar II': { nom: 'Adar II', gen: 'Adar II' },
   },
   fr: {
-    Nisan: 'Nissan',
-    Iyyar: 'Iyar',
-    Sivan: 'Sivan',
-    Tamuz: 'Tamouz',
-    Av: 'Av',
-    Elul: 'Eloul',
-    Tishrei: 'Tichri',
-    Cheshvan: 'Hechvan',
-    Kislev: 'Kislev',
-    Tevet: 'Tévet',
-    "Sh'vat": 'Chevat',
-    Adar: 'Adar',
-    'Adar I': 'Adar I',
-    'Adar II': 'Adar II',
+    Nisan: { nom: 'Nissan', gen: 'Nissan' },
+    Iyyar: { nom: 'Iyar', gen: 'Iyar' },
+    Sivan: { nom: 'Sivan', gen: 'Sivan' },
+    Tamuz: { nom: 'Tamouz', gen: 'Tamouz' },
+    Av: { nom: 'Av', gen: 'Av' },
+    Elul: { nom: 'Eloul', gen: 'Eloul' },
+    Tishrei: { nom: 'Tichri', gen: 'Tichri' },
+    Cheshvan: { nom: 'Hechvan', gen: 'Hechvan' },
+    Kislev: { nom: 'Kislev', gen: 'Kislev' },
+    Tevet: { nom: 'Tévet', gen: 'Tévet' },
+    "Sh'vat": { nom: 'Chevat', gen: 'Chevat' },
+    Adar: { nom: 'Adar', gen: 'Adar' },
+    'Adar I': { nom: 'Adar I', gen: 'Adar I' },
+    'Adar II': { nom: 'Adar II', gen: 'Adar II' },
   },
 };
+
+/** A Hebrew month in the reader's language. English keeps the Hebcal spelling. */
+export function hebrewMonthIn(englishName: string, lang: Lang, form: 'nom' | 'gen' = 'nom'): string {
+  if (lang === 'en') return englishName;
+  return HEBREW_MONTH[lang][englishName]?.[form] ?? englishName;
+}
 
 /** The home-screen Hebrew date, in the reader's language. English stays “1 Cheshvan 5787”. */
 export function hebrewDateIn(date: Date, lang: Lang): string {
   const hd = new HDate(date);
   if (lang === 'en') return hd.toString();
-  const month = HEBREW_MONTH[lang][hd.getMonthName()];
-  if (!month) return hd.toString();
+  const month = hebrewMonthIn(hd.getMonthName(), lang, 'gen');
+  if (month === hd.getMonthName()) return hd.toString();
   return `${hd.getDate()} ${month} ${hd.getFullYear()}`;
 }
