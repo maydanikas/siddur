@@ -9,12 +9,11 @@ const DATE_LOCALE: Record<Lang, string> = {
   fr: 'fr-FR',
 };
 
-export default function HomeDate({ lang }: { lang: Lang }) {
+export default function HomeDate({ lang, today = new Date() }: { lang: Lang; today?: Date }) {
   let gregorian = '';
   let hebrew = '';
   let holiday = '';
   try {
-    const today = new Date();
     const day = jewishDay(today);
     gregorian = new Intl.DateTimeFormat(DATE_LOCALE[lang], {
       day: 'numeric',

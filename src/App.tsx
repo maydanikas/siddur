@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import HomeDate from './components/HomeDate';
 import { jewishDay } from './jewishCalendar';
+import { usePhoneDay } from './phoneDay';
 import { applySeason } from './seasonalText';
 import SplashScreen from './components/SplashScreen';
 import AboutScreen from './components/AboutScreen';
@@ -688,9 +689,9 @@ const prayers: Prayer[] = [
 
 ];
 
-function forToday<T extends (typeof prayers)[number]>(prayer: T): T {
+function forToday<T extends (typeof prayers)[number]>(prayer: T, today = new Date()): T {
   try {
-    return applySeason(prayer, jewishDay());
+    return applySeason(prayer, jewishDay(today));
   } catch {
     return prayer;
   }
@@ -1182,6 +1183,7 @@ function HebrewDisplay({
 }
 
 export default function App() {
+  const today = usePhoneDay();
   const [selected, setSelected] = useState<number | null>(() => prayerIndexFromPath(window.location.pathname));
   const [belowHe, setBelowHe] = useState<BelowHe>(() => {
     try {
@@ -1634,12 +1636,12 @@ export default function App() {
           );
         }
       } else {
-        startWordHighlightFallback(forToday(prayers[selected]).he_tts, durationSec);
+        startWordHighlightFallback(forToday(prayers[selected], today).he_tts, durationSec);
       }
       return;
     }
 
-    const prayer = forToday(prayers[selected]);
+    const prayer = forToday(prayers[selected], today);
     const ttsText = prepareTtsText(prayer.he_tts);
     const estDuration = estimateSpeechDuration(ttsText, SPEECH_RATE);
 
@@ -1773,7 +1775,7 @@ export default function App() {
     setIsPlaying(true);
   };
 
-  const currentPrayer = selected !== null ? forToday(prayers[selected]) : null;
+  const currentPrayer = selected !== null ? forToday(prayers[selected], today) : null;
   const ui = controlsCopy(lang);
 
   return (
@@ -2018,7 +2020,7 @@ export default function App() {
 
           {selected === null && !showAbout && (
             <div className="px-4 pt-2 pb-10 ui-sans">
-              <HomeDate lang={lang} />
+              <HomeDate lang={lang} today={today} />
               <div className="px-2 mb-4">
                 <p className="text-[13px] text-zinc-500 leading-5">{ui.selectPrayer.replace('{n}', String(TOTAL_PRAYERS))}</p>
               </div>
