@@ -1,5 +1,7 @@
 import { homeHolidayLine } from '../holidayName';
 import { hebrewDateIn, jewishDay } from '../jewishCalendar';
+import { useReaderPlace } from '../readerPlace';
+import { dayNeedsClock, shabbatClock, shabbatClockLine } from '../shabbatTimes';
 import type { Lang } from '../supportCopy';
 
 const DATE_LOCALE: Record<Lang, string> = {
@@ -10,9 +12,17 @@ const DATE_LOCALE: Record<Lang, string> = {
 };
 
 export default function HomeDate({ lang, today = new Date() }: { lang: Lang; today?: Date }) {
+  let needed = false;
+  try {
+    needed = dayNeedsClock(today);
+  } catch {
+    needed = false;
+  }
+  const place = useReaderPlace(needed);
   let gregorian = '';
   let hebrew = '';
   let holiday = '';
+  let clockLine = '';
   try {
     const day = jewishDay(today);
     gregorian = new Intl.DateTimeFormat(DATE_LOCALE[lang], {
@@ -22,6 +32,10 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
     }).format(today);
     hebrew = hebrewDateIn(today, lang);
     holiday = homeHolidayLine(day.titles, day.shabbat, lang, day.yomRishon);
+    if (place) {
+      const clock = shabbatClock(today, place);
+      if (clock) clockLine = shabbatClockLine(clock, lang);
+    }
   } catch {
     return null;
   }
@@ -35,6 +49,9 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
       </p>
       {holiday ? (
         <p className="mt-1 text-[15px] font-semibold leading-5 tracking-tight text-[#0D9488]">{holiday}</p>
+      ) : null}
+      {clockLine ? (
+        <p className="mt-1 text-[15px] font-semibold leading-5 tracking-tight text-[#0D9488] tabular-nums">{clockLine}</p>
       ) : null}
     </div>
   );
