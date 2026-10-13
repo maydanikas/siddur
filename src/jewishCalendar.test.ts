@@ -83,6 +83,16 @@ test('Shabbat is always named, and a holiday on that day follows a comma', () =>
   assert.equal(homeHolidayLine(rosh.titles, rosh.shabbat, 'en'), 'Shabbat, Rosh Hashana 5787');
   const sukkot = jewishDay(noon('2026-09-26'));
   assert.equal(homeHolidayLine(sukkot.titles, sukkot.shabbat, 'fr'), "Chabbat, Soukkot I");
+  const sunday = jewishDay(noon('2026-10-18'));
+  assert.equal(sunday.yomRishon, true);
+  assert.equal(sunday.shabbat, false);
+  assert.equal(homeHolidayLine(sunday.titles, sunday.shabbat, 'ru', sunday.yomRishon), 'Йом Ришон');
+  assert.equal(homeHolidayLine(sunday.titles, sunday.shabbat, 'nl', sunday.yomRishon), 'Jom Risjon');
+  assert.equal(homeHolidayLine(sunday.titles, sunday.shabbat, 'fr', sunday.yomRishon), 'Yom Richon');
+  assert.equal(homeHolidayLine(sunday.titles, sunday.shabbat, 'en', sunday.yomRishon), 'Yom Rishon');
+  const roshSunday = jewishDay(noon('2026-09-13'));
+  assert.equal(homeHolidayLine(roshSunday.titles, roshSunday.shabbat, 'ru', roshSunday.yomRishon), 'Йом Ришон, Рош ха-Шана II');
+  assert.equal(jewishDay(noon('2026-10-13')).yomRishon, false);
 });
 
 test('the holiday name is written in the reader’s language', () => {

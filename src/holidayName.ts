@@ -105,12 +105,20 @@ const SHABBAT: Record<Lang, string> = {
   fr: 'Chabbat',
 };
 
-/** Shabbat on its own, or Shabbat and the holiday separated by a comma. */
-export function homeHolidayLine(titles: string[], shabbat: boolean, lang: Lang): string {
+const YOM_RISHON: Record<Lang, string> = {
+  en: 'Yom Rishon',
+  ru: 'Йом Ришон',
+  nl: 'Jom Risjon',
+  fr: 'Yom Richon',
+};
+
+/** The weekday name, then a holiday after a comma when both fall on this day. */
+export function homeHolidayLine(titles: string[], shabbat: boolean, lang: Lang, yomRishon = false): string {
   const holiday = titles.map((title) => holidayName(title, lang)).filter(Boolean).join(' · ');
-  if (!shabbat) return holiday;
-  if (!holiday) return SHABBAT[lang];
-  return `${SHABBAT[lang]}, ${holiday}`;
+  const dayName = shabbat ? SHABBAT[lang] : yomRishon ? YOM_RISHON[lang] : '';
+  if (!dayName) return holiday;
+  if (!holiday) return dayName;
+  return `${dayName}, ${holiday}`;
 }
 
 /** The home-screen holiday name. English keeps the Hebcal wording. */

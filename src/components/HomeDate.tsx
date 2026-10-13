@@ -21,7 +21,7 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
       year: 'numeric',
     }).format(today);
     hebrew = hebrewDateIn(today, lang);
-    holiday = homeHolidayLine(day.titles, day.shabbat, lang);
+    holiday = homeHolidayLine(day.titles, day.shabbat, lang, day.yomRishon);
   } catch {
     return null;
   }

@@ -26,6 +26,8 @@ export type JewishDay = {
   yaalehVeyavo: YaalehVeyavo;
   /** Civil Saturday. The app dates the day from the phone clock, not from sunset. */
   shabbat: boolean;
+  /** Civil Sunday, the first day of the week. */
+  yomRishon: boolean;
   titles: string[];
 };
 
@@ -75,6 +77,7 @@ export function jewishDay(date = new Date(), inIsrael = false): JewishDay {
     cholHamoedSukkot,
     yaalehVeyavo,
     shabbat: hd.getDay() === 6,
+    yomRishon: hd.getDay() === 0,
     titles,
   };
 }
