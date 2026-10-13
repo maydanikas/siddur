@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { HebrewCalendar, flags } from '@hebcal/core';
-import { holidayName, holidayNameKnown } from './holidayName.ts';
+import { holidayName, holidayNameKnown, homeHolidayLine } from './holidayName.ts';
 import { currentJewishDay, hebrewDateIn, jewishDay, readJewishDay } from './jewishCalendar.ts';
 
 const noon = (iso: string) => new Date(`${iso}T12:00:00`);
@@ -66,6 +66,23 @@ test('the Hebrew date is written in the reader’s language', () => {
   assert.equal(hebrewDateIn(noon('2027-01-09'), 'ru'), '1 Швата 5787');
   assert.equal(hebrewDateIn(noon('2024-02-10'), 'fr'), '1 Adar I 5784');
   assert.equal(hebrewDateIn(noon('2024-03-11'), 'nl'), '1 Adar II 5784');
+});
+
+test('Shabbat is always named, and a holiday on that day follows a comma', () => {
+  const ordinary = jewishDay(noon('2026-10-17'));
+  assert.equal(ordinary.shabbat, true);
+  assert.equal(ordinary.titles.length, 0);
+  assert.equal(homeHolidayLine(ordinary.titles, ordinary.shabbat, 'ru'), 'Шаббат');
+  assert.equal(homeHolidayLine(ordinary.titles, ordinary.shabbat, 'nl'), 'Sjabbat');
+  assert.equal(homeHolidayLine(ordinary.titles, ordinary.shabbat, 'fr'), 'Chabbat');
+  assert.equal(homeHolidayLine(ordinary.titles, ordinary.shabbat, 'en'), 'Shabbat');
+  assert.equal(jewishDay(noon('2026-10-16')).shabbat, false);
+  const rosh = jewishDay(noon('2026-09-12'));
+  assert.equal(rosh.shabbat, true);
+  assert.equal(homeHolidayLine(rosh.titles, rosh.shabbat, 'ru'), 'Шаббат, Рош ха-Шана 5787');
+  assert.equal(homeHolidayLine(rosh.titles, rosh.shabbat, 'en'), 'Shabbat, Rosh Hashana 5787');
+  const sukkot = jewishDay(noon('2026-09-26'));
+  assert.equal(homeHolidayLine(sukkot.titles, sukkot.shabbat, 'fr'), "Chabbat, Soukkot I");
 });
 
 test('the holiday name is written in the reader’s language', () => {

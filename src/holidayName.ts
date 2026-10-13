@@ -98,6 +98,21 @@ function renderHoliday(desc: string, lang: Exclude<Lang, 'en'>): string | null {
   return observed ? `${name} (${OBSERVED[lang]})` : name;
 }
 
+const SHABBAT: Record<Lang, string> = {
+  en: 'Shabbat',
+  ru: 'Шаббат',
+  nl: 'Sjabbat',
+  fr: 'Chabbat',
+};
+
+/** Shabbat on its own, or Shabbat and the holiday separated by a comma. */
+export function homeHolidayLine(titles: string[], shabbat: boolean, lang: Lang): string {
+  const holiday = titles.map((title) => holidayName(title, lang)).filter(Boolean).join(' · ');
+  if (!shabbat) return holiday;
+  if (!holiday) return SHABBAT[lang];
+  return `${SHABBAT[lang]}, ${holiday}`;
+}
+
 /** The home-screen holiday name. English keeps the Hebcal wording. */
 export function holidayName(desc: string, lang: Lang): string {
   if (lang === 'en') return desc;

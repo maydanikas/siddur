@@ -24,6 +24,8 @@ export type JewishDay = {
   cholHamoedPesach: boolean;
   cholHamoedSukkot: boolean;
   yaalehVeyavo: YaalehVeyavo;
+  /** Civil Saturday. The app dates the day from the phone clock, not from sunset. */
+  shabbat: boolean;
   titles: string[];
 };
 
@@ -72,6 +74,7 @@ export function jewishDay(date = new Date(), inIsrael = false): JewishDay {
     cholHamoedPesach,
     cholHamoedSukkot,
     yaalehVeyavo,
+    shabbat: hd.getDay() === 6,
     titles,
   };
 }

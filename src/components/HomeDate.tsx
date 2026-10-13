@@ -1,4 +1,4 @@
-import { holidayName } from '../holidayName';
+import { homeHolidayLine } from '../holidayName';
 import { hebrewDateIn, jewishDay } from '../jewishCalendar';
 import type { Lang } from '../supportCopy';
 
@@ -21,7 +21,7 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
       year: 'numeric',
     }).format(today);
     hebrew = hebrewDateIn(today, lang);
-    holiday = day.titles.map((title) => holidayName(title, lang)).join(' · ');
+    holiday = homeHolidayLine(day.titles, day.shabbat, lang);
   } catch {
     return null;
   }
