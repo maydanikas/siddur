@@ -7,10 +7,10 @@ const noon = (iso: string) => new Date(`${iso}T12:00:00`);
 const amsterdam = { latitude: 52.3676, longitude: 4.9041 };
 const zone = 'Europe/Amsterdam';
 
-test('a normal week puts candles on Friday and havdalah on Saturday', () => {
+test('a normal week uses the Israeli candle offset and havdalah on Saturday', () => {
   const friday = shabbatClock(noon('2026-10-16'), amsterdam, zone);
   const saturday = shabbatClock(noon('2026-10-17'), amsterdam, zone);
-  assert.deepEqual(friday, { kind: 'candles', time: '18:25' });
+  assert.deepEqual(friday, { kind: 'candles', time: '18:23' });
   assert.deepEqual(saturday, { kind: 'havdalah', time: '19:32' });
   assert.equal(shabbatClock(noon('2026-10-15'), amsterdam, zone), null);
   assert.equal(shabbatClock(noon('2026-10-18'), amsterdam, zone), null);
@@ -18,16 +18,18 @@ test('a normal week puts candles on Friday and havdalah on Saturday', () => {
   assert.equal(dayNeedsClock(noon('2026-10-13')), false);
 });
 
-test('a festival that continues past Saturday keeps candles on Saturday and havdalah on the last day', () => {
+test('Rosh Hashana stays two days in Israel, and Sukkot ends after one day', () => {
   const friday = shabbatClock(noon('2026-09-11'), amsterdam, zone);
   const saturday = shabbatClock(noon('2026-09-12'), amsterdam, zone);
   const sunday = shabbatClock(noon('2026-09-13'), amsterdam, zone);
-  assert.deepEqual(friday, { kind: 'candles', time: '19:47' });
+  assert.deepEqual(friday, { kind: 'candles', time: '19:45' });
   assert.deepEqual(saturday, { kind: 'candles', time: '20:54' });
   assert.deepEqual(sunday, { kind: 'havdalah', time: '20:52' });
+  const sukkot = shabbatClock(noon('2026-09-26'), amsterdam, zone);
+  assert.deepEqual(sukkot, { kind: 'havdalah', time: '20:20' });
   const kippurEve = shabbatClock(noon('2026-09-20'), amsterdam, zone);
   const kippur = shabbatClock(noon('2026-09-21'), amsterdam, zone);
-  assert.deepEqual(kippurEve, { kind: 'candles', time: '19:25' });
+  assert.deepEqual(kippurEve, { kind: 'candles', time: '19:23' });
   assert.deepEqual(kippur, { kind: 'havdalah', time: '20:32' });
 });
 

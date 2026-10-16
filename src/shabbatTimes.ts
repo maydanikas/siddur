@@ -7,7 +7,8 @@ import type { Lang } from './supportCopy';
  * When a festival runs through Saturday night, that evening is candles again
  * and havdalah moves to the day the festival ends.
  * Shabbat and Yom Rishon stay the names of Saturday and Sunday. The clock is not attached to those names.
- * Diaspora custom: 18 minutes before sunset, havdalah at tzeit (8.5°).
+ * Liberal custom follows Hebcal for Israel: candles 20 minutes before sunset, havdalah at tzeit (8.5°).
+ * Rosh Hashana is still two days. Other festivals end after one day.
  */
 
 export type Place = {
@@ -53,7 +54,7 @@ function phoneTimeZone(): string {
 export function dayNeedsClock(date: Date): boolean {
   const weekday = date.getDay();
   if (weekday === 5 || weekday === 6) return true;
-  const events = HebrewCalendar.calendar({ start: date, end: date, il: false, sedrot: false });
+  const events = HebrewCalendar.calendar({ start: date, end: date, il: true, sedrot: false });
   return events.some((event) => (event.getFlags() & CLOCK_FLAG) !== 0);
 }
 
@@ -64,11 +65,11 @@ export function dayNeedsClock(date: Date): boolean {
 export function shabbatClock(date: Date, place: Place, timeZone = phoneTimeZone()): ShabbatClock | null {
   if (!dayNeedsClock(date) || !timeZone) return null;
   try {
-    const location = new Location(place.latitude, place.longitude, false, timeZone);
+    const location = new Location(place.latitude, place.longitude, true, timeZone);
     const events = HebrewCalendar.calendar({
       start: date,
       end: date,
-      il: false,
+      il: true,
       sedrot: false,
       location,
       candlelighting: true,
