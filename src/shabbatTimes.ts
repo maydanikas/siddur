@@ -13,6 +13,9 @@ import type { Lang } from './supportCopy';
 export type Place = {
   latitude: number;
   longitude: number;
+  /** Town or city the coordinates belong to, in `nameLang`. */
+  name?: string;
+  nameLang?: Lang;
 };
 
 export type ShabbatClock = {

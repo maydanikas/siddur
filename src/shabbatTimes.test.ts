@@ -44,8 +44,16 @@ test('the clock line follows the reader language', () => {
   assert.equal(shabbatClockLine(havdalah, 'en'), 'Havdalah 19:32');
 });
 
-test('a saved place is only a latitude and a longitude', () => {
+test('a saved place keeps coordinates and a town name in a known language', () => {
   assert.deepEqual(parsePlace('{"latitude":52.37,"longitude":4.9}'), { latitude: 52.37, longitude: 4.9 });
+  assert.deepEqual(
+    parsePlace('{"latitude":51.73519,"longitude":5.5266331,"name":"Хес","nameLang":"ru"}'),
+    { latitude: 51.73519, longitude: 5.5266331, name: 'Хес', nameLang: 'ru' },
+  );
+  assert.deepEqual(parsePlace('{"latitude":51.73,"longitude":5.53,"name":"Heesch","nameLang":"de"}'), {
+    latitude: 51.73,
+    longitude: 5.53,
+  });
   assert.equal(parsePlace(null), null);
   assert.equal(parsePlace('nope'), null);
   assert.equal(parsePlace('{"latitude":91,"longitude":0}'), null);
