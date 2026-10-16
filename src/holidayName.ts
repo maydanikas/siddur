@@ -22,7 +22,8 @@ const NAME: Record<string, Phrase> = {
   'Rosh Hashana': { ru: 'Рош ха-Шана', nl: 'Rosj Hasjana', fr: 'Roch Hachana' },
   'Rosh Hashana LaBehemot': { ru: 'Рош ха-Шана ла-бехемот', nl: 'Rosj Hasjana la-behemot', fr: 'Roch Hachana la-behemot' },
   Shavuot: { ru: 'Шавуот', nl: 'Sjavoeot', fr: 'Chavouot' },
-  'Shmini Atzeret': { ru: 'Шмини ацерет', nl: 'Sjmini Atseret', fr: 'Chemini Atseret' },
+  /** In Israel this day is Simchat Torah, so the card uses that name. */
+  'Shmini Atzeret': { ru: 'Симхат Тора', nl: 'Simchat Tora', fr: 'Simhat Torah' },
   'Shushan Purim': { ru: 'Шушан Пурим', nl: 'Sjoesjan Poerim', fr: 'Chouchane Pourim' },
   'Shushan Purim Katan': { ru: 'Шушан Пурим катан', nl: 'Sjoesjan Poerim Katan', fr: 'Chouchane Pourim katan' },
   Sigd: { ru: 'Сигд', nl: 'Sigd', fr: 'Sigd' },
@@ -136,8 +137,9 @@ export function homeHolidayLine(titles: string[], shabbat: boolean, lang: Lang, 
   return `${dayName}, ${holiday}`;
 }
 
-/** The home-screen holiday name. English keeps the Hebcal wording. */
+/** The home-screen holiday name. English keeps the Hebcal wording, except Simchat Torah. */
 export function holidayName(desc: string, lang: Lang): string {
+  if (desc === 'Shmini Atzeret') return lang === 'en' ? 'Simchat Torah' : NAME['Simchat Torah'][lang];
   if (lang === 'en') return desc;
   return renderHoliday(desc, lang) ?? desc;
 }

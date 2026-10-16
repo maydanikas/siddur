@@ -23,6 +23,10 @@ test('the winter rain line starts on Shmini Atzeret and runs until the day befor
   const atzeret = jewishDay(noon('2026-10-03'));
   assert.equal(atzeret.titles.includes('Shmini Atzeret'), true);
   assert.equal(atzeret.titles.includes('Simchat Torah'), false);
+  assert.equal(homeHolidayLine(atzeret.titles, atzeret.shabbat, 'ru'), 'Шаббат, Симхат Тора');
+  assert.equal(homeHolidayLine(atzeret.titles, atzeret.shabbat, 'nl'), 'Sjabbat, Simchat Tora');
+  assert.equal(homeHolidayLine(atzeret.titles, atzeret.shabbat, 'fr'), 'Chabbat, Simhat Torah');
+  assert.equal(homeHolidayLine(atzeret.titles, atzeret.shabbat, 'en'), 'Shabbat, Simchat Torah');
   assert.equal(atzeret.mashivHaruach, true);
   assert.equal(jewishDay(noon('2026-10-04')).titles.includes('Simchat Torah'), false);
   assert.equal(jewishDay(noon('2026-10-04')).mashivHaruach, true);
@@ -120,6 +124,8 @@ test('the holiday name is written in the reader’s language', () => {
   assert.equal(holidayName('Yom Kippur', 'nl'), 'Jom Kipoer');
   assert.equal(holidayName('Yom Kippur', 'fr'), 'Kippour');
   assert.equal(holidayName('Simchat Torah', 'ru'), 'Симхат Тора');
+  assert.equal(holidayName('Shmini Atzeret', 'ru'), 'Симхат Тора');
+  assert.equal(holidayName('Shmini Atzeret', 'en'), 'Simchat Torah');
   assert.equal(holidayName("Pesach III (CH''M)", 'ru'), 'Песах III (хол ха-моэд)');
   assert.equal(holidayName("Pesach III (CH''M)", 'nl'), 'Pesach III (Chol HaMoëed)');
   assert.equal(holidayName("Pesach III (CH''M)", 'fr'), "Pessa'h III (Hol HaMoed)");
