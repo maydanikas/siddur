@@ -6,6 +6,11 @@ type Phrase = Record<Exclude<Lang, 'en'>, string>;
 /** Names already used in the seasonal notes, plus the other days the calendar can show. */
 const NAME: Record<string, Phrase> = {
   "Asara B'Tevet": { ru: 'Асара бе-Тевет', nl: 'Asara be-Tevet', fr: 'Assara be-Tévet' },
+  'Ben-Gurion Day': { ru: 'День Бен-Гуриона', nl: 'Ben-Guriondag', fr: 'Jour Ben-Gourion' },
+  'Family Day': { ru: 'День семьи', nl: 'Familiedag', fr: 'Journée de la famille' },
+  'Hebrew Language Day': { ru: 'День иврита', nl: 'Dag van de Hebreeuwse taal', fr: 'Jour de la langue hébraïque' },
+  'Herzl Day': { ru: 'День Герцля', nl: 'Herzldag', fr: 'Jour Herzl' },
+  'Jabotinsky Day': { ru: 'День Жаботинского', nl: 'Jabotinskydag', fr: 'Jour Jabotinsky' },
   'Chag HaBanot': { ru: 'Хаг ха-Банот', nl: 'Chag HaBanot', fr: 'Hag HaBanot' },
   'Lag BaOmer': { ru: 'Лаг ба-Омер', nl: 'Lag ba-Omer', fr: 'Lag ba-Omer' },
   'Leil Selichot': { ru: 'Лейл слихот', nl: 'Leil Selichot', fr: 'Leil Selihot' },
@@ -31,9 +36,19 @@ const NAME: Record<string, Phrase> = {
   'Tzom Gedaliah': { ru: 'Цом Гедалья', nl: 'Tsom Gedalja', fr: 'Tsom Guedalia' },
   'Tzom Tammuz': { ru: 'Цом Таммуз', nl: 'Tsom Tamoez', fr: 'Tsom Tamouz' },
   'Yom HaAliyah': { ru: 'Йом ха-Алия', nl: 'Jom HaAlija', fr: 'Yom HaAliya' },
+  'Yom HaAliyah School Observance': {
+    ru: 'Йом ха-Алия, школьный день',
+    nl: 'Jom HaAlija, schooldag',
+    fr: 'Yom HaAliya, journée scolaire',
+  },
   "Yom HaAtzma'ut": { ru: 'Йом ха-Ацмаут', nl: 'Jom HaAtsmaoet', fr: 'Yom HaAtsmaout' },
   'Yom HaShoah': { ru: 'Йом ха-Шоа', nl: 'Jom HaSjoa', fr: 'Yom HaChoah' },
   'Yom HaZikaron': { ru: 'Йом ха-Зикарон', nl: 'Jom HaZikaron', fr: 'Yom HaZikaron' },
+  'Yitzhak Rabin Memorial Day': {
+    ru: 'День памяти Ицхака Рабина',
+    nl: 'Herdenkingsdag van Yitzhak Rabin',
+    fr: "Jour de mémoire d'Yitzhak Rabin",
+  },
   'Yom Kippur': { ru: 'Йом Кипур', nl: 'Jom Kipoer', fr: 'Kippour' },
   'Yom Yerushalayim': { ru: 'Йом Йерушалаим', nl: 'Jom Jeroesjalajim', fr: 'Yom Yerouchalayim' },
   'Swords of Iron War Memorial Day': {

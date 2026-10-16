@@ -37,7 +37,10 @@ function localIso(date: Date): string {
   return `${date.getFullYear()}-${month}-${day}`;
 }
 
-/** From Simchat Torah until Pesach, matching the winter line in Gevurot. */
+/**
+ * From Simchat Torah until Pesach, matching the winter line in Gevurot.
+ * Liberal communities follow the Israeli calendar, so that day is 22 Tishrei.
+ */
 function mashivHaruach(hd: HDate, inIsrael: boolean): boolean {
   const month = hd.getMonth();
   const day = hd.getDate();
@@ -47,7 +50,8 @@ function mashivHaruach(hd: HDate, inIsrael: boolean): boolean {
   return month > months.TISHREI;
 }
 
-export function jewishDay(date = new Date(), inIsrael = false): JewishDay {
+/** Israeli calendar: one day of a festival. Rosh Hashana stays two days. */
+export function jewishDay(date = new Date(), inIsrael = true): JewishDay {
   const hd = new HDate(date);
   const events = HebrewCalendar.calendar({
     start: date,
@@ -84,7 +88,7 @@ export function jewishDay(date = new Date(), inIsrael = false): JewishDay {
 
 let observed: JewishDay | null = null;
 
-export function readJewishDay(date = new Date(), inIsrael = false): JewishDay {
+export function readJewishDay(date = new Date(), inIsrael = true): JewishDay {
   observed = jewishDay(date, inIsrael);
   return observed;
 }

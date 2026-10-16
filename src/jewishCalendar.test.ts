@@ -18,18 +18,22 @@ test('the ten days from Rosh Hashana through Yom Kippur are Yamim Noraim', () =>
   assert.equal(after.yamimNoraim, false);
 });
 
-test('the winter rain line runs from Simchat Torah until the day before Pesach', () => {
-  assert.equal(jewishDay(noon('2026-10-03')).mashivHaruach, false);
-  const simchat = jewishDay(noon('2026-10-04'));
-  assert.equal(simchat.titles.includes('Simchat Torah'), true);
-  assert.equal(simchat.mashivHaruach, true);
+test('the winter rain line starts on Shmini Atzeret and runs until the day before Pesach', () => {
+  assert.equal(jewishDay(noon('2026-10-02')).mashivHaruach, false);
+  const atzeret = jewishDay(noon('2026-10-03'));
+  assert.equal(atzeret.titles.includes('Shmini Atzeret'), true);
+  assert.equal(atzeret.titles.includes('Simchat Torah'), false);
+  assert.equal(atzeret.mashivHaruach, true);
+  assert.equal(jewishDay(noon('2026-10-04')).titles.includes('Simchat Torah'), false);
+  assert.equal(jewishDay(noon('2026-10-04')).mashivHaruach, true);
   assert.equal(jewishDay(noon('2026-01-15')).mashivHaruach, true);
   assert.equal(jewishDay(noon('2026-04-01')).mashivHaruach, true);
   assert.equal(jewishDay(noon('2026-04-02')).mashivHaruach, false);
 });
 
-test('in Israel the winter line starts on Shmini Atzeret, the same day as Simchat Torah', () => {
-  assert.equal(jewishDay(noon('2026-10-03'), true).mashivHaruach, true);
+test('the diaspora calendar would keep Simchat Torah on the next day', () => {
+  assert.equal(jewishDay(noon('2026-10-03'), false).mashivHaruach, false);
+  assert.equal(jewishDay(noon('2026-10-04'), false).titles.includes('Simchat Torah'), true);
 });
 
 test('Yaaleh VeYavo follows Rosh Chodesh and the two intermediate festivals', () => {
@@ -44,6 +48,10 @@ test('Yaaleh VeYavo follows Rosh Chodesh and the two intermediate festivals', ()
   assert.equal(sukkot.cholHamoedSukkot, true);
   assert.equal(sukkot.yaalehVeyavo, 'sukkot');
   assert.equal(jewishDay(noon('2026-10-02')).yaalehVeyavo, 'sukkot');
+  assert.equal(jewishDay(noon('2026-09-27')).titles.includes("Sukkot II (CH''M)"), true);
+  assert.equal(jewishDay(noon('2026-09-27')).yaalehVeyavo, 'sukkot');
+  assert.equal(jewishDay(noon('2026-04-03')).titles.includes("Pesach II (CH''M)"), true);
+  assert.equal(jewishDay(noon('2026-04-09')).titles.includes('Pesach VIII'), false);
 });
 
 test('the home screen can show both dates and the name of the day', () => {
@@ -83,7 +91,7 @@ test('Shabbat is always named, and a holiday on that day follows a comma', () =>
   assert.equal(homeHolidayLine(rosh.titles, rosh.shabbat, 'en'), 'Shabbat, Rosh Hashana 5787');
   const sukkot = jewishDay(noon('2026-09-26'));
   assert.equal(homeHolidayLine(sukkot.titles, sukkot.shabbat, 'fr'), "Chabbat, Soukkot I");
-  const sunday = jewishDay(noon('2026-10-18'));
+  const sunday = jewishDay(noon('2026-10-25'));
   assert.equal(sunday.yomRishon, true);
   assert.equal(sunday.shabbat, false);
   assert.equal(homeHolidayLine(sunday.titles, sunday.shabbat, 'ru', sunday.yomRishon), 'Йом Ришон');
@@ -93,6 +101,14 @@ test('Shabbat is always named, and a holiday on that day follows a comma', () =>
   const roshSunday = jewishDay(noon('2026-09-13'));
   assert.equal(homeHolidayLine(roshSunday.titles, roshSunday.shabbat, 'ru', roshSunday.yomRishon), 'Йом Ришон, Рош ха-Шана II');
   assert.equal(jewishDay(noon('2026-10-13')).yomRishon, false);
+  const secondSukkot = jewishDay(noon('2026-09-27'));
+  assert.equal(homeHolidayLine(secondSukkot.titles, secondSukkot.shabbat, 'ru', secondSukkot.yomRishon), 'Йом Ришон, Суккот II (хол ха-моэд)');
+  const shavuot = jewishDay(noon('2026-05-22'));
+  assert.equal(shavuot.titles.includes('Shavuot'), true);
+  assert.equal(jewishDay(noon('2026-05-23')).titles.length, 0);
+  const afterAtzeret = jewishDay(noon('2026-10-04'));
+  assert.equal(afterAtzeret.titles.includes('Simchat Torah'), false);
+  assert.equal(homeHolidayLine(afterAtzeret.titles, afterAtzeret.shabbat, 'ru', afterAtzeret.yomRishon).includes('Симхат Тора'), false);
 });
 
 test('the holiday name is written in the reader’s language', () => {
@@ -124,7 +140,7 @@ test('every holiday the calendar can show has a name in each language', () => {
   for (const event of HebrewCalendar.calendar({
     start: new Date('2024-01-01T12:00:00'),
     end: new Date('2028-12-31T12:00:00'),
-    il: false,
+    il: true,
     sedrot: false,
   })) {
     if ((event.getFlags() & mask) !== 0) titles.add(event.getDesc());
