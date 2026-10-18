@@ -55,10 +55,10 @@ function HebrewVerse({
             <button
               type="button"
               data-reading-word={wordIndex}
-              className={`inline cursor-pointer appearance-none border-0 bg-transparent p-0 font-[inherit] text-inherit rounded-sm transition-colors ${
+              className={`inline cursor-pointer appearance-none border-0 p-0 font-[inherit] text-inherit rounded-sm transition-colors ${
                 spoken
                   ? 'bg-teal-200/90 ring-1 ring-teal-400/70'
-                  : 'hover:bg-teal-50/80 active:bg-teal-100'
+                  : 'bg-transparent hover:bg-teal-50/80 active:bg-teal-100'
               }`}
               onClick={() => onWord(word)}
             >
