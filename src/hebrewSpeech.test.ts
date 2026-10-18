@@ -6,6 +6,8 @@ import {
   charIndexToWordIndex,
   nextHighlightScale,
   readingSpeechPhrases,
+  speechPhrases,
+  usesPhrasePlayback,
   wordIndexAtElapsed,
 } from './hebrewSpeech.ts';
 
@@ -33,6 +35,16 @@ test('android highlight uses the prayer clock and then corrects the next phrase'
   const corrected = nextHighlightScale(0.6, 1, phrase, 4.25);
   assert.equal(corrected.measured, 2);
   assert.equal(Math.abs(corrected.scale - 0.6) < 1e-9, true);
+});
+
+test('a prayer on a computer is one utterance, and a long passage is split like Android', () => {
+  assert.equal(usesPhrasePlayback('א'.repeat(100), false), false);
+  assert.equal(usesPhrasePlayback('א'.repeat(100), true), true);
+  assert.equal(usesPhrasePlayback('א'.repeat(1501), false), true);
+  const phrases = speechPhrases(`${'א '.repeat(80)}סוף. ${'ב '.repeat(80)}סוף`);
+  assert.equal(phrases.length >= 2, true);
+  assert.equal(phrases[0].text.endsWith('סוף.'), true);
+  assert.equal(phrases.map((phrase) => phrase.wordCount).reduce((sum, count) => sum + count, 0), 162);
 });
 
 test('replacing the Name keeps one word, so the highlight stays on that word', () => {

@@ -1,46 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import {
-  androidPassageSeconds,
-  androidPhraseSeconds,
-  charIndexToWordIndex,
-  nextHighlightScale,
-  prepareTtsText,
-  readingSpeechPhrases,
-  SPEECH_RATE,
-  wordIndexAtElapsed,
-  type SpeechPhrase,
-} from '../hebrewSpeech';
+import { useEffect, useState } from 'react';
+import HebrewPlayerBar from './HebrewPlayerBar';
+import { IDLE_WORD_CLASS, SPOKEN_WORD_CLASS } from '../hebrewSpeech';
+import { useHebrewPlayer } from '../useHebrewPlayer';
 import { READING_COPY } from '../readingCopy';
 import { loadSefariaPassage, type PassageVerse } from '../sefariaPassage';
 import { controlsCopy, type Lang } from '../supportCopy';
-
-function configureHebrewUtterance(utter: SpeechSynthesisUtterance) {
-  utter.rate = SPEECH_RATE;
-  utter.pitch = 1;
-  utter.lang = 'he-IL';
-  const voices = window.speechSynthesis?.getVoices() ?? [];
-  const hebrew = voices.filter((voice) => voice.lang.toLowerCase().startsWith('he'));
-  const voice = hebrew.find((item) => /google/i.test(item.name)) ?? hebrew[0];
-  if (voice) utter.voice = voice;
-}
-
-function isAndroidDevice(): boolean {
-  return /Android/i.test(navigator.userAgent);
-}
-
-function estimateDuration(text: string): number {
-  return Math.max(4, Math.ceil((prepareTtsText(text).length * 0.085) / SPEECH_RATE));
-}
-
-function passageClock(text: string): number {
-  return isAndroidDevice() ? androidPassageSeconds(text) : estimateDuration(text);
-}
-
-function formatTime(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const rest = Math.floor(seconds % 60);
-  return `${minutes}:${String(rest).padStart(2, '0')}`;
-}
 
 function HebrewVerse({
   verse,
@@ -66,10 +30,8 @@ function HebrewVerse({
             <button
               type="button"
               data-reading-word={wordIndex}
-              className={`inline cursor-pointer appearance-none border-0 p-0 font-[inherit] text-inherit rounded-sm transition-colors ${
-                spoken
-                  ? 'bg-teal-200/90 ring-1 ring-teal-400/70'
-                  : 'bg-transparent hover:bg-teal-50/80 active:bg-teal-100'
+              className={`inline appearance-none border-0 p-0 font-[inherit] text-inherit rounded-sm transition-colors ${
+                spoken ? SPOKEN_WORD_CLASS : `bg-transparent ${IDLE_WORD_CLASS}`
               }`}
               onClick={() => onWord(word)}
             >
@@ -102,213 +64,30 @@ export default function ReadingCard({
   const [verses, setVerses] = useState<PassageVerse[] | null>(null);
   const [transliteration, setTransliteration] = useState('');
   const [failed, setFailed] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentSec, setCurrentSec] = useState(0);
-  const [durationSec, setDurationSec] = useState(0);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [activeWord, setActiveWord] = useState<number | null>(null);
-  const playRef = useRef<{
-    cancelled: boolean;
-    phrase: SpeechPhrase | null;
-    phraseStarted: number;
-    pausedInPhrase: number;
-    durationScale: number;
-    phrasesMeasured: number;
-  } | null>(null);
-  const timerRef = useRef<number | null>(null);
-  const highlightRef = useRef<number | null>(null);
-  const elapsedRef = useRef(0);
-  const progressStartedRef = useRef(0);
-
-  const clearHighlightTimer = () => {
-    if (highlightRef.current !== null) window.clearInterval(highlightRef.current);
-    highlightRef.current = null;
-  };
-
-  const stop = () => {
-    if (playRef.current) playRef.current.cancelled = true;
-    playRef.current = null;
-    if (timerRef.current !== null) window.clearInterval(timerRef.current);
-    timerRef.current = null;
-    clearHighlightTimer();
-    window.speechSynthesis?.cancel();
-    setIsPlaying(false);
-    setActiveWord(null);
-  };
+  const hebrew = verses ? verses.map((verse) => verse.hebrew).join(' ') : null;
+  const player = useHebrewPlayer(hebrew, ui.ttsNoHebrew);
 
   useEffect(() => {
     const controller = new AbortController();
     setVerses(null);
     setTransliteration('');
     setFailed(false);
-    setNotice(null);
     loadSefariaPassage(sefariaRef)
       .then((passage) => {
         if (controller.signal.aborted) return;
         setVerses(passage.verses);
         setTransliteration(passage.transliteration);
-        setDurationSec(passageClock(passage.verses.map((verse) => verse.hebrew).join(' ')));
       })
       .catch(() => {
         if (!controller.signal.aborted) setFailed(true);
       });
-    return () => {
-      controller.abort();
-      stop();
-    };
+    return () => controller.abort();
   }, [sefariaRef]);
 
-  const followPhrase = (phrase: SpeechPhrase, alreadyElapsed = 0) => {
-    const scale = playRef.current?.durationScale ?? 1;
-    const phraseDuration = isAndroidDevice()
-      ? androidPhraseSeconds(phrase.text, scale)
-      : Math.max(0.4, estimateDuration(phrase.text));
-    const started = Date.now() - alreadyElapsed * 1000;
-    if (playRef.current) {
-      playRef.current.phrase = phrase;
-      playRef.current.phraseStarted = started;
-    }
-    clearHighlightTimer();
-    setActiveWord(phrase.wordStart + wordIndexAtElapsed(phrase.text, alreadyElapsed, phraseDuration));
-    highlightRef.current = window.setInterval(() => {
-      const elapsed = (Date.now() - started) / 1000;
-      setActiveWord(phrase.wordStart + wordIndexAtElapsed(phrase.text, elapsed, phraseDuration));
-    }, isAndroidDevice() ? 60 : 80);
-  };
-
-  const speak = (text: string, phrase: SpeechPhrase | null, onend?: () => void) => {
-    const utter = new SpeechSynthesisUtterance(text);
-    configureHebrewUtterance(utter);
-    const state = playRef.current;
-    utter.onstart = () => {
-      if (phrase) followPhrase(phrase);
-    };
-    utter.onboundary = (event) => {
-      if (!phrase || event.charIndex === undefined) return;
-      if (event.name && event.name !== 'word') return;
-      clearHighlightTimer();
-      setActiveWord(phrase.wordStart + charIndexToWordIndex(phrase.text, event.charIndex));
-    };
-    utter.onend = () => {
-      if (phrase && state && !state.cancelled && isAndroidDevice() && state.phraseStarted > 0) {
-        const actualSec = (Date.now() - state.phraseStarted) / 1000;
-        const next = nextHighlightScale(state.durationScale, state.phrasesMeasured, phrase.text, actualSec);
-        state.durationScale = next.scale;
-        state.phrasesMeasured = next.measured;
-      }
-      onend?.();
-    };
-    utter.onerror = (event) => {
-      const code = 'error' in event ? String(event.error) : '';
-      if (code === 'interrupted' || code === 'canceled' || code === 'cancelled') return;
-      if (playRef.current) playRef.current.cancelled = true;
-      if (timerRef.current !== null) window.clearInterval(timerRef.current);
-      clearHighlightTimer();
-      if (code === 'language-unavailable' || code === 'voice-unavailable' || code === 'synthesis-unavailable') {
-        setNotice(ui.ttsNoHebrew);
-      }
-      setIsPlaying(false);
-      setActiveWord(null);
-    };
-    window.speechSynthesis.speak(utter);
-  };
-
-  const speakWord = (word: string) => {
-    stop();
-    setProgress(0);
-    setCurrentSec(0);
-    speak(prepareTtsText(word), null);
-  };
-
-  const startProgress = (duration: number, offset = 0) => {
-    const started = Date.now() - offset * 1000;
-    progressStartedRef.current = started;
-    if (timerRef.current !== null) window.clearInterval(timerRef.current);
-    timerRef.current = window.setInterval(() => {
-      const elapsed = (Date.now() - started) / 1000;
-      elapsedRef.current = elapsed;
-      if (elapsed >= duration) {
-        setCurrentSec(duration);
-        setProgress(100);
-      } else {
-        setCurrentSec(elapsed);
-        setProgress((elapsed / duration) * 100);
-      }
-    }, 120);
-  };
-
-  const playPassage = () => {
-    if (!verses) return;
-    const synth = window.speechSynthesis;
-    if (!synth) return;
-    if (isPlaying) {
-      synth.pause();
-      setIsPlaying(false);
-      if (timerRef.current !== null) window.clearInterval(timerRef.current);
-      timerRef.current = null;
-      clearHighlightTimer();
-      if (progressStartedRef.current > 0) {
-        elapsedRef.current = Math.max(0, (Date.now() - progressStartedRef.current) / 1000);
-      }
-      if (playRef.current && playRef.current.phraseStarted > 0) {
-        playRef.current.pausedInPhrase = Math.max(0, (Date.now() - playRef.current.phraseStarted) / 1000);
-      }
-      return;
-    }
-    if (synth.paused && playRef.current?.phrase) {
-      synth.resume();
-      setIsPlaying(true);
-      startProgress(durationSec, elapsedRef.current);
-      followPhrase(playRef.current.phrase, playRef.current.pausedInPhrase);
-      return;
-    }
-
-    const hebrew = verses.map((verse) => verse.hebrew).join(' ');
-    const phrases = readingSpeechPhrases(hebrew);
-    const duration = passageClock(hebrew);
-    stop();
-    const state = {
-      cancelled: false,
-      phrase: null as SpeechPhrase | null,
-      phraseStarted: 0,
-      pausedInPhrase: 0,
-      durationScale: 1,
-      phrasesMeasured: 0,
-    };
-    playRef.current = state;
-    elapsedRef.current = 0;
-    setDurationSec(duration);
-    setCurrentSec(0);
-    setProgress(0);
-    setNotice(null);
-    setIsPlaying(true);
-    startProgress(duration);
-
-    const speakPhrase = (index: number) => {
-      if (state.cancelled) return;
-      if (index >= phrases.length) {
-        setIsPlaying(false);
-        setProgress(100);
-        setCurrentSec(duration);
-        setActiveWord(null);
-        if (timerRef.current !== null) window.clearInterval(timerRef.current);
-        clearHighlightTimer();
-        playRef.current = null;
-        return;
-      }
-      const phrase = phrases[index];
-      speak(phrase.text, phrase, () => speakPhrase(index + 1));
-    };
-    window.setTimeout(() => {
-      if (!state.cancelled) speakPhrase(0);
-    }, 50);
-  };
-
   useEffect(() => {
-    if (activeWord === null) return;
-    document.querySelector(`[data-reading-word="${activeWord}"]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }, [activeWord]);
+    if (player.activeWord === null) return;
+    document.querySelector(`[data-reading-word="${player.activeWord}"]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, [player.activeWord]);
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -331,8 +110,8 @@ export default function ReadingCard({
                     key={`${verse.chapter}:${verse.verse}`}
                     verse={verse}
                     wordStart={start}
-                    activeWord={activeWord}
-                    onWord={speakWord}
+                    activeWord={player.activeWord}
+                    onWord={player.speakWord}
                   />
                 );
               });
@@ -376,35 +155,18 @@ export default function ReadingCard({
         </button>
       </div>
       {verses ? (
-        <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-zinc-200 bg-white shadow-[0_-8px_30px_rgba(0,0,0,0.06)] ui-sans">
-          <div className="mx-auto max-w-[720px] px-5 py-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex min-w-0 items-center gap-3">
-                <button
-                  type="button"
-                  onClick={playPassage}
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0D9488] text-white shadow-sm"
-                  aria-label={isPlaying ? ui.pause : ui.play}
-                >
-                  {isPlaying ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="4" height="14" rx="1" /><rect x="13" y="5" width="4" height="14" rx="1" /></svg>
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="ml-[2px]"><path d="M7 5.5c0-1.2 1.3-1.9 2.3-1.1l9 7c.8.6.8 1.8 0 2.4l-9 7c-1 .7-2.3 0-2.3-1.2v-14z" /></svg>
-                  )}
-                </button>
-                <div className="min-w-0">
-                  <div className="text-[13px] font-semibold leading-none">{ui.listen}</div>
-                  <div className="mt-1 truncate text-[11px] text-zinc-500">{title} • he-IL 0.50×</div>
-                </div>
-              </div>
-              <div className="text-[11px] font-medium tabular-nums text-zinc-600">{formatTime(currentSec)} / {formatTime(durationSec || 0)}</div>
-            </div>
-            <div className="mt-3 h-[6px] w-full overflow-hidden rounded-full bg-zinc-100">
-              <div className="h-full rounded-full bg-[#0D9488]" style={{ width: `${Math.min(100, progress)}%` }} />
-            </div>
-            {notice ? <p className="mt-2 text-[11px] leading-4 text-zinc-500">{notice}</p> : null}
-          </div>
-        </div>
+        <HebrewPlayerBar
+          caption={title}
+          isPlaying={player.isPlaying}
+          progress={player.progress}
+          currentSec={player.currentSec}
+          durationSec={player.durationSec}
+          notice={player.notice}
+          listenLabel={ui.listen}
+          playLabel={ui.play}
+          pauseLabel={ui.pause}
+          onToggle={player.toggle}
+        />
       ) : null}
     </div>
   );

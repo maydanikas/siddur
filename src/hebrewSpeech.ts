@@ -9,6 +9,69 @@ export function prepareTtsText(text: string): string {
 
 export type SpeechPhrase = { text: string; wordStart: number; wordCount: number };
 
+/** The mark on the word that is being spoken. Prayers and readings both use it. */
+export const SPOKEN_WORD_CLASS = 'bg-teal-200/90 ring-1 ring-teal-400/70';
+
+export const IDLE_WORD_CLASS = 'cursor-pointer hover:bg-teal-50/80 active:bg-teal-100';
+
+/**
+ * A computer can speak a whole prayer in one utterance. Anything longer than the
+ * longest prayer, and every Android playback, is split into the same phrases.
+ */
+export const SINGLE_UTTERANCE_CHARS = 1500;
+
+export function usesPhrasePlayback(text: string, android: boolean): boolean {
+  return android || prepareTtsText(text).length > SINGLE_UTTERANCE_CHARS;
+}
+
+/** Sentences, then pieces short enough that Android does not drop them. */
+export function speechPhrases(text: string, maxChars = 180): SpeechPhrase[] {
+  const words = prepareTtsText(text).split(/\s+/).filter(Boolean);
+  const sentences: SpeechPhrase[] = [];
+  let i = 0;
+  while (i < words.length) {
+    const chunk: string[] = [];
+    const wordStart = i;
+    while (i < words.length) {
+      chunk.push(words[i]);
+      i++;
+      if (/[.!?]$/.test(chunk[chunk.length - 1])) break;
+    }
+    if (chunk.length > 0) sentences.push({ text: chunk.join(' '), wordStart, wordCount: chunk.length });
+  }
+
+  const limited: SpeechPhrase[] = [];
+  for (const phrase of sentences) {
+    if (phrase.text.length <= maxChars) {
+      limited.push(phrase);
+      continue;
+    }
+    const phraseWords = phrase.text.split(/\s+/).filter(Boolean);
+    let chunk: string[] = [];
+    let wordStart = phrase.wordStart;
+    const flush = () => {
+      if (chunk.length === 0) return;
+      limited.push({ text: chunk.join(' '), wordStart, wordCount: chunk.length });
+      wordStart += chunk.length;
+      chunk = [];
+    };
+    for (const word of phraseWords) {
+      const next = chunk.length === 0 ? word : `${chunk.join(' ')} ${word}`;
+      if (chunk.length > 0 && next.length > maxChars) flush();
+      chunk.push(word);
+    }
+    flush();
+  }
+  return limited;
+}
+
+export function speechDurationSeconds(text: string, android: boolean, rate = SPEECH_RATE): number {
+  if (!android) {
+    return Math.max(4, Math.ceil((prepareTtsText(text).length * PHRASE_CHAR_SECONDS) / rate));
+  }
+  return androidPassageSeconds(text);
+}
+
 /** Short pieces of one reading, with the word index where each piece begins. */
 export function readingSpeechPhrases(text: string, maxChars = 180): SpeechPhrase[] {
   const words = prepareTtsText(text).split(/\s+/).filter(Boolean);
