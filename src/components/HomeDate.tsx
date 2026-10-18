@@ -3,6 +3,7 @@ import { hebrewDateIn, jewishDay } from '../jewishCalendar';
 import { useReaderPlace } from '../readerPlace';
 import { dayNeedsClock, shabbatClock, shabbatClockLine } from '../shabbatTimes';
 import type { Lang } from '../supportCopy';
+import { weeklyReadingParts } from '../weeklyReading';
 
 const DATE_LOCALE: Record<Lang, string> = {
   en: 'en-GB',
@@ -22,6 +23,7 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
   let gregorian = '';
   let hebrew = '';
   let holiday = '';
+  let reading: string[] = [];
   let clockLine = '';
   try {
     const day = jewishDay(today);
@@ -32,6 +34,7 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
     }).format(today);
     hebrew = hebrewDateIn(today, lang);
     holiday = homeHolidayLine(day.titles, day.shabbat, lang, day.yomRishon);
+    reading = weeklyReadingParts(today, lang);
     if (place) {
       const clock = shabbatClock(today, place);
       if (clock) clockLine = shabbatClockLine(clock, lang);
@@ -49,6 +52,16 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
       </p>
       {holiday ? (
         <p className="mt-1 text-[15px] font-semibold leading-5 tracking-tight text-[#0D9488]">{holiday}</p>
+      ) : null}
+      {reading.length > 0 ? (
+        <p className="mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 text-[13px] font-medium leading-5 text-[#0D9488]">
+          {reading.map((part, i) => (
+            <span key={`${i}-${part}`} className="whitespace-nowrap">
+              {i > 0 ? <span className="mr-1.5">·</span> : null}
+              {part}
+            </span>
+          ))}
+        </p>
       ) : null}
       {clockLine ? (
         <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[15px] font-semibold leading-5 tracking-tight text-[#0D9488]">
