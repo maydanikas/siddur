@@ -1,29 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { prepareTtsText, SPEECH_RATE } from '../hebrewSpeech';
+import {
+  charIndexToWordIndex,
+  prepareTtsText,
+  readingSpeechPhrases,
+  SPEECH_RATE,
+  wordIndexAtElapsed,
+  type SpeechPhrase,
+} from '../hebrewSpeech';
 import { READING_COPY } from '../readingCopy';
 import { loadSefariaPassage, type PassageVerse } from '../sefariaPassage';
 import { controlsCopy, type Lang } from '../supportCopy';
-
-const PHRASE_CHARS = 180;
-
-function speechPhrases(text: string): string[] {
-  const prepared = prepareTtsText(text);
-  const words = prepared.split(/\s+/).filter(Boolean);
-  const phrases: string[] = [];
-  let chunk: string[] = [];
-  const flush = () => {
-    if (chunk.length === 0) return;
-    phrases.push(chunk.join(' '));
-    chunk = [];
-  };
-  for (const word of words) {
-    const next = chunk.length === 0 ? word : `${chunk.join(' ')} ${word}`;
-    if (chunk.length > 0 && next.length > PHRASE_CHARS) flush();
-    chunk.push(word);
-  }
-  flush();
-  return phrases;
-}
 
 function configureHebrewUtterance(utter: SpeechSynthesisUtterance) {
   utter.rate = SPEECH_RATE;
@@ -45,23 +31,42 @@ function formatTime(seconds: number): string {
   return `${minutes}:${String(rest).padStart(2, '0')}`;
 }
 
-function HebrewVerse({ verse, onWord }: { verse: PassageVerse; onWord: (word: string) => void }) {
+function HebrewVerse({
+  verse,
+  wordStart,
+  activeWord,
+  onWord,
+}: {
+  verse: PassageVerse;
+  wordStart: number;
+  activeWord: number | null;
+  onWord: (word: string) => void;
+}) {
   const words = verse.hebrew.split(/\s+/).filter(Boolean);
   return (
     <p dir="rtl" lang="he" className="he-serif text-right text-[22px] leading-[1.9] text-zinc-900">
       <span dir="ltr" className="ui-sans me-2 text-[12px] font-medium text-zinc-400">{verse.chapter}:{verse.verse}</span>
-      {words.map((word, index) => (
-        <span key={`${verse.chapter}-${verse.verse}-${index}`}>
-          {index > 0 ? ' ' : null}
-          <button
-            type="button"
-            className="inline appearance-none border-0 bg-transparent p-0 font-[inherit] text-inherit rounded-sm hover:bg-teal-50 active:bg-teal-100"
-            onClick={() => onWord(word)}
-          >
-            {word}
-          </button>
-        </span>
-      ))}
+      {words.map((word, index) => {
+        const wordIndex = wordStart + index;
+        const spoken = wordIndex === activeWord;
+        return (
+          <span key={`${verse.chapter}-${verse.verse}-${index}`}>
+            {index > 0 ? ' ' : null}
+            <button
+              type="button"
+              data-reading-word={wordIndex}
+              className={`inline cursor-pointer appearance-none border-0 bg-transparent p-0 font-[inherit] text-inherit rounded-sm transition-colors ${
+                spoken
+                  ? 'bg-teal-200/90 ring-1 ring-teal-400/70'
+                  : 'hover:bg-teal-50/80 active:bg-teal-100'
+              }`}
+              onClick={() => onWord(word)}
+            >
+              {word}
+            </button>
+          </span>
+        );
+      })}
     </p>
   );
 }
@@ -91,17 +96,32 @@ export default function ReadingCard({
   const [currentSec, setCurrentSec] = useState(0);
   const [durationSec, setDurationSec] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
-  const playRef = useRef<{ cancelled: boolean } | null>(null);
+  const [activeWord, setActiveWord] = useState<number | null>(null);
+  const playRef = useRef<{
+    cancelled: boolean;
+    phrase: SpeechPhrase | null;
+    phraseStarted: number;
+    pausedInPhrase: number;
+  } | null>(null);
   const timerRef = useRef<number | null>(null);
+  const highlightRef = useRef<number | null>(null);
   const elapsedRef = useRef(0);
+  const progressStartedRef = useRef(0);
+
+  const clearHighlightTimer = () => {
+    if (highlightRef.current !== null) window.clearInterval(highlightRef.current);
+    highlightRef.current = null;
+  };
 
   const stop = () => {
     if (playRef.current) playRef.current.cancelled = true;
     playRef.current = null;
     if (timerRef.current !== null) window.clearInterval(timerRef.current);
     timerRef.current = null;
+    clearHighlightTimer();
     window.speechSynthesis?.cancel();
     setIsPlaying(false);
+    setActiveWord(null);
   };
 
   useEffect(() => {
@@ -126,19 +146,44 @@ export default function ReadingCard({
     };
   }, [sefariaRef]);
 
-  const speak = (text: string, onend?: () => void) => {
+  const followPhrase = (phrase: SpeechPhrase, phraseDuration: number, alreadyElapsed = 0) => {
+    const started = Date.now() - alreadyElapsed * 1000;
+    if (playRef.current) {
+      playRef.current.phrase = phrase;
+      playRef.current.phraseStarted = started;
+    }
+    clearHighlightTimer();
+    setActiveWord(phrase.wordStart + wordIndexAtElapsed(phrase.text, alreadyElapsed, phraseDuration));
+    highlightRef.current = window.setInterval(() => {
+      const elapsed = (Date.now() - started) / 1000;
+      setActiveWord(phrase.wordStart + wordIndexAtElapsed(phrase.text, elapsed, phraseDuration));
+    }, 80);
+  };
+
+  const speak = (text: string, phrase: SpeechPhrase | null, phraseDuration: number, onend?: () => void) => {
     const utter = new SpeechSynthesisUtterance(text);
     configureHebrewUtterance(utter);
+    utter.onstart = () => {
+      if (phrase) followPhrase(phrase, phraseDuration);
+    };
+    utter.onboundary = (event) => {
+      if (!phrase || event.charIndex === undefined) return;
+      if (event.name && event.name !== 'word') return;
+      clearHighlightTimer();
+      setActiveWord(phrase.wordStart + charIndexToWordIndex(phrase.text, event.charIndex));
+    };
     utter.onend = () => onend?.();
     utter.onerror = (event) => {
       const code = 'error' in event ? String(event.error) : '';
       if (code === 'interrupted' || code === 'canceled' || code === 'cancelled') return;
       if (playRef.current) playRef.current.cancelled = true;
       if (timerRef.current !== null) window.clearInterval(timerRef.current);
+      clearHighlightTimer();
       if (code === 'language-unavailable' || code === 'voice-unavailable' || code === 'synthesis-unavailable') {
         setNotice(ui.ttsNoHebrew);
       }
       setIsPlaying(false);
+      setActiveWord(null);
     };
     window.speechSynthesis.speak(utter);
   };
@@ -147,11 +192,12 @@ export default function ReadingCard({
     stop();
     setProgress(0);
     setCurrentSec(0);
-    speak(prepareTtsText(word));
+    speak(prepareTtsText(word), null, 0);
   };
 
   const startProgress = (duration: number, offset = 0) => {
     const started = Date.now() - offset * 1000;
+    progressStartedRef.current = started;
     if (timerRef.current !== null) window.clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
       const elapsed = (Date.now() - started) / 1000;
@@ -174,20 +220,31 @@ export default function ReadingCard({
       synth.pause();
       setIsPlaying(false);
       if (timerRef.current !== null) window.clearInterval(timerRef.current);
+      timerRef.current = null;
+      clearHighlightTimer();
+      if (progressStartedRef.current > 0) {
+        elapsedRef.current = Math.max(0, (Date.now() - progressStartedRef.current) / 1000);
+      }
+      if (playRef.current && playRef.current.phraseStarted > 0) {
+        playRef.current.pausedInPhrase = Math.max(0, (Date.now() - playRef.current.phraseStarted) / 1000);
+      }
       return;
     }
-    if (synth.paused && playRef.current) {
+    if (synth.paused && playRef.current?.phrase) {
       synth.resume();
       setIsPlaying(true);
       startProgress(durationSec, elapsedRef.current);
+      const phrase = playRef.current.phrase;
+      const phraseDuration = Math.max(0.4, estimateDuration(phrase.text));
+      followPhrase(phrase, phraseDuration, playRef.current.pausedInPhrase);
       return;
     }
 
     const hebrew = verses.map((verse) => verse.hebrew).join(' ');
-    const phrases = speechPhrases(hebrew);
+    const phrases = readingSpeechPhrases(hebrew);
     const duration = estimateDuration(hebrew);
     stop();
-    const state = { cancelled: false };
+    const state = { cancelled: false, phrase: null as SpeechPhrase | null, phraseStarted: 0, pausedInPhrase: 0 };
     playRef.current = state;
     elapsedRef.current = 0;
     setDurationSec(duration);
@@ -203,16 +260,24 @@ export default function ReadingCard({
         setIsPlaying(false);
         setProgress(100);
         setCurrentSec(duration);
+        setActiveWord(null);
         if (timerRef.current !== null) window.clearInterval(timerRef.current);
+        clearHighlightTimer();
         playRef.current = null;
         return;
       }
-      speak(phrases[index], () => speakPhrase(index + 1));
+      const phrase = phrases[index];
+      speak(phrase.text, phrase, Math.max(0.4, estimateDuration(phrase.text)), () => speakPhrase(index + 1));
     };
     window.setTimeout(() => {
       if (!state.cancelled) speakPhrase(0);
     }, 50);
   };
+
+  useEffect(() => {
+    if (activeWord === null) return;
+    document.querySelector(`[data-reading-word="${activeWord}"]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, [activeWord]);
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -224,9 +289,23 @@ export default function ReadingCard({
         {failed ? <p className="mt-6 text-[15px] text-zinc-500">{copy.error}</p> : null}
         {verses ? (
           <div className="mt-6 space-y-3">
-            {verses.map((verse) => (
-              <HebrewVerse key={`${verse.chapter}:${verse.verse}`} verse={verse} onWord={speakWord} />
-            ))}
+            {(() => {
+              let wordStart = 0;
+              return verses.map((verse) => {
+                const count = verse.hebrew.split(/\s+/).filter(Boolean).length;
+                const start = wordStart;
+                wordStart += count;
+                return (
+                  <HebrewVerse
+                    key={`${verse.chapter}:${verse.verse}`}
+                    verse={verse}
+                    wordStart={start}
+                    activeWord={activeWord}
+                    onWord={speakWord}
+                  />
+                );
+              });
+            })()}
           </div>
         ) : null}
         {transliteration ? (
