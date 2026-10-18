@@ -351,24 +351,62 @@ export function shabbatOfWeek(date: Date): string {
   return localIso(saturday);
 }
 
+const SEFARIA_BOOK: Record<Book, string> = {
+  genesis: 'Genesis',
+  exodus: 'Exodus',
+  leviticus: 'Leviticus',
+  numbers: 'Numbers',
+  deuteronomy: 'Deuteronomy',
+  joshua: 'Joshua',
+  judges: 'Judges',
+  iSamuel: 'I_Samuel',
+  iiSamuel: 'II_Samuel',
+  iKings: 'I_Kings',
+  iiKings: 'II_Kings',
+  isaiah: 'Isaiah',
+  jeremiah: 'Jeremiah',
+  ezekiel: 'Ezekiel',
+  hosea: 'Hosea',
+  joel: 'Joel',
+  micah: 'Micah',
+  zechariah: 'Zechariah',
+  malachi: 'Malachi',
+  job: 'Job',
+  proverbs: 'Proverbs',
+  ezra: 'Ezra',
+  nehemiah: 'Nehemiah',
+  iiChronicles: 'II_Chronicles',
+};
+
 function formatRef(span: Ref, lang: Lang): string {
   const [book, c1, v1, c2, v2] = span;
   const end = c1 === c2 ? String(v2) : `${c2}:${v2}`;
   return `${BOOK[book][lang]} ${c1}:${v1}–${end}`;
 }
 
+/** The Sefaria page for this exact range. A gap stays two addresses, not one wider range. */
+export function sefariaUrl(span: Ref): string {
+  const [book, c1, v1, c2, v2] = span;
+  const end = c1 === c2 ? String(v2) : `${c2}.${v2}`;
+  return `https://www.sefaria.org/${SEFARIA_BOOK[book]}.${c1}.${v1}-${end}`;
+}
+
+export type WeeklyReadingPart = { text: string; href?: string };
+
 /** Name, then each Torah span, then each haftarah span. Empty when this week has no listed reading. */
-export function weeklyReadingParts(date: Date, lang: Lang): string[] {
+export function weeklyReadingParts(date: Date, lang: Lang): WeeklyReadingPart[] {
   const row = BY_DATE.get(shabbatOfWeek(date));
   if (!row) return [];
-  const parts = [PORTION[row.portion][lang], ...row.torah.map((span) => formatRef(span, lang))];
-  if (row.haftarah?.length) parts.push(...row.haftarah.map((span) => formatRef(span, lang)));
+  const parts: WeeklyReadingPart[] = [{ text: PORTION[row.portion][lang] }];
+  for (const span of [...row.torah, ...(row.haftarah ?? [])]) {
+    parts.push({ text: formatRef(span, lang), href: sefariaUrl(span) });
+  }
   return parts;
 }
 
 /** The home-screen line for this week's Shabbat reading, or an empty string. */
 export function weeklyReadingLine(date: Date, lang: Lang): string {
-  return weeklyReadingParts(date, lang).join(' · ');
+  return weeklyReadingParts(date, lang).map((part) => part.text).join(' · ');
 }
 
 export const weeklyReadingDates = READINGS.map((row) => row.date);

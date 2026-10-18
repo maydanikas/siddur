@@ -3,7 +3,7 @@ import { hebrewDateIn, jewishDay } from '../jewishCalendar';
 import { useReaderPlace } from '../readerPlace';
 import { dayNeedsClock, shabbatClock, shabbatClockLine } from '../shabbatTimes';
 import type { Lang } from '../supportCopy';
-import { weeklyReadingParts } from '../weeklyReading';
+import { weeklyReadingParts, type WeeklyReadingPart } from '../weeklyReading';
 
 const DATE_LOCALE: Record<Lang, string> = {
   en: 'en-GB',
@@ -23,7 +23,7 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
   let gregorian = '';
   let hebrew = '';
   let holiday = '';
-  let reading: string[] = [];
+  let reading: WeeklyReadingPart[] = [];
   let clockLine = '';
   try {
     const day = jewishDay(today);
@@ -56,9 +56,20 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
       {reading.length > 0 ? (
         <p className="mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 text-[13px] font-medium leading-5 text-[#0D9488]">
           {reading.map((part, i) => (
-            <span key={`${i}-${part}`} className="whitespace-nowrap">
+            <span key={`${i}-${part.text}`} className="whitespace-nowrap">
               {i > 0 ? <span className="mr-1.5">·</span> : null}
-              {part}
+              {part.href ? (
+                <a
+                  href={part.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-[#0D9488]/40 underline-offset-2"
+                >
+                  {part.text}
+                </a>
+              ) : (
+                part.text
+              )}
             </span>
           ))}
         </p>

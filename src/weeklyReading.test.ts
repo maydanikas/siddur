@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { shabbatOfWeek, weeklyReadingDates, weeklyReadingLine } from './weeklyReading.ts';
+import { shabbatOfWeek, weeklyReadingDates, weeklyReadingLine, weeklyReadingParts } from './weeklyReading.ts';
 
 const noon = (iso: string) => new Date(`${iso}T12:00:00`);
 
@@ -53,6 +53,49 @@ test('a Shabbat outside the Levisson year has no line', () => {
   assert.equal(weeklyReadingLine(noon('2026-09-12'), 'ru'), '');
   assert.equal(weeklyReadingLine(noon('2027-10-02'), 'ru'), '');
   assert.equal(weeklyReadingLine(noon('2026-08-01'), 'nl'), '');
+});
+
+test('every stored span has its own Sefaria range address', () => {
+  for (const iso of weeklyReadingDates) {
+    const parts = weeklyReadingParts(noon(iso), 'en');
+    assert.equal(parts[0].href, undefined, iso);
+    assert.equal(parts.length > 1, true, iso);
+    for (const part of parts.slice(1)) {
+      assert.match(
+        part.href ?? '',
+        /^https:\/\/www\.sefaria\.org\/[A-Za-z_]+\.\d+\.\d+-(?:\d+\.)?\d+$/,
+        `${iso} ${part.text}`,
+      );
+    }
+  }
+});
+
+test('each cited span links to that Sefaria range', () => {
+  const lech = weeklyReadingParts(noon('2026-10-18'), 'ru');
+  assert.equal(lech[0].href, undefined);
+  assert.deepEqual(lech.slice(1).map((part) => part.href), [
+    'https://www.sefaria.org/Genesis.14.1-15.21',
+    'https://www.sefaria.org/Joshua.24.1-26',
+  ]);
+
+  const vayechi = weeklyReadingParts(noon('2026-12-26'), 'en').map((part) => part.href);
+  assert.equal(vayechi.includes('https://www.sefaria.org/Genesis.49.1-33'), true);
+  assert.equal(vayechi.includes('https://www.sefaria.org/Genesis.50.22-26'), true);
+  assert.equal(vayechi.some((href) => href?.includes('49.1-50')), false);
+
+  const zachor = weeklyReadingParts(noon('2027-03-20'), 'nl').map((part) => part.href);
+  assert.deepEqual(zachor, [
+    undefined,
+    'https://www.sefaria.org/Leviticus.3.1-4.26',
+    'https://www.sefaria.org/Deuteronomy.25.17-19',
+    'https://www.sefaria.org/I_Samuel.15.2-34',
+  ]);
+
+  const kedoshim = weeklyReadingParts(noon('2027-05-08'), 'ru');
+  assert.deepEqual(kedoshim.map((part) => part.href), [
+    undefined,
+    'https://www.sefaria.org/Leviticus.19.1-37',
+  ]);
 });
 
 test('special Shabbat readings follow the year sheet', () => {
