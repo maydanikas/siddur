@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  androidPassageSeconds,
+  androidPhraseSeconds,
   charIndexToWordIndex,
+  nextHighlightScale,
   prepareTtsText,
   readingSpeechPhrases,
   SPEECH_RATE,
@@ -21,8 +24,16 @@ function configureHebrewUtterance(utter: SpeechSynthesisUtterance) {
   if (voice) utter.voice = voice;
 }
 
+function isAndroidDevice(): boolean {
+  return /Android/i.test(navigator.userAgent);
+}
+
 function estimateDuration(text: string): number {
   return Math.max(4, Math.ceil((prepareTtsText(text).length * 0.085) / SPEECH_RATE));
+}
+
+function passageClock(text: string): number {
+  return isAndroidDevice() ? androidPassageSeconds(text) : estimateDuration(text);
 }
 
 function formatTime(seconds: number): string {
@@ -102,6 +113,8 @@ export default function ReadingCard({
     phrase: SpeechPhrase | null;
     phraseStarted: number;
     pausedInPhrase: number;
+    durationScale: number;
+    phrasesMeasured: number;
   } | null>(null);
   const timerRef = useRef<number | null>(null);
   const highlightRef = useRef<number | null>(null);
@@ -135,7 +148,7 @@ export default function ReadingCard({
         if (controller.signal.aborted) return;
         setVerses(passage.verses);
         setTransliteration(passage.transliteration);
-        setDurationSec(estimateDuration(passage.verses.map((verse) => verse.hebrew).join(' ')));
+        setDurationSec(passageClock(passage.verses.map((verse) => verse.hebrew).join(' ')));
       })
       .catch(() => {
         if (!controller.signal.aborted) setFailed(true);
@@ -146,7 +159,11 @@ export default function ReadingCard({
     };
   }, [sefariaRef]);
 
-  const followPhrase = (phrase: SpeechPhrase, phraseDuration: number, alreadyElapsed = 0) => {
+  const followPhrase = (phrase: SpeechPhrase, alreadyElapsed = 0) => {
+    const scale = playRef.current?.durationScale ?? 1;
+    const phraseDuration = isAndroidDevice()
+      ? androidPhraseSeconds(phrase.text, scale)
+      : Math.max(0.4, estimateDuration(phrase.text));
     const started = Date.now() - alreadyElapsed * 1000;
     if (playRef.current) {
       playRef.current.phrase = phrase;
@@ -157,14 +174,15 @@ export default function ReadingCard({
     highlightRef.current = window.setInterval(() => {
       const elapsed = (Date.now() - started) / 1000;
       setActiveWord(phrase.wordStart + wordIndexAtElapsed(phrase.text, elapsed, phraseDuration));
-    }, 80);
+    }, isAndroidDevice() ? 60 : 80);
   };
 
-  const speak = (text: string, phrase: SpeechPhrase | null, phraseDuration: number, onend?: () => void) => {
+  const speak = (text: string, phrase: SpeechPhrase | null, onend?: () => void) => {
     const utter = new SpeechSynthesisUtterance(text);
     configureHebrewUtterance(utter);
+    const state = playRef.current;
     utter.onstart = () => {
-      if (phrase) followPhrase(phrase, phraseDuration);
+      if (phrase) followPhrase(phrase);
     };
     utter.onboundary = (event) => {
       if (!phrase || event.charIndex === undefined) return;
@@ -172,7 +190,15 @@ export default function ReadingCard({
       clearHighlightTimer();
       setActiveWord(phrase.wordStart + charIndexToWordIndex(phrase.text, event.charIndex));
     };
-    utter.onend = () => onend?.();
+    utter.onend = () => {
+      if (phrase && state && !state.cancelled && isAndroidDevice() && state.phraseStarted > 0) {
+        const actualSec = (Date.now() - state.phraseStarted) / 1000;
+        const next = nextHighlightScale(state.durationScale, state.phrasesMeasured, phrase.text, actualSec);
+        state.durationScale = next.scale;
+        state.phrasesMeasured = next.measured;
+      }
+      onend?.();
+    };
     utter.onerror = (event) => {
       const code = 'error' in event ? String(event.error) : '';
       if (code === 'interrupted' || code === 'canceled' || code === 'cancelled') return;
@@ -192,7 +218,7 @@ export default function ReadingCard({
     stop();
     setProgress(0);
     setCurrentSec(0);
-    speak(prepareTtsText(word), null, 0);
+    speak(prepareTtsText(word), null);
   };
 
   const startProgress = (duration: number, offset = 0) => {
@@ -234,17 +260,22 @@ export default function ReadingCard({
       synth.resume();
       setIsPlaying(true);
       startProgress(durationSec, elapsedRef.current);
-      const phrase = playRef.current.phrase;
-      const phraseDuration = Math.max(0.4, estimateDuration(phrase.text));
-      followPhrase(phrase, phraseDuration, playRef.current.pausedInPhrase);
+      followPhrase(playRef.current.phrase, playRef.current.pausedInPhrase);
       return;
     }
 
     const hebrew = verses.map((verse) => verse.hebrew).join(' ');
     const phrases = readingSpeechPhrases(hebrew);
-    const duration = estimateDuration(hebrew);
+    const duration = passageClock(hebrew);
     stop();
-    const state = { cancelled: false, phrase: null as SpeechPhrase | null, phraseStarted: 0, pausedInPhrase: 0 };
+    const state = {
+      cancelled: false,
+      phrase: null as SpeechPhrase | null,
+      phraseStarted: 0,
+      pausedInPhrase: 0,
+      durationScale: 1,
+      phrasesMeasured: 0,
+    };
     playRef.current = state;
     elapsedRef.current = 0;
     setDurationSec(duration);
@@ -267,7 +298,7 @@ export default function ReadingCard({
         return;
       }
       const phrase = phrases[index];
-      speak(phrase.text, phrase, Math.max(0.4, estimateDuration(phrase.text)), () => speakPhrase(index + 1));
+      speak(phrase.text, phrase, () => speakPhrase(index + 1));
     };
     window.setTimeout(() => {
       if (!state.cancelled) speakPhrase(0);

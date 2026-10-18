@@ -43,6 +43,39 @@ export function charIndexToWordIndex(text: string, charIndex: number): number {
   return Math.max(0, words.length - 1);
 }
 
+const PHRASE_CHAR_SECONDS = 0.085;
+
+/**
+ * Highlight clock for one phrase on Android, before and after the measured correction.
+ * The prayer player does not divide this by the 0.50 speech rate: Android Hebrew does not
+ * keep that rate, and dividing it leaves the highlight far behind the voice.
+ */
+export function androidPhraseSeconds(text: string, scale = 1): number {
+  return Math.max(1, text.length * PHRASE_CHAR_SECONDS) * scale;
+}
+
+/** Whole-passage clock the prayer player uses on Android. */
+export function androidPassageSeconds(text: string): number {
+  const len = prepareTtsText(text).length;
+  const stretch = Math.min(0.003, Math.max(0, len - 300) * 0.000004);
+  return Math.max(4, Math.ceil(len * (PHRASE_CHAR_SECONDS + stretch)));
+}
+
+/** The next phrase's highlight speed, from how long the previous phrase actually took. */
+export function nextHighlightScale(
+  scale: number,
+  measured: number,
+  phraseText: string,
+  actualSec: number,
+): { scale: number; measured: number } {
+  const base = Math.max(1, phraseText.length * PHRASE_CHAR_SECONDS);
+  const ratio = Math.min(1.6, Math.max(0.6, actualSec / base));
+  return {
+    scale: measured === 0 ? ratio : scale * 0.55 + ratio * 0.45,
+    measured: measured + 1,
+  };
+}
+
 /** Which word of this phrase is due at `elapsedSec`, by word length. */
 export function wordIndexAtElapsed(text: string, elapsedSec: number, durationSec: number): number {
   const words = text.split(/\s+/).filter(Boolean);

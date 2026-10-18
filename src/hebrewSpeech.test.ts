@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { charIndexToWordIndex, readingSpeechPhrases, wordIndexAtElapsed } from './hebrewSpeech.ts';
+import {
+  androidPassageSeconds,
+  androidPhraseSeconds,
+  charIndexToWordIndex,
+  nextHighlightScale,
+  readingSpeechPhrases,
+  wordIndexAtElapsed,
+} from './hebrewSpeech.ts';
 
 test('a long reading is split without losing a word', () => {
   const words = Array.from({ length: 40 }, (_, index) => `w${index}`);
@@ -15,6 +22,17 @@ test('a boundary inside the second word selects that word', () => {
   assert.equal(charIndexToWordIndex('aa bb ccc', 4), 1);
   assert.equal(wordIndexAtElapsed('aa bbbb', 0, 4), 0);
   assert.equal(wordIndexAtElapsed('aa bbbb', 3.9, 4), 1);
+});
+
+test('android highlight uses the prayer clock and then corrects the next phrase', () => {
+  const phrase = 'א'.repeat(100);
+  assert.equal(androidPhraseSeconds(phrase, 1), 8.5);
+  assert.equal(androidPassageSeconds(phrase) < Math.ceil((phrase.length * 0.085) / 0.5), true);
+  assert.equal(nextHighlightScale(1, 0, phrase, 4.25).scale, 0.6);
+  assert.equal(nextHighlightScale(1, 0, phrase, 20).scale, 1.6);
+  const corrected = nextHighlightScale(0.6, 1, phrase, 4.25);
+  assert.equal(corrected.measured, 2);
+  assert.equal(Math.abs(corrected.scale - 0.6) < 1e-9, true);
 });
 
 test('replacing the Name keeps one word, so the highlight stays on that word', () => {
