@@ -1,25 +1,29 @@
 import { useEffect, useState } from 'react';
 import HebrewPlayerBar from './HebrewPlayerBar';
+import TextSizeControl from './TextSizeControl';
 import { IDLE_WORD_CLASS, SPOKEN_WORD_CLASS } from '../hebrewSpeech';
 import { useHebrewPlayer } from '../useHebrewPlayer';
 import { READING_COPY } from '../readingCopy';
 import { loadSefariaPassage, type PassageVerse } from '../sefariaPassage';
 import { controlsCopy, type Lang } from '../supportCopy';
+import { TYPE_SCALE, type TypeSize } from '../textSize';
 
 function HebrewVerse({
   verse,
   wordStart,
   activeWord,
   onWord,
+  fontSize,
 }: {
   verse: PassageVerse;
   wordStart: number;
   activeWord: number | null;
   onWord: (word: string) => void;
+  fontSize: number;
 }) {
   const words = verse.hebrew.split(/\s+/).filter(Boolean);
   return (
-    <p dir="rtl" lang="he" className="he-serif text-right text-[22px] leading-[1.9] text-zinc-900">
+    <p dir="rtl" lang="he" className="he-serif text-right leading-[1.75] text-zinc-900" style={{ fontSize }}>
       <span dir="ltr" className="ui-sans me-2 text-[12px] font-medium text-zinc-400">{verse.chapter}:{verse.verse}</span>
       {words.map((word, index) => {
         const wordIndex = wordStart + index;
@@ -51,6 +55,8 @@ export default function ReadingCard({
   nextTitle,
   onNext,
   onHome,
+  typeSize,
+  onTypeSize,
 }: {
   title: string;
   sefariaRef: string;
@@ -58,6 +64,8 @@ export default function ReadingCard({
   nextTitle?: string;
   onNext?: () => void;
   onHome: () => void;
+  typeSize: TypeSize;
+  onTypeSize: (size: TypeSize) => void;
 }) {
   const copy = READING_COPY[lang];
   const ui = controlsCopy(lang);
@@ -92,7 +100,17 @@ export default function ReadingCard({
   return (
     <div className="flex-1 flex flex-col min-h-0">
       <div className="flex-1 overflow-auto px-5 pb-[168px]">
-        <h2 className="pt-1 text-[22px] font-semibold leading-snug tracking-tight text-[#0D9488]">{title}</h2>
+        <div className="pt-1 flex items-center justify-between gap-3">
+          <h2 className="min-w-0 text-[22px] font-semibold leading-snug tracking-tight text-[#0D9488]">{title}</h2>
+          <TextSizeControl
+            value={typeSize}
+            onChange={onTypeSize}
+            label={ui.textSize}
+            nameM={ui.textSizeM}
+            nameL={ui.textSizeL}
+            nameXl={ui.textSizeXl}
+          />
+        </div>
         {verses === null && !failed ? (
           <p className="mt-6 text-[15px] text-zinc-500">{copy.loading}</p>
         ) : null}
@@ -112,6 +130,7 @@ export default function ReadingCard({
                     wordStart={start}
                     activeWord={player.activeWord}
                     onWord={player.speakWord}
+                    fontSize={TYPE_SCALE[typeSize].he}
                   />
                 );
               });
@@ -119,7 +138,10 @@ export default function ReadingCard({
           </div>
         ) : null}
         {transliteration ? (
-          <div className="mt-8 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-[15px] italic leading-7 text-zinc-700">
+          <div
+            className="mt-8 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 italic text-zinc-700"
+            style={{ fontSize: TYPE_SCALE[typeSize].translit, lineHeight: 1.6 }}
+          >
             {transliteration}
           </div>
         ) : null}

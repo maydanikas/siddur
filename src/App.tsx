@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import HebrewPlayerBar from './components/HebrewPlayerBar';
 import HomeDate from './components/HomeDate';
 import ReadingCard from './components/ReadingCard';
+import TextSizeControl from './components/TextSizeControl';
 import { IDLE_WORD_CLASS, prepareTtsText, SPOKEN_WORD_CLASS } from './hebrewSpeech';
+import { resolveTypeSize, TYPE_SCALE, type TypeSize } from './textSize';
 import { useHebrewPlayer } from './useHebrewPlayer';
 import { weeklyReadingPassages } from './weeklyReading';
 import { jewishDay } from './jewishCalendar';
@@ -18,22 +20,10 @@ import { REMINDER_INTRO_SEEN_KEY, maintainReminder, reminderNotice } from './rem
 import { HOME_DESCRIPTION, HOME_TITLE, prayerSeoDescription, prayerSlug } from './prayerPaths';
 
 type BelowHe = 'translation' | 'translit';
-type TypeSize = 'm' | 'l' | 'xl';
 
 function resolveBelowHe(value: string | null | undefined): BelowHe {
   return value === 'translit' ? 'translit' : 'translation';
 }
-
-function resolveTypeSize(value: string | null | undefined): TypeSize {
-  if (value === 'l' || value === 'xl') return value;
-  return 'm';
-}
-
-const TYPE_SCALE: Record<TypeSize, { he: number; instruction: number; translit: number; translation: number }> = {
-  m: { he: 26, instruction: 15, translit: 14, translation: 15 },
-  l: { he: 32, instruction: 17, translit: 17, translation: 18 },
-  xl: { he: 40, instruction: 20, translit: 21, translation: 22 },
-};
 
 type Prayer = {
   id: number;
@@ -1382,36 +1372,14 @@ export default function App() {
                       <span className="h-1 w-1 rounded-full bg-[#0D9488]/40 shrink-0"></span>
                       <span className="truncate">{currentPrayer.titleEn}</span>
                     </div>
-                    <div
-                      className="flex items-end gap-0.5 shrink-0 ui-sans"
-                      role="radiogroup"
-                      aria-label={ui.textSize}
-                      onTouchStart={(e) => e.stopPropagation()}
-                    >
-                      {([
-                        { id: 'm' as const, px: 12, name: ui.textSizeM },
-                        { id: 'l' as const, px: 15, name: ui.textSizeL },
-                        { id: 'xl' as const, px: 18, name: ui.textSizeXl },
-                      ]).map(({ id, px, name }) => {
-                        const active = typeSize === id;
-                        return (
-                          <button
-                            key={id}
-                            type="button"
-                            role="radio"
-                            aria-checked={active}
-                            aria-label={name}
-                            onClick={() => setTypeSize(id)}
-                            className={`h-8 w-8 flex items-center justify-center rounded-md font-semibold leading-none transition-all ${
-                              active ? 'bg-[#0D9488] text-white' : 'text-zinc-500 hover:bg-zinc-100'
-                            }`}
-                            style={{ fontSize: px }}
-                          >
-                            A
-                          </button>
-                        );
-                      })}
-                    </div>
+                    <TextSizeControl
+                      value={typeSize}
+                      onChange={setTypeSize}
+                      label={ui.textSize}
+                      nameM={ui.textSizeM}
+                      nameL={ui.textSizeL}
+                      nameXl={ui.textSizeXl}
+                    />
                   </div>
                   <h2 className="he-serif mt-1 text-[15px] font-normal leading-snug text-zinc-500" dir="rtl">
                     {currentPrayer.titleHe}
@@ -1548,6 +1516,8 @@ export default function App() {
               nextTitle={readingIndex === null ? undefined : readingPassages[readingIndex + 1]?.title}
               onNext={readingIndex !== null && readingPassages[readingIndex + 1] ? () => openReading(readingIndex + 1) : undefined}
               onHome={closeReading}
+              typeSize={typeSize}
+              onTypeSize={setTypeSize}
             />
           ) : null}
 
