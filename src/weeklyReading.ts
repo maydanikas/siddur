@@ -1,3 +1,4 @@
+import { readingFromCycle } from './readingSchedule.ts';
 import type { Lang } from './supportCopy';
 
 /**
@@ -8,7 +9,7 @@ import type { Lang } from './supportCopy';
  * Rosh Hashana points to a machzor and has no row.
  */
 
-type Book =
+export type Book =
   | 'genesis'
   | 'exodus'
   | 'leviticus'
@@ -32,12 +33,21 @@ type Book =
   | 'proverbs'
   | 'ezra'
   | 'nehemiah'
-  | 'iiChronicles';
+  | 'iChronicles'
+  | 'iiChronicles'
+  | 'psalms'
+  | 'amos'
+  | 'obadiah'
+  | 'zephaniah'
+  | 'daniel'
+  | 'ruth'
+  | 'ecclesiastes'
+  | 'haggai';
 
 /** Book, start chapter, start verse, end chapter, end verse. */
-type Ref = readonly [Book, number, number, number, number];
+export type Ref = readonly [Book, number, number, number, number];
 
-type PortionId =
+export type PortionId =
   | 'haazinu'
   | 'sukkot'
   | 'simchatTorah'
@@ -91,7 +101,18 @@ type PortionId =
   | 'shoftim'
   | 'kiTetse'
   | 'kiTavo'
-  | 'nitzavimVayelech';
+  | 'nitzavim'
+  | 'vayelech'
+  | 'nitzavimVayelech'
+  | 'matot'
+  | 'masei'
+  | 'vayakhelPekudei'
+  | 'tazriaMetzora'
+  | 'achareiKedoshim'
+  | 'beharBechukotai'
+  | 'chukatBalak'
+  | 'pesach'
+  | 'shavuot';
 
 const PORTION: Record<PortionId, Record<Lang, string>> = {
   haazinu: { ru: 'Аазину', nl: 'Haäzinoe', en: 'Haazinu', fr: 'Haazinou' },
@@ -152,12 +173,23 @@ const PORTION: Record<PortionId, Record<Lang, string>> = {
   shoftim: { ru: 'Шофтим', nl: 'Sjoftim', en: 'Shoftim', fr: 'Choftim' },
   kiTetse: { ru: 'Ки теце', nl: 'Ki Tétsé', en: 'Ki Tetze', fr: 'Ki Tetsé' },
   kiTavo: { ru: 'Ки таво', nl: 'Ki Tawo', en: 'Ki Tavo', fr: 'Ki Tavo' },
+  nitzavim: { ru: 'Ницавим', nl: 'Nitsawim', en: 'Nitzavim', fr: 'Nitsavim' },
+  vayelech: { ru: 'Ваелех', nl: 'Wajelech', en: 'Vayelech', fr: 'Vayélekh' },
   nitzavimVayelech: {
     ru: 'Ницавим-Ваелех',
     nl: 'Nitsawim-Wajelech',
     en: 'Nitzavim-Vayelech',
     fr: 'Nitsavim-Vayélekh',
   },
+  matot: { ru: 'Матот', nl: 'Mattot', en: 'Matot', fr: 'Matot' },
+  masei: { ru: 'Масей', nl: 'Masé', en: 'Masei', fr: 'Massé' },
+  vayakhelPekudei: { ru: 'Ваякхель-Пекудей', nl: 'Wajakhél-Pekoedé', en: 'Vayakhel-Pekudei', fr: 'Vayakhel-Pekoudé' },
+  tazriaMetzora: { ru: 'Тазриа-Мецора', nl: 'Tazria-Metsora', en: 'Tazria-Metzora', fr: 'Tazria-Metsora' },
+  achareiKedoshim: { ru: 'Ахарей мот-Кдошим', nl: 'Acharé-mot-Kedosjim', en: 'Acharei Mot-Kedoshim', fr: "A'haré mot-Kedochim" },
+  beharBechukotai: { ru: 'Беар-Бехукотай', nl: 'Behar-Bechoekotai', en: 'Behar-Bechukotai', fr: "Behar-Be'houkotaï" },
+  chukatBalak: { ru: 'Хукат-Балак', nl: 'Choekat-Balak', en: 'Chukat-Balak', fr: 'Houkat-Balak' },
+  pesach: { ru: 'Песах', nl: 'Pesach', en: 'Pesach', fr: "Pessa'h" },
+  shavuot: { ru: 'Шавуот', nl: 'Sjawoeot', en: 'Shavuot', fr: 'Chavouot' },
 };
 
 const BOOK: Record<Book, Record<Lang, string>> = {
@@ -184,7 +216,16 @@ const BOOK: Record<Book, Record<Lang, string>> = {
   proverbs: { ru: 'Мишлей', nl: 'Misjlé', en: 'Proverbs', fr: 'Proverbes' },
   ezra: { ru: 'Эзра', nl: 'Ezra', en: 'Ezra', fr: 'Esdras' },
   nehemiah: { ru: 'Нехемья', nl: 'Nechemja', en: 'Nehemiah', fr: 'Néhémie' },
+  iChronicles: { ru: 'I Диврей га-ямим', nl: 'I Kronieken', en: 'I Chronicles', fr: 'I Chroniques' },
   iiChronicles: { ru: 'II Диврей га-ямим', nl: 'II Kronieken', en: 'II Chronicles', fr: 'II Chroniques' },
+  psalms: { ru: 'Техилим', nl: 'Psalm', en: 'Psalms', fr: 'Psaumes' },
+  amos: { ru: 'Амос', nl: 'Amos', en: 'Amos', fr: 'Amos' },
+  obadiah: { ru: 'Овадья', nl: 'Owadia', en: 'Obadiah', fr: 'Abdias' },
+  zephaniah: { ru: 'Цфания', nl: 'Tsefanja', en: 'Zephaniah', fr: 'Sophonie' },
+  daniel: { ru: 'Даниэль', nl: 'Daniël', en: 'Daniel', fr: 'Daniel' },
+  ruth: { ru: 'Рут', nl: 'Ruth', en: 'Ruth', fr: 'Ruth' },
+  ecclesiastes: { ru: 'Коэлет', nl: 'Kohelet', en: 'Ecclesiastes', fr: 'Ecclésiaste' },
+  haggai: { ru: 'Хаггай', nl: 'Chaggai', en: 'Haggai', fr: 'Aggée' },
 };
 
 const ref = (book: Book, c1: number, v1: number, c2 = c1, v2 = v1): Ref => [book, c1, v1, c2, v2];
@@ -375,11 +416,21 @@ const SEFARIA_BOOK: Record<Book, string> = {
   proverbs: 'Proverbs',
   ezra: 'Ezra',
   nehemiah: 'Nehemiah',
+  iChronicles: 'I_Chronicles',
   iiChronicles: 'II_Chronicles',
+  psalms: 'Psalms',
+  amos: 'Amos',
+  obadiah: 'Obadiah',
+  zephaniah: 'Zephaniah',
+  daniel: 'Daniel',
+  ruth: 'Ruth',
+  ecclesiastes: 'Ecclesiastes',
+  haggai: 'Haggai',
 };
 
 function formatRef(span: Ref, lang: Lang): string {
   const [book, c1, v1, c2, v2] = span;
+  if (c1 === c2 && v1 === v2) return `${BOOK[book][lang]} ${c1}:${v1}`;
   const end = c1 === c2 ? String(v2) : `${c2}:${v2}`;
   return `${BOOK[book][lang]} ${c1}:${v1}–${end}`;
 }
@@ -398,9 +449,14 @@ export function sefariaUrl(span: Ref): string {
 
 export type WeeklyReadingPart = { text: string; href?: string };
 
+function rowOf(date: Date): Row | null {
+  const iso = shabbatOfWeek(date);
+  return BY_DATE.get(iso) ?? readingFromCycle(iso);
+}
+
 /** Name, then each Torah span, then each haftarah span. Empty when this week has no listed reading. */
 export function weeklyReadingParts(date: Date, lang: Lang): WeeklyReadingPart[] {
-  const row = BY_DATE.get(shabbatOfWeek(date));
+  const row = rowOf(date);
   if (!row) return [];
   const parts: WeeklyReadingPart[] = [{ text: PORTION[row.portion][lang] }];
   for (const span of [...row.torah, ...(row.haftarah ?? [])]) {
@@ -413,7 +469,7 @@ export type WeeklyPassage = { title: string; ref: string };
 
 /** Each Torah and haftarah span for this week's Shabbat, in reading order. */
 export function weeklyReadingPassages(date: Date, lang: Lang): WeeklyPassage[] {
-  const row = BY_DATE.get(shabbatOfWeek(date));
+  const row = rowOf(date);
   if (!row) return [];
   return [...row.torah, ...(row.haftarah ?? [])].map((span) => ({
     title: formatRef(span, lang),

@@ -1030,6 +1030,7 @@ export default function App() {
       return 'm';
     }
   });
+  const [readingTranslation, setReadingTranslation] = useState<'en' | 'fr' | null>(null);
   const [lang, setLang] = useState<Lang>(() => {
     try {
       const saved = localStorage.getItem('shacharis_lang');
@@ -1315,6 +1316,10 @@ export default function App() {
   }, [belowHe]);
 
   useEffect(() => {
+    if (lang === 'en' || lang === 'fr') setReadingTranslation(lang);
+  }, [lang]);
+
+  useEffect(() => {
     localStorage.setItem('shacharis_type_size', typeSize);
   }, [typeSize]);
 
@@ -1539,6 +1544,10 @@ export default function App() {
               onHome={closeReading}
               typeSize={typeSize}
               onTypeSize={setTypeSize}
+              belowHe={belowHe}
+              onBelowHe={setBelowHe}
+              translationLang={readingTranslation}
+              onTranslationLang={setReadingTranslation}
             />
           ) : null}
 

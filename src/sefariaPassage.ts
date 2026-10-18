@@ -73,11 +73,72 @@ export function passageHebrew(verses: PassageVerse[]): string {
   return verses.map((verse) => verse.hebrew).join('\n');
 }
 
-export async function loadSefariaPassage(ref: string): Promise<{ verses: PassageVerse[]; transliteration: string }> {
-  const response = await fetch(`https://www.sefaria.org/api/texts/${ref}?commentary=0&context=0`);
+export type ReadingTranslationLang = 'en' | 'fr';
+
+export type PassageTranslation = { text: string; credit: string };
+
+const TRANSLATION_VERSION: Record<ReadingTranslationLang, { title: string; marker: string; credit: string }> = {
+  en: {
+    title: 'The Holy Scriptures: A New Translation (JPS 1917)',
+    marker: '1917',
+    credit: 'The Holy Scriptures: A New Translation (JPS 1917) · Public Domain',
+  },
+  fr: {
+    title: 'Bible du Rabbinat 1899 [fr]',
+    marker: 'Rabbinat',
+    credit: 'Bible du Rabbinat 1899 · Public Domain',
+  },
+};
+
+export function cleanTranslationText(value: string): string {
+  return value
+    .replace(TAG, '')
+    .replace(ENTITY, (all, entity: string) => {
+      if (entity[0] !== '#') return NAMED_ENTITY[entity] ?? all;
+      const code = entity[1] === 'x' || entity[1] === 'X' ? Number.parseInt(entity.slice(2), 16) : Number.parseInt(entity.slice(1), 10);
+      return Number.isFinite(code) ? String.fromCodePoint(code) : all;
+    })
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function translationVerses(value: unknown): string {
+  if (typeof value === 'string') return cleanTranslationText(value);
+  if (!Array.isArray(value)) return '';
+  return value
+    .map((part) => translationVerses(part))
+    .filter(Boolean)
+    .join('\n');
+}
+
+async function loadTranslation(ref: string, lang: ReadingTranslationLang, signal: AbortSignal): Promise<PassageTranslation | null> {
+  const version = TRANSLATION_VERSION[lang];
+  const response = await fetch(
+    `https://www.sefaria.org/api/texts/${ref}?commentary=0&context=0&ven=${encodeURIComponent(version.title)}`,
+    { signal },
+  );
+  if (!response.ok) return null;
+  const payload = (await response.json()) as { text?: unknown; versionTitle?: string };
+  if (!payload.versionTitle?.includes(version.marker)) return null;
+  const text = translationVerses(payload.text);
+  return text ? { text, credit: version.credit } : null;
+}
+
+export async function loadSefariaPassage(
+  ref: string,
+  signal?: AbortSignal,
+): Promise<{ verses: PassageVerse[]; transliteration: string; translations: Partial<Record<ReadingTranslationLang, PassageTranslation>> }> {
+  const response = await fetch(`https://www.sefaria.org/api/texts/${ref}?commentary=0&context=0`, { signal });
   if (!response.ok) throw new Error(`Sefaria ${response.status}`);
   const payload = (await response.json()) as SefariaHebrewPayload;
   const verses = parseSefariaVerses(payload);
   if (verses.length === 0) throw new Error('Sefaria returned no verses');
-  return { verses, transliteration: transliterateHebrew(passageHebrew(verses).replace(/\n/g, ' ')) };
+  const [en, fr] = await Promise.all([
+    loadTranslation(ref, 'en', signal ?? new AbortController().signal).catch(() => null),
+    loadTranslation(ref, 'fr', signal ?? new AbortController().signal).catch(() => null),
+  ]);
+  const translations: Partial<Record<ReadingTranslationLang, PassageTranslation>> = {};
+  if (en) translations.en = en;
+  if (fr) translations.fr = fr;
+  return { verses, transliteration: transliterateHebrew(passageHebrew(verses).replace(/\n/g, ' ')), translations };
 }

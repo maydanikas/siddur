@@ -4,9 +4,11 @@ import TextSizeControl from './TextSizeControl';
 import { IDLE_WORD_CLASS, SPOKEN_WORD_CLASS } from '../hebrewSpeech';
 import { useHebrewPlayer } from '../useHebrewPlayer';
 import { READING_COPY } from '../readingCopy';
-import { loadSefariaPassage, type PassageVerse } from '../sefariaPassage';
+import { loadSefariaPassage, type PassageTranslation, type PassageVerse, type ReadingTranslationLang } from '../sefariaPassage';
 import { controlsCopy, type Lang } from '../supportCopy';
 import { TYPE_SCALE, type TypeSize } from '../textSize';
+
+type BelowHe = 'translation' | 'translit';
 
 function HebrewVerse({
   verse,
@@ -57,6 +59,10 @@ export default function ReadingCard({
   onHome,
   typeSize,
   onTypeSize,
+  belowHe,
+  onBelowHe,
+  translationLang,
+  onTranslationLang,
 }: {
   title: string;
   sefariaRef: string;
@@ -66,11 +72,16 @@ export default function ReadingCard({
   onHome: () => void;
   typeSize: TypeSize;
   onTypeSize: (size: TypeSize) => void;
+  belowHe: BelowHe;
+  onBelowHe: (mode: BelowHe) => void;
+  translationLang: ReadingTranslationLang | null;
+  onTranslationLang: (lang: ReadingTranslationLang) => void;
 }) {
   const copy = READING_COPY[lang];
   const ui = controlsCopy(lang);
   const [verses, setVerses] = useState<PassageVerse[] | null>(null);
   const [transliteration, setTransliteration] = useState('');
+  const [translations, setTranslations] = useState<Partial<Record<ReadingTranslationLang, PassageTranslation>>>({});
   const [failed, setFailed] = useState(false);
   const hebrew = verses ? verses.map((verse) => verse.hebrew).join(' ') : null;
   const player = useHebrewPlayer(hebrew, ui.ttsNoHebrew);
@@ -79,12 +90,14 @@ export default function ReadingCard({
     const controller = new AbortController();
     setVerses(null);
     setTransliteration('');
+    setTranslations({});
     setFailed(false);
-    loadSefariaPassage(sefariaRef)
+    loadSefariaPassage(sefariaRef, controller.signal)
       .then((passage) => {
         if (controller.signal.aborted) return;
         setVerses(passage.verses);
         setTransliteration(passage.transliteration);
+        setTranslations(passage.translations);
       })
       .catch(() => {
         if (!controller.signal.aborted) setFailed(true);
@@ -137,12 +150,76 @@ export default function ReadingCard({
             })()}
           </div>
         ) : null}
-        {transliteration ? (
-          <div
-            className="mt-8 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 italic text-zinc-700"
-            style={{ fontSize: TYPE_SCALE[typeSize].translit, lineHeight: 1.6 }}
-          >
-            {transliteration}
+        {verses ? (
+          <div className="mt-8 ui-sans">
+            <div className="flex p-1 rounded-full bg-zinc-100" role="tablist" aria-label={`${ui.translation} / ${ui.transliteration}`}>
+              {([
+                { mode: 'translation' as const, label: ui.translation },
+                { mode: 'translit' as const, label: ui.transliteration },
+              ]).map(({ mode, label }) => {
+                const active = belowHe === mode;
+                return (
+                  <button
+                    key={mode}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => onBelowHe(mode)}
+                    className={`flex-1 h-10 rounded-full text-[13px] font-semibold transition-all ${
+                      active ? 'bg-[#0D9488] text-white shadow-sm' : 'text-zinc-600'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(['RU', 'NL', 'EN', 'FR'] as const).map((code) => {
+                const lower = code.toLowerCase() as Lang;
+                const available = lower === 'en' || lower === 'fr' ? Boolean(translations[lower]) : false;
+                const active = available && translationLang === lower;
+                return (
+                  <button
+                    key={code}
+                    type="button"
+                    disabled={!available}
+                    aria-disabled={!available}
+                    onClick={() => {
+                      if (lower === 'en' || lower === 'fr') onTranslationLang(lower);
+                    }}
+                    className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
+                      active
+                        ? 'bg-[#0D9488] text-white shadow-sm'
+                        : available
+                          ? 'border border-zinc-300 bg-white text-zinc-600'
+                          : 'cursor-not-allowed border border-zinc-200 bg-zinc-50 text-zinc-300'
+                    }`}
+                  >
+                    {code}
+                  </button>
+                );
+              })}
+            </div>
+            {belowHe === 'translit' && transliteration ? (
+              <div
+                className="mt-4 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 italic text-zinc-700"
+                style={{ fontSize: TYPE_SCALE[typeSize].translit, lineHeight: 1.6 }}
+              >
+                {transliteration}
+              </div>
+            ) : null}
+            {belowHe === 'translation' && translationLang && translations[translationLang] ? (
+              <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                <p
+                  className="whitespace-pre-wrap text-zinc-800"
+                  style={{ fontSize: TYPE_SCALE[typeSize].translation, lineHeight: 1.7 }}
+                >
+                  {translations[translationLang].text}
+                </p>
+                <p className="mt-4 text-[11px] leading-4 text-zinc-400">{translations[translationLang].credit}</p>
+              </div>
+            ) : null}
           </div>
         ) : null}
         {verses ? (

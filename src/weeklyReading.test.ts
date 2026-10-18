@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { HebrewCalendar } from '@hebcal/core';
 import { shabbatOfWeek, weeklyReadingDates, weeklyReadingLine, weeklyReadingParts, weeklyReadingPassages } from './weeklyReading.ts';
 
 const noon = (iso: string) => new Date(`${iso}T12:00:00`);
@@ -49,10 +50,55 @@ test('a gap in the reading stays a gap', () => {
   assert.equal(line.includes('50:1'), false);
 });
 
-test('a Shabbat outside the Levisson year has no line', () => {
+test('Rosh Hashana and Yom Kippur have no reading line', () => {
   assert.equal(weeklyReadingLine(noon('2026-09-12'), 'ru'), '');
   assert.equal(weeklyReadingLine(noon('2027-10-02'), 'ru'), '');
-  assert.equal(weeklyReadingLine(noon('2026-08-01'), 'nl'), '');
+  assert.equal(weeklyReadingLine(noon('2028-09-30'), 'en'), '');
+});
+
+test('1 August 2026 already follows column A', () => {
+  assert.equal(
+    weeklyReadingLine(noon('2026-08-01'), 'nl'),
+    'Ekev · Dewarim 7:12–9:3 · Jesjajahoe 49:14–51:3',
+  );
+});
+
+test('columns A, B, and C continue after the 5787 sheet', () => {
+  assert.equal(
+    weeklyReadingLine(noon('2027-10-30'), 'en'),
+    'Bereshit · Genesis 4:19–6:8 · I Samuel 20:18–42',
+  );
+  assert.equal(
+    weeklyReadingLine(noon('2028-11-04'), 'en'),
+    'Vayera · Genesis 18:1–19:29 · II Kings 4:1–37',
+  );
+  assert.equal(
+    weeklyReadingLine(noon('2028-10-21'), 'en'),
+    'Noach · Genesis 6:9–8:5 · Genesis 1:14–19 · Isaiah 66:10–23',
+  );
+  assert.equal(
+    weeklyReadingLine(noon('2029-10-13'), 'en'),
+    'Noach · Genesis 8:6–9:29 · Jeremiah 31:23–36',
+  );
+  assert.equal(
+    weeklyReadingLine(noon('2028-09-23'), 'en'),
+    "Haazinu · Deuteronomy 32:1–52 · Hosea 14:2–10 · Micah 7:18–20",
+  );
+});
+
+test('every Saturday through 2031 still has a reading, apart from the machzor', () => {
+  const cursor = new Date(2027, 9, 30, 12);
+  const end = new Date(2031, 9, 31, 12);
+  while (cursor <= end) {
+    if (cursor.getDay() === 6) {
+      const descriptions = HebrewCalendar.calendar({ start: cursor, end: cursor, il: true }).map((event) => event.getDesc());
+      const machzor = descriptions.some((desc) => desc === 'Yom Kippur' || /^Rosh Hashana( II| \d+)/.test(desc));
+      const line = weeklyReadingLine(cursor, 'en');
+      if (machzor) assert.equal(line, '', cursor.toDateString());
+      else assert.equal(line.includes(' · '), true, cursor.toDateString());
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
 });
 
 test('every stored span has its own Sefaria range address', () => {
