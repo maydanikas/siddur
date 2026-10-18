@@ -1,4 +1,13 @@
-const RESERVED_SLUGS = new Set(['about']);
+const RESERVED_SLUGS = new Set(['about', 'reading']);
+
+export const READING_PATH = '/reading';
+
+export const READING_TITLE = 'Reading — Shacharis';
+
+export function isReadingPath(pathname: string): boolean {
+  const path = pathname.replace(/\/+$/, '') || '/';
+  return path === READING_PATH;
+}
 
 export const HOME_TITLE = 'Shacharis — liberal siddur';
 

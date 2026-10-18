@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const RESERVED = new Set(['about']);
+const RESERVED = new Set(['about', 'reading']);
 
 function prayerSlug(titleEn) {
   const slug = titleEn
@@ -21,7 +21,7 @@ if (titles.length < 50) {
 }
 
 const used = new Set();
-const paths = ['/', '/about'];
+const paths = ['/', '/about', '/reading'];
 titles.forEach((title, index) => {
   let slug = prayerSlug(title);
   if (RESERVED.has(slug) || used.has(slug)) slug = `${slug}-${index + 1}`;

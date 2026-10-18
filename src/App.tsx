@@ -17,7 +17,7 @@ import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
 import { trackAboutPage, trackAppOpen, trackLanguage, trackPageView } from './analytics';
 import { REMINDER_INTRO_SEEN_KEY, maintainReminder, reminderNotice } from './reminder';
-import { HOME_DESCRIPTION, HOME_TITLE, prayerSeoDescription, prayerSlug } from './prayerPaths';
+import { HOME_DESCRIPTION, HOME_TITLE, isReadingPath, prayerSeoDescription, prayerSlug, READING_PATH, READING_TITLE } from './prayerPaths';
 
 type BelowHe = 'translation' | 'translit';
 
@@ -692,7 +692,7 @@ function forToday<T extends (typeof prayers)[number]>(prayer: T, today = new Dat
   }
 }
 
-const RESERVED_PRAYER_SLUGS = new Set(['about']);
+const RESERVED_PRAYER_SLUGS = new Set(['about', 'reading']);
 const prayerSlugByIndex = prayers.map((prayer) => {
   const slug = prayerSlug(prayer.titleEn);
   return RESERVED_PRAYER_SLUGS.has(slug) ? `${slug}-${prayer.id}` : slug;
@@ -1013,7 +1013,8 @@ export default function App() {
   const [selected, setSelected] = useState<number | null>(() => prayerIndexFromPath(window.location.pathname));
   const [readingIndex, setReadingIndex] = useState<number | null>(() => {
     const state = window.history.state;
-    return state?.screen === 'reading' && typeof state.index === 'number' ? state.index : null;
+    if (state?.screen === 'reading' && typeof state.index === 'number') return state.index;
+    return isReadingPath(window.location.pathname) ? 0 : null;
   });
   const [belowHe, setBelowHe] = useState<BelowHe>(() => {
     try {
@@ -1156,11 +1157,11 @@ export default function App() {
     const onPop = () => {
       const path = window.location.pathname;
       const screen = historyScreen();
-      if (screen === 'reading') {
+      if (screen === 'reading' || isReadingPath(path)) {
         const index = window.history.state?.index;
         setShowAbout(false);
         setSelected(null);
-        setReadingIndex(typeof index === 'number' ? index : null);
+        setReadingIndex(typeof index === 'number' ? index : 0);
         setShowEnvelope(false);
         return;
       }
@@ -1182,7 +1183,7 @@ export default function App() {
 
   useEffect(() => {
     const path = window.location.pathname;
-    if (path === '/' || path === '/about' || prayerIndexFromPath(path) !== null) return;
+    if (path === '/' || path === '/about' || isReadingPath(path) || prayerIndexFromPath(path) !== null) return;
     window.history.replaceState({ screen: 'list' }, '', '/');
   }, []);
 
@@ -1193,6 +1194,9 @@ export default function App() {
     if (showAbout) {
       title = 'About — Shacharis';
       description = 'Shacharis is a free Shaharit siddur. Бесплатный сидур утренних молитв.';
+    } else if (readingIndex !== null) {
+      title = READING_TITLE;
+      description = "This week's Shabbat Torah and haftarah reading.";
     } else if (selected !== null) {
       const prayer = prayers[selected];
       title = `${prayer.titleEn} — Shacharis`;
@@ -1211,7 +1215,7 @@ export default function App() {
     if (canonical) canonical.setAttribute('href', canonicalUrl);
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute('content', canonicalUrl);
-  }, [showAbout, selected]);
+  }, [showAbout, selected, readingIndex]);
 
   const openReading = (index: number) => {
     player.stop();
@@ -1219,8 +1223,12 @@ export default function App() {
     setSelected(null);
     setReadingIndex(index);
     const state = { screen: 'reading' as const, index };
-    if (historyScreen() === 'reading') window.history.replaceState(state, '', '/');
-    else window.history.pushState(state, '', '/');
+    if (historyScreen() === 'reading' || isReadingPath(window.location.pathname)) {
+      window.history.replaceState(state, '', READING_PATH);
+    } else {
+      window.history.pushState(state, '', READING_PATH);
+    }
+    trackPageView(READING_TITLE, READING_PATH);
     scrollShellToTop();
   };
 
@@ -1283,6 +1291,11 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!isReadingPath(window.location.pathname)) return;
+    trackPageView(READING_TITLE, READING_PATH);
+  }, []);
+
+  useEffect(() => {
     void maintainReminder(reminderNotice(lang));
   }, [lang]);
 
@@ -1308,6 +1321,14 @@ export default function App() {
   const currentPrayer = selected !== null ? forToday(prayers[selected], today) : null;
   const readingPassages = weeklyReadingPassages(today, lang);
   const readingPassage = readingIndex !== null ? readingPassages[readingIndex] : undefined;
+
+  useEffect(() => {
+    if (readingIndex === null || readingIndex < readingPassages.length) return;
+    setReadingIndex(null);
+    if (isReadingPath(window.location.pathname)) {
+      window.history.replaceState({ screen: 'list' }, '', '/');
+    }
+  }, [readingIndex, readingPassages.length]);
 
   return (
       <div className="h-full bg-white text-zinc-900 antialiased selection:bg-teal-100">
