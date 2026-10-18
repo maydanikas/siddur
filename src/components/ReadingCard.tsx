@@ -236,22 +236,30 @@ export default function ReadingCard({
             {' '}· CC-BY-SA
           </p>
         ) : null}
-        {nextTitle && onNext ? (
+        <div className="mt-10 flex items-stretch gap-3 ui-sans">
+          <button
+            type="button"
+            onClick={onHome}
+            className="flex min-h-11 flex-1 items-center justify-center rounded-full border border-[#0D9488] bg-white px-3 py-2 text-center text-[14px] font-medium leading-tight text-[#0D9488] transition-all hover:bg-teal-50"
+          >
+            {copy.home}
+          </button>
           <button
             type="button"
             onClick={onNext}
-            className="mt-8 block text-left text-[15px] font-medium text-[#0D9488] underline decoration-[#0D9488]/40 underline-offset-2"
+            disabled={!onNext}
+            className={`flex min-h-11 flex-1 flex-col items-center justify-center rounded-full px-3 py-2 text-center text-[14px] font-medium leading-tight transition-all ${
+              onNext
+                ? 'bg-[#0D9488] text-white shadow-sm hover:bg-teal-700'
+                : 'bg-zinc-100 text-zinc-400'
+            }`}
           >
-            {copy.next} · {nextTitle}
+            <span>{copy.next}</span>
+            {nextTitle && onNext ? (
+              <span className="mt-0.5 text-[12px] font-normal leading-snug opacity-90">{nextTitle}</span>
+            ) : null}
           </button>
-        ) : null}
-        <button
-          type="button"
-          onClick={onHome}
-          className="mt-4 h-11 w-full rounded-full border border-[#0D9488] text-[14px] font-medium text-[#0D9488]"
-        >
-          {copy.home}
-        </button>
+        </div>
       </div>
       {verses ? (
         <HebrewPlayerBar
