@@ -12,7 +12,15 @@ const DATE_LOCALE: Record<Lang, string> = {
   fr: 'fr-FR',
 };
 
-export default function HomeDate({ lang, today = new Date() }: { lang: Lang; today?: Date }) {
+export default function HomeDate({
+  lang,
+  today = new Date(),
+  onOpenReading,
+}: {
+  lang: Lang;
+  today?: Date;
+  onOpenReading?: (index: number) => void;
+}) {
   let needed = false;
   try {
     needed = dayNeedsClock(today);
@@ -55,23 +63,25 @@ export default function HomeDate({ lang, today = new Date() }: { lang: Lang; tod
       ) : null}
       {reading.length > 0 ? (
         <p className="mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 text-[13px] font-medium leading-5 text-[#0D9488]">
-          {reading.map((part, i) => (
-            <span key={`${i}-${part.text}`} className="whitespace-nowrap">
-              {i > 0 ? <span className="mr-1.5">·</span> : null}
-              {part.href ? (
-                <a
-                  href={part.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-[#0D9488]/40 underline-offset-2"
-                >
-                  {part.text}
-                </a>
-              ) : (
-                part.text
-              )}
-            </span>
-          ))}
+          {reading.map((part, i) => {
+            const passageIndex = part.href ? reading.slice(0, i).filter((item) => item.href).length : -1;
+            return (
+              <span key={`${i}-${part.text}`} className="whitespace-nowrap">
+                {i > 0 ? <span className="mr-1.5">·</span> : null}
+                {part.href ? (
+                  <button
+                    type="button"
+                    onClick={() => onOpenReading?.(passageIndex)}
+                    className="underline decoration-[#0D9488]/40 underline-offset-2"
+                  >
+                    {part.text}
+                  </button>
+                ) : (
+                  part.text
+                )}
+              </span>
+            );
+          })}
         </p>
       ) : null}
       {clockLine ? (

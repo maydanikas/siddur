@@ -384,11 +384,16 @@ function formatRef(span: Ref, lang: Lang): string {
   return `${BOOK[book][lang]} ${c1}:${v1}–${end}`;
 }
 
-/** The Sefaria page for this exact range. A gap stays two addresses, not one wider range. */
-export function sefariaUrl(span: Ref): string {
+/** Sefaria’s address for this exact range. A gap stays two addresses, not one wider range. */
+export function sefariaRef(span: Ref): string {
   const [book, c1, v1, c2, v2] = span;
   const end = c1 === c2 ? String(v2) : `${c2}.${v2}`;
-  return `https://www.sefaria.org/${SEFARIA_BOOK[book]}.${c1}.${v1}-${end}`;
+  return `${SEFARIA_BOOK[book]}.${c1}.${v1}-${end}`;
+}
+
+/** The Sefaria page for this exact range. */
+export function sefariaUrl(span: Ref): string {
+  return `https://www.sefaria.org/${sefariaRef(span)}`;
 }
 
 export type WeeklyReadingPart = { text: string; href?: string };
@@ -402,6 +407,18 @@ export function weeklyReadingParts(date: Date, lang: Lang): WeeklyReadingPart[] 
     parts.push({ text: formatRef(span, lang), href: sefariaUrl(span) });
   }
   return parts;
+}
+
+export type WeeklyPassage = { title: string; ref: string };
+
+/** Each Torah and haftarah span for this week's Shabbat, in reading order. */
+export function weeklyReadingPassages(date: Date, lang: Lang): WeeklyPassage[] {
+  const row = BY_DATE.get(shabbatOfWeek(date));
+  if (!row) return [];
+  return [...row.torah, ...(row.haftarah ?? [])].map((span) => ({
+    title: formatRef(span, lang),
+    ref: sefariaRef(span),
+  }));
 }
 
 /** The home-screen line for this week's Shabbat reading, or an empty string. */

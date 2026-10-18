@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import HomeDate from './components/HomeDate';
+import ReadingCard from './components/ReadingCard';
+import { prepareTtsText, SPEECH_RATE } from './hebrewSpeech';
+import { weeklyReadingPassages } from './weeklyReading';
 import { jewishDay } from './jewishCalendar';
 import { usePhoneDay } from './phoneDay';
 import { applySeason } from './seasonalText';
@@ -715,7 +718,7 @@ const prayerIndexFromPath = (pathname: string) => {
 
 const historyScreen = () => {
   const screen = window.history.state?.screen;
-  return screen === 'list' || screen === 'about' || screen === 'prayer' ? screen : null;
+  return screen === 'list' || screen === 'about' || screen === 'prayer' || screen === 'reading' ? screen : null;
 };
 
 const TOTAL_PRAYERS = prayers[prayers.length - 1].id;
@@ -801,18 +804,12 @@ function parseHeDisplay(text: string): DisplayBlock[] {
   return blocks;
 }
 
-const DIVINE_NAME_FOR_TTS = /יְהוָה|יְהֹוָה|יהוה|יְיָ/g;
-
 function stripNikud(text: string): string {
   return text.replace(/[\u0591-\u05C7]/g, '');
 }
 
 function normalizeWord(text: string): string {
-  return stripNikud(text.replace(DIVINE_NAME_FOR_TTS, 'אֲדֹנָי')).replace(/[^\u0590-\u05FF]/g, '');
-}
-
-function prepareTtsText(text: string): string {
-  return text.replace(DIVINE_NAME_FOR_TTS, 'אֲדֹנָי');
+  return stripNikud(prepareTtsText(text)).replace(/[^\u0590-\u05FF]/g, '');
 }
 
 function tokenizeTts(heTts: string): string[] {
@@ -936,7 +933,6 @@ function charIndexToWordIndex(text: string, charIndex: number): number {
   return Math.max(0, words.length - 1);
 }
 
-const SPEECH_RATE = 0.5;
 const CHAR_SECONDS_AT_RATE = 0.085;
 
 function isAndroidDevice(): boolean {
@@ -1185,6 +1181,10 @@ function HebrewDisplay({
 export default function App() {
   const today = usePhoneDay();
   const [selected, setSelected] = useState<number | null>(() => prayerIndexFromPath(window.location.pathname));
+  const [readingIndex, setReadingIndex] = useState<number | null>(() => {
+    const state = window.history.state;
+    return state?.screen === 'reading' && typeof state.index === 'number' ? state.index : null;
+  });
   const [belowHe, setBelowHe] = useState<BelowHe>(() => {
     try {
       return resolveBelowHe(localStorage.getItem('shacharis_below_he'));
@@ -1293,11 +1293,12 @@ export default function App() {
     scrollShellToTop();
     if (idx === null) {
       const screen = historyScreen();
-      if (screen === 'prayer' || screen === 'about') {
+      if (screen === 'prayer' || screen === 'about' || screen === 'reading') {
         window.history.back();
         return;
       }
       setSelected(null);
+      setReadingIndex(null);
       setShowAbout(false);
       refreshEnvelope();
       if (window.location.pathname !== '/') {
@@ -1307,6 +1308,7 @@ export default function App() {
     }
 
     setShowAbout(false);
+    setReadingIndex(null);
     setSelected(idx);
     const path = prayerPathForIndex(idx);
     if (window.location.pathname === path) return;
@@ -1333,6 +1335,16 @@ export default function App() {
   useEffect(() => {
     const onPop = () => {
       const path = window.location.pathname;
+      const screen = historyScreen();
+      if (screen === 'reading') {
+        const index = window.history.state?.index;
+        setShowAbout(false);
+        setSelected(null);
+        setReadingIndex(typeof index === 'number' ? index : null);
+        setShowEnvelope(false);
+        return;
+      }
+      setReadingIndex(null);
       if (path === '/about') {
         setShowAbout(true);
         setSelected(null);
@@ -1434,6 +1446,27 @@ export default function App() {
     userPausedRef.current = false;
     return cancelled;
   }, []);
+
+  const openReading = (index: number) => {
+    stopAudio();
+    setShowAbout(false);
+    setSelected(null);
+    setReadingIndex(index);
+    const state = { screen: 'reading' as const, index };
+    if (historyScreen() === 'reading') window.history.replaceState(state, '', '/');
+    else window.history.pushState(state, '', '/');
+    scrollShellToTop();
+  };
+
+  const closeReading = () => {
+    stopAudio();
+    if (historyScreen() === 'reading') {
+      window.history.back();
+      return;
+    }
+    setReadingIndex(null);
+    scrollShellToTop();
+  };
 
   const speakWhenReady = (utter: SpeechSynthesisUtterance, cancelledJustNow: boolean) => {
     const synth = window.speechSynthesis;
@@ -1776,6 +1809,8 @@ export default function App() {
   };
 
   const currentPrayer = selected !== null ? forToday(prayers[selected], today) : null;
+  const readingPassages = weeklyReadingPassages(today, lang);
+  const readingPassage = readingIndex !== null ? readingPassages[readingIndex] : undefined;
   const ui = controlsCopy(lang);
 
   return (
@@ -1822,7 +1857,7 @@ export default function App() {
         <main
           ref={mainRef}
           className={`flex-1 flex flex-col min-h-0 ${
-            selected !== null && !showAbout ? 'overflow-hidden' : 'overflow-y-auto'
+            (selected !== null || readingPassage) && !showAbout ? 'overflow-hidden' : 'overflow-y-auto'
           }`}
         >
           {showAbout ? (
@@ -2016,11 +2051,21 @@ export default function App() {
                 </div>
               </div>
             </div>
+          ) : readingPassage ? (
+            <ReadingCard
+              key={readingPassage.ref}
+              title={readingPassage.title}
+              sefariaRef={readingPassage.ref}
+              lang={lang}
+              nextTitle={readingIndex === null ? undefined : readingPassages[readingIndex + 1]?.title}
+              onNext={readingIndex !== null && readingPassages[readingIndex + 1] ? () => openReading(readingIndex + 1) : undefined}
+              onHome={closeReading}
+            />
           ) : null}
 
-          {selected === null && !showAbout && (
+          {selected === null && !showAbout && !readingPassage && (
             <div className="px-4 pt-2 pb-10 ui-sans">
-              <HomeDate lang={lang} today={today} />
+              <HomeDate lang={lang} today={today} onOpenReading={openReading} />
               <div className="px-2 mb-4">
                 <p className="text-[13px] text-zinc-500 leading-5">{ui.selectPrayer.replace('{n}', String(TOTAL_PRAYERS))}</p>
               </div>

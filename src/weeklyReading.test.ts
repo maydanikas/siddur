@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { shabbatOfWeek, weeklyReadingDates, weeklyReadingLine, weeklyReadingParts } from './weeklyReading.ts';
+import { shabbatOfWeek, weeklyReadingDates, weeklyReadingLine, weeklyReadingParts, weeklyReadingPassages } from './weeklyReading.ts';
 
 const noon = (iso: string) => new Date(`${iso}T12:00:00`);
 
@@ -77,6 +77,10 @@ test('each cited span links to that Sefaria range', () => {
     'https://www.sefaria.org/Genesis.14.1-15.21',
     'https://www.sefaria.org/Joshua.24.1-26',
   ]);
+  assert.deepEqual(
+    weeklyReadingPassages(noon('2026-10-18'), 'ru').map((passage) => passage.ref),
+    ['Genesis.14.1-15.21', 'Joshua.24.1-26'],
+  );
 
   const vayechi = weeklyReadingParts(noon('2026-12-26'), 'en').map((part) => part.href);
   assert.equal(vayechi.includes('https://www.sefaria.org/Genesis.49.1-33'), true);
