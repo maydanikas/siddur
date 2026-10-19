@@ -75,7 +75,7 @@ export function passageHebrew(verses: PassageVerse[]): string {
 
 export type ReadingTranslationLang = 'en' | 'fr';
 
-export type PassageTranslation = { text: string; credit: string };
+export type PassageTranslation = { text: string; lines: string[]; credit: string };
 
 const TRANSLATION_VERSION: Record<ReadingTranslationLang, { title: string; marker: string; credit: string }> = {
   en: {
@@ -111,6 +111,13 @@ export function translationVerses(value: unknown): string {
     .join('\n');
 }
 
+/** One cleaned line per verse, including a range that crosses a chapter. Empty verses stay in place. */
+export function translationLines(value: unknown): string[] {
+  if (typeof value === 'string') return [cleanTranslationText(value)];
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((part) => (typeof part === 'string' || Array.isArray(part) ? translationLines(part) : []));
+}
+
 async function loadTranslation(ref: string, lang: ReadingTranslationLang, signal: AbortSignal): Promise<PassageTranslation | null> {
   const version = TRANSLATION_VERSION[lang];
   const response = await fetch(
@@ -120,8 +127,9 @@ async function loadTranslation(ref: string, lang: ReadingTranslationLang, signal
   if (!response.ok) return null;
   const payload = (await response.json()) as { text?: unknown; versionTitle?: string };
   if (!payload.versionTitle?.includes(version.marker)) return null;
-  const text = translationVerses(payload.text);
-  return text ? { text, credit: version.credit } : null;
+  const lines = translationLines(payload.text);
+  const text = lines.filter(Boolean).join('\n');
+  return text ? { text, lines, credit: version.credit } : null;
 }
 
 export async function loadSefariaPassage(

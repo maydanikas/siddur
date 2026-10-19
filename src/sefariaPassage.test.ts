@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { cleanMasoreticHtml, parseSefariaVerses, translationVerses } from './sefariaPassage.ts';
+import { cleanMasoreticHtml, parseSefariaVerses, translationLines, translationVerses } from './sefariaPassage.ts';
 import { transliterateHebrew } from './transliterate.ts';
 
 test('ketiv is dropped and the vocalized qere stays', () => {
@@ -23,6 +23,10 @@ test('paseq markup does not stay in the verse', () => {
 test('a public-domain translation keeps verse breaks and drops markup', () => {
   assert.equal(translationVerses(['<i>And</i> it came', ['to pass.']]), 'And it came\nto pass.');
   assert.equal(translationVerses(''), '');
+});
+
+test('translation lines keep a slot for every verse across a chapter break', () => {
+  assert.deepEqual(translationLines([['<i>And</i> it came', ''], ['to pass.']]), ['And it came', '', 'to pass.']);
 });
 
 test('a range that crosses a chapter keeps both verse numbers', () => {

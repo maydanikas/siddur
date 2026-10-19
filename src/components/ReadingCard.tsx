@@ -88,12 +88,15 @@ export default function ReadingCard({
   const player = useHebrewPlayer(hebrew, ui.ttsNoHebrew);
   const draftLang = translationLang === 'ru' || translationLang === 'nl' ? translationLang : null;
   const draftReady = verses?.some((verse) => draftLine(sefariaRef, verse.chapter, verse.verse)) ?? false;
-  const draftText = draftLang && verses
-    ? verses
-        .map((verse) => draftLine(sefariaRef, verse.chapter, verse.verse)?.[draftLang] ?? '')
-        .filter(Boolean)
-        .join('\n')
-    : '';
+  const draftLines = draftLang && verses
+    ? verses.map((verse) => draftLine(sefariaRef, verse.chapter, verse.verse)?.[draftLang] ?? '')
+    : [];
+  const published = translationLang === 'en' || translationLang === 'fr' ? translations[translationLang] : undefined;
+  const framedTranslation = published
+    ? { lines: published.lines, fallback: published.text, credit: published.credit }
+    : draftLines.some(Boolean)
+      ? { lines: draftLines, fallback: draftLines.filter(Boolean).join('\n'), credit: copy.draftCredit }
+      : null;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -216,26 +219,30 @@ export default function ReadingCard({
                 {transliteration}
               </div>
             ) : null}
-            {belowHe === 'translation' && (translationLang === 'en' || translationLang === 'fr') && translations[translationLang] ? (
+            {belowHe === 'translation' && verses && framedTranslation ? (
               <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-                <p
-                  className="whitespace-pre-wrap text-zinc-800"
-                  style={{ fontSize: TYPE_SCALE[typeSize].translation, lineHeight: 1.7 }}
-                >
-                  {translations[translationLang].text}
-                </p>
-                <p className="mt-4 text-[11px] leading-4 text-zinc-400">{translations[translationLang].credit}</p>
-              </div>
-            ) : null}
-            {belowHe === 'translation' && draftText ? (
-              <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
-                <p
-                  className="whitespace-pre-wrap text-zinc-800"
-                  style={{ fontSize: TYPE_SCALE[typeSize].translation, lineHeight: 1.7 }}
-                >
-                  {draftText}
-                </p>
-                <p className="mt-4 text-[11px] leading-4 text-zinc-400">{copy.draftCredit}</p>
+                {framedTranslation.lines.length === verses.length ? (
+                  <div className="space-y-3">
+                    {verses.map((verse, index) => (
+                      <p
+                        key={`${verse.chapter}:${verse.verse}`}
+                        className="text-zinc-800"
+                        style={{ fontSize: TYPE_SCALE[typeSize].translation, lineHeight: 1.7 }}
+                      >
+                        <span className="me-2 text-[12px] font-medium text-zinc-400">{verse.chapter}:{verse.verse}</span>
+                        {framedTranslation.lines[index]}
+                      </p>
+                    ))}
+                  </div>
+                ) : (
+                  <p
+                    className="whitespace-pre-wrap text-zinc-800"
+                    style={{ fontSize: TYPE_SCALE[typeSize].translation, lineHeight: 1.7 }}
+                  >
+                    {framedTranslation.fallback}
+                  </p>
+                )}
+                <p className="mt-4 text-[11px] leading-4 text-zinc-400">{framedTranslation.credit}</p>
               </div>
             ) : null}
           </div>
