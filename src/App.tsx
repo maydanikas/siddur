@@ -6,6 +6,7 @@ import TextSizeControl from './components/TextSizeControl';
 import { IDLE_WORD_CLASS, prepareTtsText, SPOKEN_WORD_CLASS } from './hebrewSpeech';
 import { resolveTypeSize, TYPE_SCALE, type TypeSize } from './textSize';
 import { useHebrewPlayer } from './useHebrewPlayer';
+import { type PassageTranslationLang } from './readingDraft';
 import { weeklyReadingPassages } from './weeklyReading';
 import { jewishDay } from './jewishCalendar';
 import { usePhoneDay } from './phoneDay';
@@ -1030,7 +1031,7 @@ export default function App() {
       return 'm';
     }
   });
-  const [readingTranslation, setReadingTranslation] = useState<'en' | 'fr' | null>(null);
+  const [readingTranslation, setReadingTranslation] = useState<PassageTranslationLang | null>(null);
   const [lang, setLang] = useState<Lang>(() => {
     try {
       const saved = localStorage.getItem('shacharis_lang');
@@ -1316,7 +1317,7 @@ export default function App() {
   }, [belowHe]);
 
   useEffect(() => {
-    if (lang === 'en' || lang === 'fr') setReadingTranslation(lang);
+    setReadingTranslation(lang);
   }, [lang]);
 
   useEffect(() => {

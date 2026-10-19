@@ -4,7 +4,8 @@ import TextSizeControl from './TextSizeControl';
 import { IDLE_WORD_CLASS, SPOKEN_WORD_CLASS } from '../hebrewSpeech';
 import { useHebrewPlayer } from '../useHebrewPlayer';
 import { READING_COPY } from '../readingCopy';
-import { loadSefariaPassage, type PassageTranslation, type PassageVerse, type ReadingTranslationLang } from '../sefariaPassage';
+import { draftLine, type PassageTranslationLang } from '../readingDraft';
+import { loadSefariaPassage, type PassageTranslation, type PassageVerse } from '../sefariaPassage';
 import { controlsCopy, type Lang } from '../supportCopy';
 import { TYPE_SCALE, type TypeSize } from '../textSize';
 
@@ -74,8 +75,8 @@ export default function ReadingCard({
   onTypeSize: (size: TypeSize) => void;
   belowHe: BelowHe;
   onBelowHe: (mode: BelowHe) => void;
-  translationLang: ReadingTranslationLang | null;
-  onTranslationLang: (lang: ReadingTranslationLang) => void;
+  translationLang: PassageTranslationLang | null;
+  onTranslationLang: (lang: PassageTranslationLang) => void;
 }) {
   const copy = READING_COPY[lang];
   const ui = controlsCopy(lang);
@@ -85,6 +86,9 @@ export default function ReadingCard({
   const [failed, setFailed] = useState(false);
   const hebrew = verses ? verses.map((verse) => verse.hebrew).join(' ') : null;
   const player = useHebrewPlayer(hebrew, ui.ttsNoHebrew);
+  const draftLang = translationLang === 'ru' || translationLang === 'nl' ? translationLang : null;
+  const showDraft = belowHe === 'translation' && draftLang !== null;
+  const draftReady = verses?.some((verse) => draftLine(sefariaRef, verse.chapter, verse.verse)) ?? false;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -124,27 +128,45 @@ export default function ReadingCard({
             nameXl={ui.textSizeXl}
           />
         </div>
+        {showDraft && draftReady ? (
+          <p className="ui-sans mt-2 text-[12px] leading-4 text-zinc-500">{copy.draftCredit}</p>
+        ) : null}
         {verses === null && !failed ? (
           <p className="mt-6 text-[15px] text-zinc-500">{copy.loading}</p>
         ) : null}
         {failed ? <p className="mt-6 text-[15px] text-zinc-500">{copy.error}</p> : null}
         {verses ? (
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 space-y-4">
             {(() => {
               let wordStart = 0;
               return verses.map((verse) => {
                 const count = verse.hebrew.split(/\s+/).filter(Boolean).length;
                 const start = wordStart;
                 wordStart += count;
+                const line = showDraft ? draftLine(sefariaRef, verse.chapter, verse.verse) : null;
                 return (
-                  <HebrewVerse
-                    key={`${verse.chapter}:${verse.verse}`}
-                    verse={verse}
-                    wordStart={start}
-                    activeWord={player.activeWord}
-                    onWord={player.speakWord}
-                    fontSize={TYPE_SCALE[typeSize].he}
-                  />
+                  <div key={`${verse.chapter}:${verse.verse}`}>
+                    <HebrewVerse
+                      verse={verse}
+                      wordStart={start}
+                      activeWord={player.activeWord}
+                      onWord={player.speakWord}
+                      fontSize={TYPE_SCALE[typeSize].he}
+                    />
+                    {line && draftLang ? (
+                      <div className="ui-sans mt-1">
+                        <p
+                          className="text-zinc-800"
+                          style={{ fontSize: TYPE_SCALE[typeSize].translation, lineHeight: 1.7 }}
+                        >
+                          {line[draftLang]}
+                        </p>
+                        {line.note ? (
+                          <p className="mt-1 border-s-2 border-zinc-200 ps-2 text-[12px] leading-5 text-zinc-500">{line.note}</p>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
                 );
               });
             })()}
@@ -176,8 +198,8 @@ export default function ReadingCard({
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
               {(['RU', 'NL', 'EN', 'FR'] as const).map((code) => {
-                const lower = code.toLowerCase() as Lang;
-                const available = lower === 'en' || lower === 'fr' ? Boolean(translations[lower]) : false;
+                const lower = code.toLowerCase() as PassageTranslationLang;
+                const available = lower === 'en' || lower === 'fr' ? Boolean(translations[lower]) : draftReady;
                 const active = available && translationLang === lower;
                 return (
                   <button
@@ -185,9 +207,7 @@ export default function ReadingCard({
                     type="button"
                     disabled={!available}
                     aria-disabled={!available}
-                    onClick={() => {
-                      if (lower === 'en' || lower === 'fr') onTranslationLang(lower);
-                    }}
+                    onClick={() => onTranslationLang(lower)}
                     className={`rounded-full px-4 py-2 text-[13px] font-semibold ${
                       active
                         ? 'bg-[#0D9488] text-white shadow-sm'
@@ -209,7 +229,7 @@ export default function ReadingCard({
                 {transliteration}
               </div>
             ) : null}
-            {belowHe === 'translation' && translationLang && translations[translationLang] ? (
+            {belowHe === 'translation' && (translationLang === 'en' || translationLang === 'fr') && translations[translationLang] ? (
               <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
                 <p
                   className="whitespace-pre-wrap text-zinc-800"
