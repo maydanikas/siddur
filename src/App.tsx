@@ -1548,7 +1548,10 @@ export default function App() {
               belowHe={belowHe}
               onBelowHe={setBelowHe}
               translationLang={readingTranslation}
-              onTranslationLang={setReadingTranslation}
+              onTranslationLang={(next) => {
+                setLang(next);
+                setReadingTranslation(next);
+              }}
             />
           ) : null}
 
