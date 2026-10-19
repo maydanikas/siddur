@@ -1,6 +1,8 @@
-// Column B draft for reading aloud, 24 Oct–26 Dec 2026.
-// Each line is [russian, dutch, note]. The note is empty unless JPS and the French diverge, or the Hebrew is obscure.
-// This is not a published translation.
+// Column B draft for reading aloud. Each line is [russian, dutch, note].
+// Done: 24 Oct 2026 Lech-Lecha through 26 Dec 2026 Vayechi, 617 verses.
+// Continue at Shemot, Shabbat 2 Jan 2027: Exodus 3:1–4:17 and I Samuel 3:1–21,
+// then the rest of column B through Simchat Torah 23 Oct 2027. Columns A and C are not started.
+// A week with no line keeps RU and NL inactive. This is not a published translation.
 
 export type PassageTranslationLang = 'ru' | 'nl' | 'en' | 'fr';
 
