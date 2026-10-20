@@ -66,10 +66,11 @@ test('the Chanukah scroll and the haftarah use their own books', () => {
   assert.equal(half?.nl.includes('een halve sikkel'), true);
 });
 
-test('Bereshit in column B has Andrii’s Dutch and no Russian yet', () => {
+test('Bereshit in column B has Andrii’s Russian and Dutch', () => {
   assert.equal(draftLine('Genesis.3.1-4.18', 3, 1)?.nl.startsWith('De slang was slimmer'), true);
   assert.equal(draftLine('Genesis.3.1-4.18', 4, 18)?.nl.endsWith('verwekte Lemech.'), true);
-  assert.equal(draftLine('Genesis.3.1-4.18', 3, 1)?.ru, '');
+  assert.equal(draftLine('Genesis.3.1-4.18', 3, 1)?.ru.startsWith('Змей был хитрее'), true);
+  assert.equal(draftLine('Job.38.1-18', 38, 18)?.ru.endsWith('знаешь всё это».'), true);
   assert.equal(draftLine('Job.38.1-18', 38, 18)?.nl.endsWith('als je dit alles weet.’'), true);
   assert.equal(draftLine('Job.38.1-19', 38, 19), null);
 });
