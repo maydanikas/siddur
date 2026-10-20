@@ -1,12 +1,14 @@
-const RESERVED_SLUGS = new Set(['about', 'reading', 'column-b']);
+const RESERVED_SLUGS = new Set(['about', 'reading', 'cyclus', 'cyclum', 'column-b']);
 
 export const READING_PATH = '/reading';
 
-export const COLUMN_B_PATH = '/column-b';
+export const COLUMN_B_PATH = '/cyclus';
+
+const COLUMN_B_ALIASES = new Set([COLUMN_B_PATH, '/cyclum', '/column-b']);
 
 export function isColumnBPath(pathname: string): boolean {
   const path = pathname.replace(/\/+$/, '') || '/';
-  return path === COLUMN_B_PATH;
+  return COLUMN_B_ALIASES.has(path);
 }
 
 export const READING_TITLE = 'Reading — Shacharis';
