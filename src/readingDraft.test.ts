@@ -2,13 +2,22 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { DRAFT_VERSE_COUNT, draftLine } from './readingDraft.ts';
 
-test('the first packet holds every prepared verse and leaves the next portion empty', () => {
-  assert.equal(DRAFT_VERSE_COUNT, 617);
+test('the prepared draft holds both packets and leaves the next portion empty', () => {
+  assert.equal(DRAFT_VERSE_COUNT, 1203);
   const first = draftLine('Genesis.14.1-15.21', 14, 1);
   assert.equal(first?.ru.startsWith('В дни Амрафеля'), true);
   assert.equal(first?.nl.startsWith('In de dagen van Amrafel'), true);
   assert.equal(first?.note, '');
-  assert.equal(draftLine('Exodus.3.1-4.17', 3, 1), null);
+  const bush = draftLine('Exodus.3.1-4.17', 3, 2);
+  assert.equal(bush?.ru.startsWith('Посланник Господа'), true);
+  assert.equal(bush?.nl.startsWith('De bode van de Eeuwige'), true);
+  const name = draftLine('Exodus.3.1-4.17', 3, 14);
+  assert.equal(name?.ru.includes('Я буду тем, кем буду'), true);
+  assert.equal(name?.nl.includes('Ik zal zijn die Ik zijn zal'), true);
+  const plea = draftLine('Exodus.3.1-4.17', 4, 10);
+  assert.equal(plea?.ru.includes('Владыка'), true);
+  assert.equal(plea?.nl.includes('Heer'), true);
+  assert.equal(draftLine('Exodus.39.15-43', 39, 15), null);
   assert.equal(draftLine('Amos.2.6-3.8', 2, 6), null);
 });
 
@@ -43,4 +52,10 @@ test('the Chanukah scroll and the haftarah use their own books', () => {
   assert.equal(draftLine('I_Kings.7.40-50', 7, 51), null);
   assert.equal(draftLine('Zechariah.2.14-4.7', 3, 2)?.ru.includes('обвинител'), true);
   assert.equal(draftLine('Isaiah.38.9-38.20', 38, 11)?.ru.includes('Господа, Господа'), true);
+  const sea = draftLine('Exodus.14.26-16.10', 15, 4);
+  assert.equal(sea?.ru.includes('Тростниковом море'), true);
+  assert.equal(sea?.nl.includes('de Rietzee'), true);
+  const half = draftLine('Exodus.30.11-16', 30, 13);
+  assert.equal(half?.ru.includes('половину шекеля'), true);
+  assert.equal(half?.nl.includes('een halve sikkel'), true);
 });

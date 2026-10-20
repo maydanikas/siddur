@@ -7,10 +7,12 @@ import { IDLE_WORD_CLASS, prepareTtsText, SPOKEN_WORD_CLASS } from './hebrewSpee
 import { resolveTypeSize, TYPE_SCALE, type TypeSize } from './textSize';
 import { useHebrewPlayer } from './useHebrewPlayer';
 import { type PassageTranslationLang } from './readingDraft';
+import { COLUMN_B_COPY, columnBSaturday } from './columnB';
 import { weeklyReadingPassages } from './weeklyReading';
 import { jewishDay } from './jewishCalendar';
 import { usePhoneDay } from './phoneDay';
 import { applySeason } from './seasonalText';
+import ColumnBScreen from './components/ColumnBScreen';
 import SplashScreen from './components/SplashScreen';
 import AboutScreen from './components/AboutScreen';
 import SupportEnvelope from './components/SupportEnvelope';
@@ -18,7 +20,7 @@ import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
 import { trackAboutPage, trackAppOpen, trackLanguage, trackPageView } from './analytics';
 import { REMINDER_INTRO_SEEN_KEY, maintainReminder, reminderNotice } from './reminder';
-import { HOME_DESCRIPTION, HOME_TITLE, isReadingPath, prayerSeoDescription, prayerSlug, READING_PATH, READING_TITLE } from './prayerPaths';
+import { COLUMN_B_PATH, HOME_DESCRIPTION, HOME_TITLE, isColumnBPath, isReadingPath, prayerSeoDescription, prayerSlug, READING_PATH, READING_TITLE } from './prayerPaths';
 
 type BelowHe = 'translation' | 'translit';
 
@@ -711,7 +713,7 @@ const prayerIndexFromPath = (pathname: string) => {
 
 const historyScreen = () => {
   const screen = window.history.state?.screen;
-  return screen === 'list' || screen === 'about' || screen === 'prayer' || screen === 'reading' ? screen : null;
+  return screen === 'list' || screen === 'about' || screen === 'prayer' || screen === 'reading' || screen === 'column-b' ? screen : null;
 };
 
 const TOTAL_PRAYERS = prayers[prayers.length - 1].id;
@@ -1032,6 +1034,17 @@ export default function App() {
     }
   });
   const [readingTranslation, setReadingTranslation] = useState<PassageTranslationLang | null>(null);
+  const [columnB, setColumnB] = useState<{ date: string | null; index: number | null } | null>(() => {
+    if (!isColumnBPath(window.location.pathname)) return null;
+    const state = window.history.state;
+    if (state?.screen === 'column-b') {
+      return {
+        date: typeof state.date === 'string' ? state.date : null,
+        index: typeof state.index === 'number' ? state.index : null,
+      };
+    }
+    return { date: null, index: null };
+  });
   const [lang, setLang] = useState<Lang>(() => {
     try {
       const saved = localStorage.getItem('shacharis_lang');
@@ -1122,6 +1135,7 @@ export default function App() {
       }
       setSelected(null);
       setReadingIndex(null);
+      setColumnB(null);
       setShowAbout(false);
       refreshEnvelope();
       if (window.location.pathname !== '/') {
@@ -1159,6 +1173,19 @@ export default function App() {
     const onPop = () => {
       const path = window.location.pathname;
       const screen = historyScreen();
+      if (screen === 'column-b' || isColumnBPath(path)) {
+        const state = window.history.state;
+        setShowAbout(false);
+        setSelected(null);
+        setReadingIndex(null);
+        setColumnB({
+          date: typeof state?.date === 'string' ? state.date : null,
+          index: typeof state?.index === 'number' ? state.index : null,
+        });
+        setShowEnvelope(false);
+        return;
+      }
+      setColumnB(null);
       if (screen === 'reading' || isReadingPath(path)) {
         const index = window.history.state?.index;
         setShowAbout(false);
@@ -1185,7 +1212,7 @@ export default function App() {
 
   useEffect(() => {
     const path = window.location.pathname;
-    if (path === '/' || path === '/about' || isReadingPath(path) || prayerIndexFromPath(path) !== null) return;
+    if (path === '/' || path === '/about' || isReadingPath(path) || isColumnBPath(path) || prayerIndexFromPath(path) !== null) return;
     window.history.replaceState({ screen: 'list' }, '', '/');
   }, []);
 
@@ -1196,6 +1223,9 @@ export default function App() {
     if (showAbout) {
       title = 'About — Shacharis';
       description = 'Shacharis is a free Shaharit siddur. Бесплатный сидур утренних молитв.';
+    } else if (columnB) {
+      title = `${COLUMN_B_COPY[lang].title} — Shacharis`;
+      description = COLUMN_B_COPY[lang].note;
     } else if (readingIndex !== null) {
       title = READING_TITLE;
       description = "This week's Shabbat Torah and haftarah reading.";
@@ -1217,7 +1247,7 @@ export default function App() {
     if (canonical) canonical.setAttribute('href', canonicalUrl);
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) ogUrl.setAttribute('content', canonicalUrl);
-  }, [showAbout, selected, readingIndex]);
+  }, [showAbout, selected, readingIndex, columnB, lang]);
 
   const openReading = (index: number) => {
     player.stop();
@@ -1241,6 +1271,34 @@ export default function App() {
       return;
     }
     setReadingIndex(null);
+    scrollShellToTop();
+  };
+
+  const openColumnWeek = (date: string) => {
+    player.stop();
+    setShowAbout(false);
+    setSelected(null);
+    setReadingIndex(null);
+    setColumnB({ date, index: 0 });
+    window.history.pushState({ screen: 'column-b', date, index: 0 }, '', COLUMN_B_PATH);
+    scrollShellToTop();
+  };
+
+  const openColumnPassage = (index: number) => {
+    if (!columnB?.date) return;
+    const date = columnB.date;
+    setColumnB({ date, index });
+    window.history.replaceState({ screen: 'column-b', date, index }, '', COLUMN_B_PATH);
+    scrollShellToTop();
+  };
+
+  const closeColumnPassage = () => {
+    player.stop();
+    if (historyScreen() === 'column-b' && typeof window.history.state?.index === 'number') {
+      window.history.back();
+      return;
+    }
+    setColumnB((current) => (current ? { date: null, index: null } : current));
     scrollShellToTop();
   };
 
@@ -1326,7 +1384,12 @@ export default function App() {
 
   const currentPrayer = selected !== null ? forToday(prayers[selected], today) : null;
   const readingPassages = weeklyReadingPassages(today, lang);
-  const readingPassage = readingIndex !== null ? readingPassages[readingIndex] : undefined;
+  const readingPassage = columnB === null && readingIndex !== null ? readingPassages[readingIndex] : undefined;
+  const columnDate = columnB?.date ? columnBSaturday(columnB.date) : null;
+  const columnPassages = columnDate ? weeklyReadingPassages(columnDate, lang) : [];
+  const columnIndex = columnB?.index ?? null;
+  const columnPassage = columnIndex != null ? columnPassages[columnIndex] : undefined;
+  const columnNext = columnIndex != null ? columnPassages[columnIndex + 1] : undefined;
 
   useEffect(() => {
     if (readingIndex === null || readingIndex < readingPassages.length) return;
@@ -1380,7 +1443,7 @@ export default function App() {
         <main
           ref={mainRef}
           className={`flex-1 flex flex-col min-h-0 ${
-            (selected !== null || readingPassage) && !showAbout ? 'overflow-hidden' : 'overflow-y-auto'
+            (selected !== null || readingPassage || columnPassage) && !showAbout ? 'overflow-hidden' : 'overflow-y-auto'
           }`}
         >
           {showAbout ? (
@@ -1534,6 +1597,26 @@ export default function App() {
                 onToggle={player.toggle}
               />
             </div>
+          ) : columnPassage ? (
+            <ReadingCard
+              key={columnPassage.ref}
+              title={columnPassage.title}
+              sefariaRef={columnPassage.ref}
+              lang={lang}
+              nextTitle={columnNext?.title}
+              onNext={columnNext && columnIndex != null ? () => openColumnPassage(columnIndex + 1) : undefined}
+              onHome={closeColumnPassage}
+              homeLabel={COLUMN_B_COPY[lang].list}
+              typeSize={typeSize}
+              onTypeSize={setTypeSize}
+              belowHe={belowHe}
+              onBelowHe={setBelowHe}
+              translationLang={readingTranslation}
+              onTranslationLang={(next) => {
+                setLang(next);
+                setReadingTranslation(next);
+              }}
+            />
           ) : readingPassage ? (
             <ReadingCard
               key={readingPassage.ref}
@@ -1555,7 +1638,11 @@ export default function App() {
             />
           ) : null}
 
-          {selected === null && !showAbout && !readingPassage && (
+          {selected === null && !showAbout && !readingPassage && columnB && columnB.index === null && (
+            <ColumnBScreen lang={lang} onOpen={openColumnWeek} />
+          )}
+
+          {selected === null && !showAbout && !readingPassage && !columnB && (
             <div className="px-4 pt-2 pb-10 ui-sans">
               <HomeDate lang={lang} today={today} onOpenReading={openReading} />
               <div className="px-2 mb-4">
@@ -1588,7 +1675,7 @@ export default function App() {
               <div className="mt-8 px-2 text-[11px] text-zinc-400 leading-4">
                 {ui.footer}
               </div>
-              {showEnvelope && !showSplash && (
+              {showEnvelope && !showSplash && !columnB && (
                 <SupportEnvelope
                   onOpen={openAbout}
                   onDismiss={dismissEnvelope}

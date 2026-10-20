@@ -58,6 +58,7 @@ export default function ReadingCard({
   nextTitle,
   onNext,
   onHome,
+  homeLabel,
   typeSize,
   onTypeSize,
   belowHe,
@@ -71,6 +72,7 @@ export default function ReadingCard({
   nextTitle?: string;
   onNext?: () => void;
   onHome: () => void;
+  homeLabel?: string;
   typeSize: TypeSize;
   onTypeSize: (size: TypeSize) => void;
   belowHe: BelowHe;
@@ -267,7 +269,7 @@ export default function ReadingCard({
             onClick={onHome}
             className="flex min-h-11 flex-1 items-center justify-center rounded-full border border-[#0D9488] bg-white px-3 py-2 text-center text-[14px] font-medium leading-tight text-[#0D9488] transition-all hover:bg-teal-50"
           >
-            {copy.home}
+            {homeLabel ?? copy.home}
           </button>
           <button
             type="button"
