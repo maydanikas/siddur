@@ -97,7 +97,7 @@ export default function ReadingCard({
   const framedTranslation = published
     ? { lines: published.lines, fallback: published.text, credit: published.credit }
     : draftLines.some(Boolean)
-      ? { lines: draftLines, fallback: draftLines.filter(Boolean).join('\n'), credit: copy.draftCredit }
+      ? { lines: draftLines, fallback: draftLines.filter(Boolean).join('\n'), credit: copy.translationCredit }
       : null;
 
   useEffect(() => {

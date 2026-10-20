@@ -16,7 +16,7 @@ export const COLUMN_B_COPY: Record<
   ru: {
     kicker: 'Предпросмотр',
     title: 'Год Б',
-    note: 'Готовые переводы открываются в той же рамке, что и на карточке чтения. Это черновик, не изданный перевод.',
+    note: 'Готовые переводы открываются в той же рамке, что и на карточке чтения.',
     ready: 'готово',
     pending: 'ещё нет',
     list: 'К списку',
@@ -25,7 +25,7 @@ export const COLUMN_B_COPY: Record<
   nl: {
     kicker: 'Voorbeeld',
     title: 'Jaar B',
-    note: 'Afgewerkte vertalingen openen in hetzelfde kader als de leeskaart. Dit is een klad, geen uitgegeven vertaling.',
+    note: 'Afgewerkte vertalingen openen in hetzelfde kader als de leeskaart.',
     ready: 'klaar',
     pending: 'nog niet',
     list: 'Naar de lijst',
@@ -34,7 +34,7 @@ export const COLUMN_B_COPY: Record<
   en: {
     kicker: 'Preview',
     title: 'Year B',
-    note: 'Finished translations open in the same frame as the reading card. This is a draft, not a published translation.',
+    note: 'Finished translations open in the same frame as the reading card.',
     ready: 'ready',
     pending: 'not yet',
     list: 'Back to the list',
@@ -43,7 +43,7 @@ export const COLUMN_B_COPY: Record<
   fr: {
     kicker: 'Aperçu',
     title: 'Année B',
-    note: 'Les traductions terminées s’ouvrent dans le même cadre que la carte de lecture. Ceci est un brouillon, pas une traduction publiée.',
+    note: 'Les traductions terminées s’ouvrent dans le même cadre que la carte de lecture.',
     ready: 'prêt',
     pending: 'pas encore',
     list: 'Vers la liste',
