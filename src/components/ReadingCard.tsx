@@ -89,7 +89,8 @@ export default function ReadingCard({
   const hebrew = verses ? verses.map((verse) => verse.hebrew).join(' ') : null;
   const player = useHebrewPlayer(hebrew, ui.ttsNoHebrew);
   const draftLang = translationLang === 'ru' || translationLang === 'nl' ? translationLang : null;
-  const draftReady = verses?.some((verse) => draftLine(sefariaRef, verse.chapter, verse.verse)) ?? false;
+  const draftReady = (code: 'ru' | 'nl') =>
+    verses?.some((verse) => Boolean(draftLine(sefariaRef, verse.chapter, verse.verse)?.[code])) ?? false;
   const draftLines = draftLang && verses
     ? verses.map((verse) => draftLine(sefariaRef, verse.chapter, verse.verse)?.[draftLang] ?? '')
     : [];
@@ -205,7 +206,7 @@ export default function ReadingCard({
             <div className="mt-3 flex flex-wrap gap-2">
               {(['RU', 'NL', 'EN', 'FR'] as const).map((code) => {
                 const lower = code.toLowerCase() as PassageTranslationLang;
-                const available = lower === 'en' || lower === 'fr' ? Boolean(translations[lower]) : draftReady;
+                const available = lower === 'en' || lower === 'fr' ? Boolean(translations[lower]) : draftReady(lower);
                 const active = available && translationLang === lower;
                 return (
                   <button

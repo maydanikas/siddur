@@ -3,10 +3,13 @@ import { test } from 'node:test';
 import { DRAFT_VERSE_COUNT, draftLine } from './readingDraft.ts';
 
 test('the prepared draft holds both packets and leaves the next portion empty', () => {
-  assert.equal(DRAFT_VERSE_COUNT, 1207);
-  assert.equal(draftLine('Deuteronomy.32.1-52', 32, 48), null);
-  assert.equal(draftLine('Deuteronomy.32.1-52', 32, 49)?.ru.startsWith('«Поднимись на эту гору Аварим'), true);
+  assert.equal(DRAFT_VERSE_COUNT, 1306);
+  assert.equal(draftLine('Deuteronomy.32.1-52', 32, 1)?.ru.startsWith('Внимайте, небеса'), true);
+  assert.equal(draftLine('Deuteronomy.32.1-52', 32, 1)?.nl, '');
+  assert.equal(draftLine('Deuteronomy.32.1-52', 32, 49)?.ru.includes('напротив Йерихо'), true);
   assert.equal(draftLine('Deuteronomy.32.1-52', 32, 52)?.nl.endsWith('zul je niet komen.»'), true);
+  assert.equal(draftLine('II_Samuel.22.1-51', 22, 51)?.ru.endsWith('навеки».'), true);
+  assert.equal(draftLine('II_Samuel.22.1-51', 22, 51)?.nl, '');
   const first = draftLine('Genesis.14.1-15.21', 14, 1);
   assert.equal(first?.ru.startsWith('В дни Амрафеля'), true);
   assert.equal(first?.nl.startsWith('In de dagen van Amrafel'), true);
