@@ -165,6 +165,20 @@ export default function ReadingCard({
           </div>
         ) : null}
         {verses ? (
+          <p className="mt-4 ui-sans text-[11px] leading-4 text-zinc-400">
+            Miqra according to the Masorah ·{' '}
+            <a
+              href={`https://www.sefaria.org/${sefariaRef}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline decoration-zinc-300 underline-offset-2"
+            >
+              Sefaria
+            </a>
+            {' '}· CC-BY-SA
+          </p>
+        ) : null}
+        {verses ? (
           <div className="mt-8 ui-sans">
             <div className="flex p-1 rounded-full bg-zinc-100" role="tablist" aria-label={`${ui.translation} / ${ui.transliteration}`}>
               {([
@@ -248,20 +262,6 @@ export default function ReadingCard({
               </div>
             ) : null}
           </div>
-        ) : null}
-        {verses ? (
-          <p className="mt-6 text-[11px] leading-4 text-zinc-400">
-            Miqra according to the Masorah ·{' '}
-            <a
-              href={`https://www.sefaria.org/${sefariaRef}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline decoration-zinc-300 underline-offset-2"
-            >
-              Sefaria
-            </a>
-            {' '}· CC-BY-SA
-          </p>
         ) : null}
         <div className="mt-10 flex items-stretch gap-3 ui-sans">
           <button
