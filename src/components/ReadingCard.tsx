@@ -239,7 +239,7 @@ export default function ReadingCard({
               <div className="mt-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
                 {framedTranslation.lines.length === verses.length ? (
                   <div className="space-y-3">
-                    {verses.map((verse, index) => (
+                    {verses.map((verse, index) => !framedTranslation.lines[index] ? null : (
                       <p
                         key={`${verse.chapter}:${verse.verse}`}
                         className="text-zinc-800"
