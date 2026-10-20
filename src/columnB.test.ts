@@ -8,6 +8,7 @@ test('the year B preview marks a Shabbat ready only when every span has a draft'
   assert.equal(ready.get('2026-12-26'), true);
   assert.equal(ready.get('2027-01-02'), true);
   assert.equal(ready.get('2027-03-06'), true);
+  assert.equal(ready.get('2026-10-10'), true);
   assert.equal(ready.get('2026-10-17'), false);
   assert.equal(ready.get('2027-03-13'), false);
   const lech = columnBWeeks('ru').find((week) => week.iso === '2026-10-24');
