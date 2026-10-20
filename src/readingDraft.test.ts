@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { DRAFT_VERSE_COUNT, draftLine } from './readingDraft.ts';
 
 test('the prepared draft holds both packets and leaves the next portion empty', () => {
-  assert.equal(DRAFT_VERSE_COUNT, 1366);
+  assert.equal(DRAFT_VERSE_COUNT, 1400);
   assert.equal(draftLine('Deuteronomy.32.1-52', 32, 1)?.ru.startsWith('Внимайте, небеса'), true);
   assert.equal(draftLine('Deuteronomy.32.1-52', 32, 1)?.nl.startsWith('Luister, hemel'), true);
   assert.equal(draftLine('Deuteronomy.32.1-52', 32, 49)?.ru.includes('напротив Йерихо'), true);
@@ -23,7 +23,7 @@ test('the prepared draft holds both packets and leaves the next portion empty', 
   const plea = draftLine('Exodus.3.1-4.17', 4, 10);
   assert.equal(plea?.ru.includes('Владыка'), true);
   assert.equal(plea?.nl.includes('Heer'), true);
-  assert.equal(draftLine('Exodus.39.15-43', 39, 15), null);
+  assert.equal(draftLine('Leviticus.3.1-4.26', 3, 1), null);
   assert.equal(draftLine('Amos.2.6-3.8', 2, 6), null);
 });
 
@@ -73,4 +73,12 @@ test('Bereshit in column B has Andrii’s Russian and Dutch', () => {
   assert.equal(draftLine('Job.38.1-18', 38, 18)?.ru.endsWith('знаешь всё это».'), true);
   assert.equal(draftLine('Job.38.1-18', 38, 18)?.nl.endsWith('als je dit alles weet.’'), true);
   assert.equal(draftLine('Job.38.1-19', 38, 19), null);
+});
+
+test('Pekudei in column B has Andrii’s Russian; Exodus there has no Dutch yet', () => {
+  assert.equal(draftLine('Exodus.39.15-43', 39, 15)?.ru.startsWith('На нагруднике сделали цепочки'), true);
+  assert.equal(draftLine('Exodus.39.15-43', 39, 15)?.nl, '');
+  assert.equal(draftLine('Exodus.40.34-38', 40, 38)?.ru.endsWith('всех их переходов.'), true);
+  assert.equal(draftLine('I_Kings.7.40-50', 7, 40)?.ru.startsWith('Хирам изготовил котлы'), true);
+  assert.equal(draftLine('I_Kings.7.40-50', 7, 40)?.nl.startsWith('Chiram maakte'), true);
 });
