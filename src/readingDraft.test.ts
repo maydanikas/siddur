@@ -75,10 +75,10 @@ test('Bereshit in column B has Andrii’s Russian and Dutch', () => {
   assert.equal(draftLine('Job.38.1-19', 38, 19), null);
 });
 
-test('Pekudei in column B has Andrii’s Russian; Exodus there has no Dutch yet', () => {
+test('Pekudei in column B has Andrii’s Russian and Dutch', () => {
   assert.equal(draftLine('Exodus.39.15-43', 39, 15)?.ru.startsWith('На нагруднике сделали цепочки'), true);
-  assert.equal(draftLine('Exodus.39.15-43', 39, 15)?.nl, '');
+  assert.equal(draftLine('Exodus.39.15-43', 39, 15)?.nl.startsWith('Op het borstschild'), true);
   assert.equal(draftLine('Exodus.40.34-38', 40, 38)?.ru.endsWith('всех их переходов.'), true);
   assert.equal(draftLine('I_Kings.7.40-50', 7, 40)?.ru.startsWith('Хирам изготовил котлы'), true);
-  assert.equal(draftLine('I_Kings.7.40-50', 7, 40)?.nl.startsWith('Chiram maakte'), true);
+  assert.equal(draftLine('I_Kings.7.40-50', 7, 50)?.nl.endsWith('grote zaal van het Huis.'), true);
 });
