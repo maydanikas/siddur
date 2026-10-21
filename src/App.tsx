@@ -7,8 +7,9 @@ import { IDLE_WORD_CLASS, prepareTtsText, SPOKEN_WORD_CLASS } from './hebrewSpee
 import { resolveTypeSize, TYPE_SCALE, type TypeSize } from './textSize';
 import { useHebrewPlayer } from './useHebrewPlayer';
 import { type PassageTranslationLang } from './readingDraft';
+import { READING_COPY } from './readingCopy';
 import { COLUMN_B_COPY, columnBSaturday } from './columnB';
-import { weeklyReadingPassages } from './weeklyReading';
+import { weeklyReadingPassages, type WeeklyPassage } from './weeklyReading';
 import { jewishDay } from './jewishCalendar';
 import { usePhoneDay } from './phoneDay';
 import { applySeason } from './seasonalText';
@@ -1390,6 +1391,11 @@ export default function App() {
   const columnIndex = columnB?.index ?? null;
   const columnPassage = columnIndex != null ? columnPassages[columnIndex] : undefined;
   const columnNext = columnIndex != null ? columnPassages[columnIndex + 1] : undefined;
+  const readingNext = readingIndex !== null ? readingPassages[readingIndex + 1] : undefined;
+  const nextPassageLabel = (passage: WeeklyPassage | undefined) => {
+    if (!passage) return undefined;
+    return passage.kind === 'haftarah' ? READING_COPY[lang].haftarah : READING_COPY[lang].next;
+  };
   const showHomeDateSticky =
     selected === null && !showAbout && readingIndex === null && !columnB;
   const showPrayerChromeSticky = selected !== null && currentPrayer !== null && !showAbout;
@@ -1614,7 +1620,7 @@ export default function App() {
               title={columnPassage.title}
               sefariaRef={columnPassage.ref}
               lang={lang}
-              nextTitle={columnNext?.title}
+              nextLabel={nextPassageLabel(columnNext)}
               onNext={columnNext && columnIndex != null ? () => openColumnPassage(columnIndex + 1) : undefined}
               onHome={closeColumnPassage}
               homeLabel={COLUMN_B_COPY[lang].list}
@@ -1634,8 +1640,8 @@ export default function App() {
               title={readingPassage.title}
               sefariaRef={readingPassage.ref}
               lang={lang}
-              nextTitle={readingIndex === null ? undefined : readingPassages[readingIndex + 1]?.title}
-              onNext={readingIndex !== null && readingPassages[readingIndex + 1] ? () => openReading(readingIndex + 1) : undefined}
+              nextLabel={nextPassageLabel(readingNext)}
+              onNext={readingNext ? () => openReading(readingIndex! + 1) : undefined}
               onHome={closeReading}
               typeSize={typeSize}
               onTypeSize={setTypeSize}

@@ -465,16 +465,24 @@ export function weeklyReadingParts(date: Date, lang: Lang): WeeklyReadingPart[] 
   return parts;
 }
 
-export type WeeklyPassage = { title: string; ref: string };
+export type WeeklyPassage = { title: string; ref: string; kind: 'torah' | 'haftarah' };
 
 /** Each Torah and haftarah span for this week's Shabbat, in reading order. */
 export function weeklyReadingPassages(date: Date, lang: Lang): WeeklyPassage[] {
   const row = rowOf(date);
   if (!row) return [];
-  return [...row.torah, ...(row.haftarah ?? [])].map((span) => ({
-    title: formatRef(span, lang),
-    ref: sefariaRef(span),
-  }));
+  return [
+    ...row.torah.map((span) => ({
+      title: formatRef(span, lang),
+      ref: sefariaRef(span),
+      kind: 'torah' as const,
+    })),
+    ...(row.haftarah ?? []).map((span) => ({
+      title: formatRef(span, lang),
+      ref: sefariaRef(span),
+      kind: 'haftarah' as const,
+    })),
+  ];
 }
 
 /** The home-screen line for this week's Shabbat reading, or an empty string. */
