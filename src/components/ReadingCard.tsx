@@ -127,8 +127,8 @@ export default function ReadingCard({
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      <div className="flex-1 overflow-auto px-5 pb-[168px]">
-        <div className="pt-1 flex items-center justify-between gap-3">
+      <div className="shrink-0 z-10 bg-white px-5 pt-1 pb-3">
+        <div className="flex items-center justify-between gap-3">
           <h2 className="min-w-0 text-[22px] font-semibold leading-snug tracking-tight text-[#0D9488]">{title}</h2>
           <TextSizeControl
             value={typeSize}
@@ -139,6 +139,8 @@ export default function ReadingCard({
             nameXl={ui.textSizeXl}
           />
         </div>
+      </div>
+      <div className="flex-1 overflow-auto px-5 pb-[168px]">
         {verses === null && !failed ? (
           <p className="mt-6 text-[15px] text-zinc-500">{copy.loading}</p>
         ) : null}

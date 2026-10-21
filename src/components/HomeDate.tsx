@@ -52,7 +52,7 @@ export default function HomeDate({
   }
   if (!gregorian || !hebrew) return null;
   return (
-    <div className="mb-4 rounded-2xl border border-[#0D9488] bg-[#f3faf9] px-4 py-3">
+    <div className="rounded-2xl border border-[#0D9488] bg-[#f3faf9] px-4 py-3">
       <p className="text-[13px] leading-5 text-zinc-500">
         <span>{gregorian}</span>
         <span className="mx-1.5 text-[#0D9488]/45" aria-hidden="true">·</span>

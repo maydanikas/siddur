@@ -1390,6 +1390,9 @@ export default function App() {
   const columnIndex = columnB?.index ?? null;
   const columnPassage = columnIndex != null ? columnPassages[columnIndex] : undefined;
   const columnNext = columnIndex != null ? columnPassages[columnIndex + 1] : undefined;
+  const showHomeDateSticky =
+    selected === null && !showAbout && readingIndex === null && !columnB;
+  const showPrayerChromeSticky = selected !== null && currentPrayer !== null && !showAbout;
 
   useEffect(() => {
     if (readingIndex === null || readingIndex < readingPassages.length) return;
@@ -1409,35 +1412,64 @@ export default function App() {
       `}</style>
 
       <div className="max-w-[720px] mx-auto h-full overflow-hidden flex flex-col">
-        {/* Header stays outside the scroller so the i-button does not jump */}
-        <header className="px-6 pt-8 pb-5 ui-sans shrink-0 z-10 bg-white">
-          <div className="flex items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={goHome}
-              aria-label={ui.backToList}
-              className="flex items-center gap-3 min-w-0 text-left appearance-none bg-transparent p-0 m-0 border-0 font-[inherit] text-inherit"
-            >
-              <div className="h-9 w-9 rounded-full bg-[#0D9488] flex items-center justify-center text-white font-semibold text-[15px]">ש</div>
-              <div>
-                <h1 className="text-[22px] font-semibold tracking-tight leading-none">Shacharis</h1>
-                <p className="text-[13px] text-zinc-500 mt-1 font-medium">{ui.tagline}</p>
-              </div>
-            </button>
-            <button
-              type="button"
-              onClick={showAbout ? closeAbout : openAbout}
-              aria-label={ABOUT_COPY[lang].aboutLink}
-              aria-pressed={showAbout}
-              className="group shrink-0 h-9 w-9 flex items-center justify-center appearance-none bg-transparent p-0 m-0 border-0"
-            >
-              <span className={`h-7 w-7 rounded-full border flex items-center justify-center text-[13px] italic font-serif leading-none group-active:bg-zinc-50 ${
-                showAbout ? 'border-zinc-400 text-zinc-600' : 'border-zinc-300 text-zinc-400'
-              } ${!reminderIntroSeen && !showAbout ? 'reminder-intro' : ''}`}>
-                i
-              </span>
-            </button>
+        {/* Brand + screen chrome stay outside the scroller */}
+        <header className="ui-sans shrink-0 z-10 bg-white">
+          <div className={`px-6 pt-8 ${showHomeDateSticky || showPrayerChromeSticky ? 'pb-3' : 'pb-5'}`}>
+            <div className="flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={goHome}
+                aria-label={ui.backToList}
+                className="flex items-center gap-3 min-w-0 text-left appearance-none bg-transparent p-0 m-0 border-0 font-[inherit] text-inherit"
+              >
+                <div className="h-9 w-9 rounded-full bg-[#0D9488] flex items-center justify-center text-white font-semibold text-[15px]">ש</div>
+                <div>
+                  <h1 className="text-[22px] font-semibold tracking-tight leading-none">Shacharis</h1>
+                  <p className="text-[13px] text-zinc-500 mt-1 font-medium">{ui.tagline}</p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={showAbout ? closeAbout : openAbout}
+                aria-label={ABOUT_COPY[lang].aboutLink}
+                aria-pressed={showAbout}
+                className="group shrink-0 h-9 w-9 flex items-center justify-center appearance-none bg-transparent p-0 m-0 border-0"
+              >
+                <span className={`h-7 w-7 rounded-full border flex items-center justify-center text-[13px] italic font-serif leading-none group-active:bg-zinc-50 ${
+                  showAbout ? 'border-zinc-400 text-zinc-600' : 'border-zinc-300 text-zinc-400'
+                } ${!reminderIntroSeen && !showAbout ? 'reminder-intro' : ''}`}>
+                  i
+                </span>
+              </button>
+            </div>
           </div>
+          {showHomeDateSticky ? (
+            <div className="px-4 pb-2">
+              <HomeDate lang={lang} today={today} onOpenReading={openReading} />
+            </div>
+          ) : null}
+          {showPrayerChromeSticky && currentPrayer ? (
+            <div className="px-5 pt-1 pb-4 border-b border-zinc-100">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 min-w-0 text-[11px] tracking-widest text-[#0D9488] font-semibold uppercase">
+                  <span>{String(currentPrayer.id).padStart(2, '0')} / {String(TOTAL_PRAYERS).padStart(2, '0')}</span>
+                  <span className="h-1 w-1 rounded-full bg-[#0D9488]/40 shrink-0"></span>
+                  <span className="truncate">{currentPrayer.titleEn}</span>
+                </div>
+                <TextSizeControl
+                  value={typeSize}
+                  onChange={setTypeSize}
+                  label={ui.textSize}
+                  nameM={ui.textSizeM}
+                  nameL={ui.textSizeL}
+                  nameXl={ui.textSizeXl}
+                />
+              </div>
+              <h2 className="he-serif mt-1 text-[15px] font-normal leading-snug text-zinc-500" dir="rtl">
+                {currentPrayer.titleHe}
+              </h2>
+            </div>
+          ) : null}
         </header>
 
         <main
@@ -1455,27 +1487,6 @@ export default function App() {
               onTouchEnd={handlePrayerTouchEnd}
             >
               <div ref={prayerScrollRef} className="flex-1 overflow-auto px-5 pb-[168px]">
-                <div className="pt-1 pb-4 border-b border-zinc-100">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 min-w-0 text-[11px] tracking-widest text-[#0D9488] font-semibold uppercase ui-sans">
-                      <span>{String(currentPrayer.id).padStart(2, '0')} / {String(TOTAL_PRAYERS).padStart(2, '0')}</span>
-                      <span className="h-1 w-1 rounded-full bg-[#0D9488]/40 shrink-0"></span>
-                      <span className="truncate">{currentPrayer.titleEn}</span>
-                    </div>
-                    <TextSizeControl
-                      value={typeSize}
-                      onChange={setTypeSize}
-                      label={ui.textSize}
-                      nameM={ui.textSizeM}
-                      nameL={ui.textSizeL}
-                      nameXl={ui.textSizeXl}
-                    />
-                  </div>
-                  <h2 className="he-serif mt-1 text-[15px] font-normal leading-snug text-zinc-500" dir="rtl">
-                    {currentPrayer.titleHe}
-                  </h2>
-                </div>
-
                 <div className="mt-6">
                   <HebrewDisplay
                     heDisplay={currentPrayer.he_display}
@@ -1644,7 +1655,6 @@ export default function App() {
 
           {selected === null && !showAbout && !readingPassage && !columnB && (
             <div className="px-4 pt-2 pb-10 ui-sans">
-              <HomeDate lang={lang} today={today} onOpenReading={openReading} />
               <div className="px-2 mb-4">
                 <p className="text-[13px] text-zinc-500 leading-5">{ui.selectPrayer.replace('{n}', String(TOTAL_PRAYERS))}</p>
               </div>
