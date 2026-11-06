@@ -48,15 +48,15 @@ test('the first launch is remembered, and the ask waits a full month', () => {
   assert.equal(shouldShowSupportEnvelope(day31), true);
 });
 
-test('opening About does not snooze — only an explicit donate does', () => {
+test('opening About does not snooze — donate or dismiss (X) does', () => {
   memory.set(SUPPORT_FIRST_SEEN_KEY, String(day0));
   assert.equal(shouldShowSupportEnvelope(day31), true);
 
-  // Visiting About / dismissing the envelope used to write SUPPORT_SNOOZE_KEY.
-  // Without that write the ask stays due.
+  // Visiting About alone must not write SUPPORT_SNOOZE_KEY.
   assert.equal(memory.has(SUPPORT_SNOOZE_KEY), false);
   assert.equal(shouldShowSupportEnvelope(day40), true);
 
+  // Same path as donate click or envelope X.
   snoozeSupportEnvelope(day40);
   assert.equal(shouldShowSupportEnvelope(day40), false);
   assert.equal(shouldShowSupportEnvelope(day40 + SUPPORT_CYCLE_MS - 1), false);

@@ -68,7 +68,7 @@ export function shouldNotifySupport(now = Date.now()): boolean {
   return lastNotified < dueAt;
 }
 
-/** Call only when the reader taps a donate button — not when they open or leave About. */
+/** Call on donate or envelope dismiss (X). Opening About alone must not snooze. */
 export function snoozeSupportEnvelope(now = Date.now()): void {
   writeTimestamp(SUPPORT_SNOOZE_KEY, now);
 }

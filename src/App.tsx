@@ -17,7 +17,7 @@ import ColumnBScreen from './components/ColumnBScreen';
 import SplashScreen from './components/SplashScreen';
 import AboutScreen from './components/AboutScreen';
 import SupportEnvelope from './components/SupportEnvelope';
-import { maybeNotifySupport, shouldShowSupportEnvelope } from './support';
+import { maybeNotifySupport, shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, supportNotice, type Lang } from './supportCopy';
 import { trackAboutPage, trackAppOpen, trackLanguage, trackPageView } from './analytics';
 import { REMINDER_INTRO_SEEN_KEY, maintainReminder, reminderNotice } from './reminder';
@@ -1111,6 +1111,7 @@ export default function App() {
   };
 
   const dismissEnvelope = () => {
+    snoozeSupportEnvelope();
     setShowEnvelope(false);
   };
 
@@ -1362,6 +1363,23 @@ export default function App() {
     if (!showEnvelope) return;
     void maybeNotifySupport(supportNotice(lang));
   }, [showEnvelope, lang]);
+
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return;
+    const onMessage = (event: MessageEvent) => {
+      const data = event.data as { type?: string; path?: string } | null;
+      if (!data || data.type !== 'shacharis-open' || data.path !== '/about') return;
+      setShowAbout(true);
+      setShowEnvelope(false);
+      if (window.location.pathname !== '/about') {
+        window.history.pushState({ screen: 'about' }, '', '/about');
+      }
+      trackAboutPage();
+      scrollShellToTop();
+    };
+    navigator.serviceWorker.addEventListener('message', onMessage);
+    return () => navigator.serviceWorker.removeEventListener('message', onMessage);
+  }, []);
 
   useEffect(() => {
     const synth = window.speechSynthesis;

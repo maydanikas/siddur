@@ -36,6 +36,11 @@ self.addEventListener('notificationclick', function (event) {
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (windows) {
       for (var i = 0; i < windows.length; i++) {
         var client = windows[i];
+        try {
+          client.postMessage({ type: 'shacharis-open', path: url });
+        } catch (e) {
+          /* older clients ignore */
+        }
         if (typeof client.navigate === 'function') {
           return client.navigate(url).then(function (opened) {
             if (opened && opened.focus) return opened.focus();
