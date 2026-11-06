@@ -1,5 +1,5 @@
 import { ABOUT_COPY, resolveLang, type Lang } from '../supportCopy';
-import { APP_SHARE_URL, SUPPORT_DONATE_NL_URL, SUPPORT_DONATE_URL, snoozeSupportEnvelope } from '../support';
+import { APP_SHARE_URL, SUPPORT_DONATE_NL_URL, SUPPORT_DONATE_URL, snoozeSupportAsk } from '../support';
 import { trackSupportClick } from '../analytics';
 import ReminderCard from './ReminderCard';
 
@@ -7,7 +7,7 @@ export default function AboutScreen({ lang, onReminderSeen }: { lang: Lang; onRe
   const copy = ABOUT_COPY[resolveLang(lang)];
 
   const onDonate = (button: 'netherlands' | 'world') => {
-    snoozeSupportEnvelope();
+    snoozeSupportAsk();
     trackSupportClick(button);
   };
 

@@ -5,10 +5,10 @@ import {
   SUPPORT_FIRST_SEEN_KEY,
   SUPPORT_NOTIFIED_KEY,
   SUPPORT_SNOOZE_KEY,
+  isSupportAskDue,
   markSupportNotified,
   shouldNotifySupport,
-  shouldShowSupportEnvelope,
-  snoozeSupportEnvelope,
+  snoozeSupportAsk,
   supportDueAt,
 } from './support.ts';
 
@@ -26,7 +26,12 @@ beforeEach(() => {
       removeItem: (key: string) => {
         memory.delete(key);
       },
-    },
+      clear: () => memory.clear(),
+      key: () => null,
+      get length() {
+        return memory.size;
+      },
+    } satisfies Storage,
   });
 });
 
@@ -38,29 +43,25 @@ const day0 = Date.UTC(2026, 0, 1, 12, 0, 0);
 const day10 = day0 + 10 * 24 * 60 * 60 * 1000;
 const day31 = day0 + 31 * 24 * 60 * 60 * 1000;
 const day40 = day0 + 40 * 24 * 60 * 60 * 1000;
-const day70 = day40 + SUPPORT_CYCLE_MS;
 
 test('the first launch is remembered, and the ask waits a full month', () => {
-  assert.equal(shouldShowSupportEnvelope(day0), false);
+  assert.equal(isSupportAskDue(day0), false);
   assert.equal(Number(memory.get(SUPPORT_FIRST_SEEN_KEY)), day0);
   assert.equal(supportDueAt(day0), day0 + SUPPORT_CYCLE_MS);
-  assert.equal(shouldShowSupportEnvelope(day10), false);
-  assert.equal(shouldShowSupportEnvelope(day31), true);
+  assert.equal(isSupportAskDue(day10), false);
+  assert.equal(isSupportAskDue(day31), true);
 });
 
-test('opening About does not snooze — donate or dismiss (X) does', () => {
+test('opening About does not snooze — a delivered notification or donate does', () => {
   memory.set(SUPPORT_FIRST_SEEN_KEY, String(day0));
-  assert.equal(shouldShowSupportEnvelope(day31), true);
-
-  // Visiting About alone must not write SUPPORT_SNOOZE_KEY.
+  assert.equal(isSupportAskDue(day31), true);
   assert.equal(memory.has(SUPPORT_SNOOZE_KEY), false);
-  assert.equal(shouldShowSupportEnvelope(day40), true);
+  assert.equal(isSupportAskDue(day40), true);
 
-  // Same path as donate click or envelope X.
-  snoozeSupportEnvelope(day40);
-  assert.equal(shouldShowSupportEnvelope(day40), false);
-  assert.equal(shouldShowSupportEnvelope(day40 + SUPPORT_CYCLE_MS - 1), false);
-  assert.equal(shouldShowSupportEnvelope(day40 + SUPPORT_CYCLE_MS), true);
+  snoozeSupportAsk(day40);
+  assert.equal(isSupportAskDue(day40), false);
+  assert.equal(isSupportAskDue(day40 + SUPPORT_CYCLE_MS - 1), false);
+  assert.equal(isSupportAskDue(day40 + SUPPORT_CYCLE_MS), true);
 });
 
 test('the system notification fires once per due window', () => {
@@ -69,11 +70,12 @@ test('the system notification fires once per due window', () => {
   assert.equal(shouldNotifySupport(day31), true);
 
   markSupportNotified(day31);
+  snoozeSupportAsk(day31);
   assert.equal(Number(memory.get(SUPPORT_NOTIFIED_KEY)), day31);
+  assert.equal(Number(memory.get(SUPPORT_SNOOZE_KEY)), day31);
   assert.equal(shouldNotifySupport(day40), false);
 
-  snoozeSupportEnvelope(day40);
-  assert.equal(shouldNotifySupport(day40), false);
-  assert.equal(shouldNotifySupport(day70 - 1), false);
-  assert.equal(shouldNotifySupport(day70), true);
+  const nextDue = day31 + SUPPORT_CYCLE_MS;
+  assert.equal(shouldNotifySupport(nextDue - 1), false);
+  assert.equal(shouldNotifySupport(nextDue), true);
 });

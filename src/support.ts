@@ -16,9 +16,17 @@ export const APP_SHARE_URL = 'https://shacharis.app';
 
 export type SupportNotice = { title: string; body: string; lang: string };
 
+function storage(): Storage | null {
+  try {
+    return globalThis.localStorage ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function readTimestamp(key: string): number | null {
   try {
-    const raw = localStorage.getItem(key);
+    const raw = storage()?.getItem(key);
     if (!raw) return null;
     const value = Number(raw);
     return Number.isFinite(value) ? value : null;
@@ -29,13 +37,13 @@ function readTimestamp(key: string): number | null {
 
 function writeTimestamp(key: string, value: number): void {
   try {
-    localStorage.setItem(key, String(value));
+    storage()?.setItem(key, String(value));
   } catch {
     /* ignore quota / private mode */
   }
 }
 
-/** Remember first launch so the envelope can wait a month before the first ask. */
+/** Remember first launch so the monthly ask can wait a month. */
 function rememberFirstSeen(now: number): number | null {
   const existing = readTimestamp(SUPPORT_FIRST_SEEN_KEY);
   if (existing !== null) return existing;
@@ -43,24 +51,24 @@ function rememberFirstSeen(now: number): number | null {
   return readTimestamp(SUPPORT_FIRST_SEEN_KEY) ?? now;
 }
 
-/** Moment the current monthly ask becomes due (first month, or a month after donate). */
+/** Moment the current monthly ask becomes due (first month, or a month after the last quieting). */
 export function supportDueAt(now = Date.now()): number | null {
   const firstSeen = rememberFirstSeen(now);
   if (firstSeen === null) return null;
-  const lastDonate = readTimestamp(SUPPORT_SNOOZE_KEY);
-  if (lastDonate === null) return firstSeen + SUPPORT_CYCLE_MS;
-  return lastDonate + SUPPORT_CYCLE_MS;
+  const lastQuiet = readTimestamp(SUPPORT_SNOOZE_KEY);
+  if (lastQuiet === null) return firstSeen + SUPPORT_CYCLE_MS;
+  return lastQuiet + SUPPORT_CYCLE_MS;
 }
 
-export function shouldShowSupportEnvelope(now = Date.now()): boolean {
+export function isSupportAskDue(now = Date.now()): boolean {
   const dueAt = supportDueAt(now);
   if (dueAt === null) return false;
   return now >= dueAt;
 }
 
-/** True once per due window, until the reader donates and the next month begins. */
+/** True once per due window, until the ask is delivered or the reader donates. */
 export function shouldNotifySupport(now = Date.now()): boolean {
-  if (!shouldShowSupportEnvelope(now)) return false;
+  if (!isSupportAskDue(now)) return false;
   const dueAt = supportDueAt(now);
   if (dueAt === null) return false;
   const lastNotified = readTimestamp(SUPPORT_NOTIFIED_KEY);
@@ -68,8 +76,8 @@ export function shouldNotifySupport(now = Date.now()): boolean {
   return lastNotified < dueAt;
 }
 
-/** Call on donate or envelope dismiss (X). Opening About alone must not snooze. */
-export function snoozeSupportEnvelope(now = Date.now()): void {
+/** Call on donate, or after the shade notification was shown. Opening About alone must not snooze. */
+export function snoozeSupportAsk(now = Date.now()): void {
   writeTimestamp(SUPPORT_SNOOZE_KEY, now);
 }
 
@@ -89,6 +97,7 @@ async function supportRegistration(): Promise<ServiceWorkerRegistration | null> 
 /**
  * One system notification per monthly ask, only if the phone already allowed
  * notifications (usually via the morning-prayer reminder). Never prompts.
+ * A successful show quiets the ask for another month.
  */
 export async function maybeNotifySupport(notice: SupportNotice, now = Date.now()): Promise<boolean> {
   if (!shouldNotifySupport(now)) return false;
@@ -110,6 +119,7 @@ export async function maybeNotifySupport(notice: SupportNotice, now = Date.now()
     if (reg) await reg.showNotification(notice.title, options);
     else new Notification(notice.title, options);
     markSupportNotified(now);
+    snoozeSupportAsk(now);
     return true;
   } catch {
     return false;
