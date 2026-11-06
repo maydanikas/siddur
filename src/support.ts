@@ -66,9 +66,27 @@ export function isSupportAskDue(now = Date.now()): boolean {
   return now >= dueAt;
 }
 
-/** True once per due window, until the ask is delivered or the reader donates. */
+/** True when the phone already allows notifications (no new prompt). */
+export function canUseSupportNotification(): boolean {
+  try {
+    return typeof Notification !== 'undefined' && Notification.permission === 'granted';
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * In-app envelope only when the monthly ask is due and the phone cannot show
+ * a shade notification. If permission is granted, the shade notification is used instead.
+ */
+export function shouldShowSupportEnvelope(now = Date.now()): boolean {
+  return isSupportAskDue(now) && !canUseSupportNotification();
+}
+
+/** True once per due window when shade notifications are allowed. */
 export function shouldNotifySupport(now = Date.now()): boolean {
   if (!isSupportAskDue(now)) return false;
+  if (!canUseSupportNotification()) return false;
   const dueAt = supportDueAt(now);
   if (dueAt === null) return false;
   const lastNotified = readTimestamp(SUPPORT_NOTIFIED_KEY);
@@ -76,7 +94,7 @@ export function shouldNotifySupport(now = Date.now()): boolean {
   return lastNotified < dueAt;
 }
 
-/** Call on donate, or after the shade notification was shown. Opening About alone must not snooze. */
+/** Call on donate, envelope dismiss (X), or after the shade notification was shown. */
 export function snoozeSupportAsk(now = Date.now()): void {
   writeTimestamp(SUPPORT_SNOOZE_KEY, now);
 }
@@ -95,13 +113,12 @@ async function supportRegistration(): Promise<ServiceWorkerRegistration | null> 
 }
 
 /**
- * One system notification per monthly ask, only if the phone already allowed
- * notifications (usually via the morning-prayer reminder). Never prompts.
- * A successful show quiets the ask for another month.
+ * One system notification per monthly ask when permission is already granted.
+ * Never prompts. A successful show quiets the ask for another month.
+ * Without permission the in-app envelope is used instead.
  */
 export async function maybeNotifySupport(notice: SupportNotice, now = Date.now()): Promise<boolean> {
   if (!shouldNotifySupport(now)) return false;
-  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return false;
 
   const options = {
     body: notice.body,

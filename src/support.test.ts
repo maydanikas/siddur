@@ -5,9 +5,11 @@ import {
   SUPPORT_FIRST_SEEN_KEY,
   SUPPORT_NOTIFIED_KEY,
   SUPPORT_SNOOZE_KEY,
+  canUseSupportNotification,
   isSupportAskDue,
   markSupportNotified,
   shouldNotifySupport,
+  shouldShowSupportEnvelope,
   snoozeSupportAsk,
   supportDueAt,
 } from './support.ts';
@@ -33,6 +35,10 @@ beforeEach(() => {
       },
     } satisfies Storage,
   });
+  Object.defineProperty(globalThis, 'Notification', {
+    configurable: true,
+    value: { permission: 'default' },
+  });
 });
 
 afterEach(() => {
@@ -52,7 +58,25 @@ test('the first launch is remembered, and the ask waits a full month', () => {
   assert.equal(isSupportAskDue(day31), true);
 });
 
-test('opening About does not snooze — a delivered notification or donate does', () => {
+test('without notification permission the due ask is the envelope, not the shade', () => {
+  memory.set(SUPPORT_FIRST_SEEN_KEY, String(day0));
+  assert.equal(canUseSupportNotification(), false);
+  assert.equal(shouldShowSupportEnvelope(day31), true);
+  assert.equal(shouldNotifySupport(day31), false);
+});
+
+test('with notification permission the due ask is the shade, not the envelope', () => {
+  memory.set(SUPPORT_FIRST_SEEN_KEY, String(day0));
+  Object.defineProperty(globalThis, 'Notification', {
+    configurable: true,
+    value: { permission: 'granted' },
+  });
+  assert.equal(canUseSupportNotification(), true);
+  assert.equal(shouldShowSupportEnvelope(day31), false);
+  assert.equal(shouldNotifySupport(day31), true);
+});
+
+test('opening About does not snooze — a delivered notification, envelope X, or donate does', () => {
   memory.set(SUPPORT_FIRST_SEEN_KEY, String(day0));
   assert.equal(isSupportAskDue(day31), true);
   assert.equal(memory.has(SUPPORT_SNOOZE_KEY), false);
@@ -66,6 +90,10 @@ test('opening About does not snooze — a delivered notification or donate does'
 
 test('the system notification fires once per due window', () => {
   memory.set(SUPPORT_FIRST_SEEN_KEY, String(day0));
+  Object.defineProperty(globalThis, 'Notification', {
+    configurable: true,
+    value: { permission: 'granted' },
+  });
   assert.equal(shouldNotifySupport(day10), false);
   assert.equal(shouldNotifySupport(day31), true);
 
@@ -74,6 +102,7 @@ test('the system notification fires once per due window', () => {
   assert.equal(Number(memory.get(SUPPORT_NOTIFIED_KEY)), day31);
   assert.equal(Number(memory.get(SUPPORT_SNOOZE_KEY)), day31);
   assert.equal(shouldNotifySupport(day40), false);
+  assert.equal(shouldShowSupportEnvelope(day40), false);
 
   const nextDue = day31 + SUPPORT_CYCLE_MS;
   assert.equal(shouldNotifySupport(nextDue - 1), false);

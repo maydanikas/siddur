@@ -16,7 +16,8 @@ import { applySeason } from './seasonalText';
 import ColumnBScreen from './components/ColumnBScreen';
 import SplashScreen from './components/SplashScreen';
 import AboutScreen from './components/AboutScreen';
-import { maybeNotifySupport } from './support';
+import SupportEnvelope from './components/SupportEnvelope';
+import { maybeNotifySupport, shouldShowSupportEnvelope, snoozeSupportAsk } from './support';
 import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, supportNotice, type Lang } from './supportCopy';
 import { trackAboutPage, trackAppOpen, trackLanguage, trackPageView } from './analytics';
 import { REMINDER_INTRO_SEEN_KEY, maintainReminder, reminderNotice } from './reminder';
@@ -1063,6 +1064,7 @@ export default function App() {
       return false;
     }
   });
+  const [showEnvelope, setShowEnvelope] = useState(() => shouldShowSupportEnvelope());
   const ui = controlsCopy(lang);
   const player = useHebrewPlayer(
     selected !== null ? forToday(prayers[selected], today).he_tts : null,
@@ -1086,8 +1088,13 @@ export default function App() {
     prayerScrollRef.current?.scrollTo({ top: 0 });
   };
 
+  const refreshEnvelope = () => {
+    setShowEnvelope(shouldShowSupportEnvelope());
+  };
+
   const closeAbout = () => {
     setShowAbout(false);
+    refreshEnvelope();
     if (window.location.pathname !== '/about') return;
     if (historyScreen() === 'about') window.history.back();
     else window.history.replaceState({ screen: 'list' }, '', '/');
@@ -1099,7 +1106,13 @@ export default function App() {
       window.history.pushState({ screen: 'about' }, '', '/about');
     }
     trackAboutPage();
+    setShowEnvelope(false);
     scrollShellToTop();
+  };
+
+  const dismissEnvelope = () => {
+    snoozeSupportAsk();
+    setShowEnvelope(false);
   };
 
   const swipeRef = useRef<{ startX: number; startY: number; edge: 'left' | 'right' | null }>({
@@ -1124,6 +1137,7 @@ export default function App() {
       setReadingIndex(null);
       setColumnB(null);
       setShowAbout(false);
+      refreshEnvelope();
       if (window.location.pathname !== '/') {
         window.history.replaceState({ screen: 'list' }, '', '/');
       }
@@ -1147,6 +1161,7 @@ export default function App() {
     if (window.location.pathname === '/about' && historyScreen() === 'about') {
       setShowAbout(false);
       setSelected(null);
+      refreshEnvelope();
       scrollShellToTop();
       window.history.go(openedAboutOverPrayer ? -2 : -1);
       return;
@@ -1167,6 +1182,7 @@ export default function App() {
           date: typeof state?.date === 'string' ? state.date : null,
           index: typeof state?.index === 'number' ? state.index : null,
         });
+        setShowEnvelope(false);
         return;
       }
       setColumnB(null);
@@ -1175,17 +1191,20 @@ export default function App() {
         setShowAbout(false);
         setSelected(null);
         setReadingIndex(typeof index === 'number' ? index : 0);
+        setShowEnvelope(false);
         return;
       }
       setReadingIndex(null);
       if (path === '/about') {
         setShowAbout(true);
         setSelected(null);
+        setShowEnvelope(false);
         return;
       }
       setShowAbout(false);
       const idx = prayerIndexFromPath(path);
       setSelected(idx);
+      if (idx === null) setShowEnvelope(shouldShowSupportEnvelope());
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -1341,7 +1360,15 @@ export default function App() {
   }, [lang]);
 
   useEffect(() => {
-    void maybeNotifySupport(supportNotice(lang));
+    let cancelled = false;
+    void (async () => {
+      const notified = await maybeNotifySupport(supportNotice(lang));
+      if (cancelled) return;
+      setShowEnvelope(!notified && shouldShowSupportEnvelope());
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [lang]);
 
   useEffect(() => {
@@ -1350,6 +1377,7 @@ export default function App() {
       const data = event.data as { type?: string; path?: string } | null;
       if (!data || data.type !== 'shacharis-open' || data.path !== '/about') return;
       setShowAbout(true);
+      setShowEnvelope(false);
       if (window.location.pathname !== '/about') {
         window.history.pushState({ screen: 'about' }, '', '/about');
       }
@@ -1691,6 +1719,14 @@ export default function App() {
               <div className="mt-8 px-2 text-[11px] text-zinc-400 leading-4">
                 {ui.footer}
               </div>
+              {showEnvelope && !showSplash && !columnB && (
+                <SupportEnvelope
+                  onOpen={openAbout}
+                  onDismiss={dismissEnvelope}
+                  dismissLabel={ui.dismiss}
+                  noteLabel={ui.envelope}
+                />
+              )}
             </div>
           )}
         </main>
