@@ -1,10 +1,15 @@
 import { ABOUT_COPY, resolveLang, type Lang } from '../supportCopy';
-import { APP_SHARE_URL, SUPPORT_DONATE_NL_URL, SUPPORT_DONATE_URL } from '../support';
+import { APP_SHARE_URL, SUPPORT_DONATE_NL_URL, SUPPORT_DONATE_URL, snoozeSupportEnvelope } from '../support';
 import { trackSupportClick } from '../analytics';
 import ReminderCard from './ReminderCard';
 
 export default function AboutScreen({ lang, onReminderSeen }: { lang: Lang; onReminderSeen: () => void }) {
   const copy = ABOUT_COPY[resolveLang(lang)];
+
+  const onDonate = (button: 'netherlands' | 'world') => {
+    snoozeSupportEnvelope();
+    trackSupportClick(button);
+  };
 
   return (
     <div className="px-5 pt-1 pb-8 ui-sans">
@@ -23,7 +28,7 @@ export default function AboutScreen({ lang, onReminderSeen }: { lang: Lang; onRe
             href={SUPPORT_DONATE_NL_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackSupportClick('netherlands')}
+            onClick={() => onDonate('netherlands')}
             className="flex flex-1 items-center justify-center px-3 hover:bg-teal-700 active:bg-teal-800 transition"
           >
             {copy.donateNl}
@@ -33,7 +38,7 @@ export default function AboutScreen({ lang, onReminderSeen }: { lang: Lang; onRe
             href={SUPPORT_DONATE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackSupportClick('world')}
+            onClick={() => onDonate('world')}
             className="flex flex-1 items-center justify-center px-3 hover:bg-teal-700 active:bg-teal-800 transition"
           >
             {copy.donateWorld}

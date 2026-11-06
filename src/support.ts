@@ -1,6 +1,8 @@
 export const SUPPORT_SNOOZE_KEY = 'shacharis_support_hint_at';
 export const SUPPORT_FIRST_SEEN_KEY = 'shacharis_first_seen_at';
+export const SUPPORT_NOTIFIED_KEY = 'shacharis_support_notified_at';
 export const SUPPORT_CYCLE_MS = 30 * 24 * 60 * 60 * 1000;
+export const SUPPORT_TAG = 'shacharis-support';
 
 /** Public Ko-fi page for supporters outside the Netherlands (PayPal payouts). */
 export const SUPPORT_DONATE_URL = 'https://ko-fi.com/shacharis';
@@ -11,6 +13,8 @@ export const SUPPORT_DONATE_NL_URL =
 
 /** Canonical URL encoded in the About-page QR (install / share the PWA). */
 export const APP_SHARE_URL = 'https://shacharis.app';
+
+export type SupportNotice = { title: string; body: string; lang: string };
 
 function readTimestamp(key: string): number | null {
   try {
@@ -39,16 +43,75 @@ function rememberFirstSeen(now: number): number | null {
   return readTimestamp(SUPPORT_FIRST_SEEN_KEY) ?? now;
 }
 
-export function shouldShowSupportEnvelope(now = Date.now()): boolean {
+/** Moment the current monthly ask becomes due (first month, or a month after donate). */
+export function supportDueAt(now = Date.now()): number | null {
   const firstSeen = rememberFirstSeen(now);
-  if (firstSeen === null) return false;
-  if (now - firstSeen < SUPPORT_CYCLE_MS) return false;
-
-  const lastHint = readTimestamp(SUPPORT_SNOOZE_KEY);
-  if (lastHint === null) return true;
-  return now - lastHint >= SUPPORT_CYCLE_MS;
+  if (firstSeen === null) return null;
+  const lastDonate = readTimestamp(SUPPORT_SNOOZE_KEY);
+  if (lastDonate === null) return firstSeen + SUPPORT_CYCLE_MS;
+  return lastDonate + SUPPORT_CYCLE_MS;
 }
 
+export function shouldShowSupportEnvelope(now = Date.now()): boolean {
+  const dueAt = supportDueAt(now);
+  if (dueAt === null) return false;
+  return now >= dueAt;
+}
+
+/** True once per due window, until the reader donates and the next month begins. */
+export function shouldNotifySupport(now = Date.now()): boolean {
+  if (!shouldShowSupportEnvelope(now)) return false;
+  const dueAt = supportDueAt(now);
+  if (dueAt === null) return false;
+  const lastNotified = readTimestamp(SUPPORT_NOTIFIED_KEY);
+  if (lastNotified === null) return true;
+  return lastNotified < dueAt;
+}
+
+/** Call only when the reader taps a donate button — not when they open or leave About. */
 export function snoozeSupportEnvelope(now = Date.now()): void {
   writeTimestamp(SUPPORT_SNOOZE_KEY, now);
+}
+
+export function markSupportNotified(now = Date.now()): void {
+  writeTimestamp(SUPPORT_NOTIFIED_KEY, now);
+}
+
+async function supportRegistration(): Promise<ServiceWorkerRegistration | null> {
+  if (!('serviceWorker' in navigator)) return null;
+  try {
+    return (await navigator.serviceWorker.getRegistration()) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * One system notification per monthly ask, only if the phone already allowed
+ * notifications (usually via the morning-prayer reminder). Never prompts.
+ */
+export async function maybeNotifySupport(notice: SupportNotice, now = Date.now()): Promise<boolean> {
+  if (!shouldNotifySupport(now)) return false;
+  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return false;
+
+  const options = {
+    body: notice.body,
+    icon: '/icon-192.png',
+    badge: '/icon-badge.png',
+    tag: SUPPORT_TAG,
+    lang: notice.lang,
+    data: { url: '/about' },
+    vibrate: [180, 80, 180],
+    renotify: true,
+  } as NotificationOptions;
+
+  try {
+    const reg = await supportRegistration();
+    if (reg) await reg.showNotification(notice.title, options);
+    else new Notification(notice.title, options);
+    markSupportNotified(now);
+    return true;
+  } catch {
+    return false;
+  }
 }

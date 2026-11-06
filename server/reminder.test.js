@@ -70,6 +70,8 @@ test('the notification badge is a transparent shin, and the phone shows the name
   assert.match(sw, /badge: '\/icon-badge\.png'/);
   assert.match(client, /badge: '\/icon-badge\.png'/);
   assert.match(manifest, /short_name: 'Shacharis'/);
+  assert.match(sw, /shacharis-support/);
+  assert.match(sw, /\/about/);
   const png = readFileSync(new URL('../public/icon-badge.png', import.meta.url));
   assert.equal(pngHasTransparentPixel(png), true);
 });

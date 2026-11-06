@@ -34,6 +34,9 @@ type AboutCopy = {
   donateWorld: string;
   aboutLink: string;
   shareTitle: string;
+  /** System notification title for the monthly support ask. */
+  notifTitle: string;
+  notifBody: string;
 };
 
 export type ReminderCopy = {
@@ -65,6 +68,8 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     donateWorld: 'World',
     aboutLink: 'About',
     shareTitle: 'Share the Shacharis app',
+    notifTitle: 'Support our project',
+    notifBody: 'Shacharis',
   },
   ru: {
     title: 'О приложении',
@@ -77,6 +82,8 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     donateWorld: 'Мир',
     aboutLink: 'О проекте',
     shareTitle: 'Поделитесь приложением Shacharis',
+    notifTitle: 'Поддержите наш проект',
+    notifBody: 'Shacharis',
   },
   nl: {
     title: 'Over deze app',
@@ -89,6 +96,8 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     donateWorld: 'Wereld',
     aboutLink: 'Over',
     shareTitle: 'Deel de Shacharis-app',
+    notifTitle: 'Steun ons project',
+    notifBody: 'Shacharis',
   },
   fr: {
     title: 'À propos',
@@ -101,6 +110,8 @@ export const ABOUT_COPY: Record<Lang, AboutCopy> = {
     donateWorld: 'Monde',
     aboutLink: 'À propos',
     shareTitle: 'Partagez l’application Shacharis',
+    notifTitle: 'Soutenez notre projet',
+    notifBody: 'Shacharis',
   },
 };
 
@@ -281,4 +292,11 @@ export function controlsCopy(lang: Lang): ControlsCopy {
 
 export function aboutCopy(lang: Lang): AboutCopy {
   return ABOUT_COPY[resolveLang(lang)];
+}
+
+/** Title and body for the monthly system notification on the phone shade. */
+export function supportNotice(lang: Lang | string): { title: string; body: string; lang: Lang } {
+  const active = resolveLang(lang);
+  const copy = ABOUT_COPY[active];
+  return { title: copy.notifTitle, body: copy.notifBody, lang: active };
 }

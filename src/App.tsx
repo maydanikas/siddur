@@ -17,8 +17,8 @@ import ColumnBScreen from './components/ColumnBScreen';
 import SplashScreen from './components/SplashScreen';
 import AboutScreen from './components/AboutScreen';
 import SupportEnvelope from './components/SupportEnvelope';
-import { shouldShowSupportEnvelope, snoozeSupportEnvelope } from './support';
-import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, type Lang } from './supportCopy';
+import { maybeNotifySupport, shouldShowSupportEnvelope } from './support';
+import { ABOUT_COPY, controlsCopy, resolveLang, resolveSystemLang, supportNotice, type Lang } from './supportCopy';
 import { trackAboutPage, trackAppOpen, trackLanguage, trackPageView } from './analytics';
 import { REMINDER_INTRO_SEEN_KEY, maintainReminder, reminderNotice } from './reminder';
 import { COLUMN_B_PATH, HOME_DESCRIPTION, HOME_TITLE, isColumnBPath, isReadingPath, prayerSeoDescription, prayerSlug, READING_PATH, READING_TITLE } from './prayerPaths';
@@ -1106,13 +1106,11 @@ export default function App() {
       window.history.pushState({ screen: 'about' }, '', '/about');
     }
     trackAboutPage();
-    snoozeSupportEnvelope();
     setShowEnvelope(false);
     scrollShellToTop();
   };
 
   const dismissEnvelope = () => {
-    snoozeSupportEnvelope();
     setShowEnvelope(false);
   };
 
@@ -1359,6 +1357,11 @@ export default function App() {
   useEffect(() => {
     void maintainReminder(reminderNotice(lang));
   }, [lang]);
+
+  useEffect(() => {
+    if (!showEnvelope) return;
+    void maybeNotifySupport(supportNotice(lang));
+  }, [showEnvelope, lang]);
 
   useEffect(() => {
     const synth = window.speechSynthesis;

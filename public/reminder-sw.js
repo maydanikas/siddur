@@ -22,14 +22,30 @@ self.addEventListener('push', function (event) {
 
 self.addEventListener('notificationclick', function (event) {
   var tag = (event.notification && event.notification.tag) || '';
-  if (tag.indexOf('shacharis-reminder') !== 0) return;
+  var data = (event.notification && event.notification.data) || {};
+  var url = '/';
+  if (tag.indexOf('shacharis-support') === 0) {
+    url = data.url || '/about';
+  } else if (tag.indexOf('shacharis-reminder') === 0) {
+    url = data.url || '/';
+  } else {
+    return;
+  }
   event.notification.close();
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (windows) {
       for (var i = 0; i < windows.length; i++) {
-        if (windows[i].focus) return windows[i].focus();
+        var client = windows[i];
+        if (typeof client.navigate === 'function') {
+          return client.navigate(url).then(function (opened) {
+            if (opened && opened.focus) return opened.focus();
+            if (client.focus) return client.focus();
+            return opened;
+          });
+        }
+        if (client.focus) return client.focus();
       }
-      if (self.clients.openWindow) return self.clients.openWindow('/');
+      if (self.clients.openWindow) return self.clients.openWindow(url);
     }),
   );
 });
